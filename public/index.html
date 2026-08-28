@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELLA ITALIA — Ingrosso Cosmetici</title>
+<meta name="description" content="Ingrosso cosmetici e accessori beauty. Oltre 60 categorie, pronta consegna dall'Italia. Rossetti, smalti, gel, pennelli, profumi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --plum:#2B1B26;
+    --plum-soft:#3D2836;
+    --ivory:#F7EFEE;
+    --rose:#C9506B;
+    --gold:#C6A15B;
+    --blush:#EFD9DD;
+    --muted:rgba(247,239,238,.55);
+    --muted-dark:rgba(43,27,38,.55);
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--ivory);color:var(--plum);
+    font-family:'Jost',system-ui,sans-serif;font-weight:400;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+  .display{font-family:'Bodoni Moda',Georgia,serif}
+  .eyebrow{
+    font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    font-weight:500;color:var(--gold);
+  }
+
+  /* ---------- nav ---------- */
+  .nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 28px;
+    background:rgba(43,27,38,0);transition:background .4s, padding .4s;
+  }
+  .nav.solid{background:rgba(43,27,38,.94);backdrop-filter:blur(10px);padding:12px 28px}
+  .nav a{color:var(--ivory);text-decoration:none}
+  .nav-mark{font-family:'Bodoni Moda',serif;font-style:italic;font-size:21px;letter-spacing:.01em}
+  .nav-links{display:flex;gap:26px;align-items:center;font-size:13px;letter-spacing:.06em}
+  .nav-links a{opacity:.75;transition:opacity .2s}
+  .nav-links a:hover,.nav-links a:focus-visible{opacity:1}
+  .nav-cta{
+    border:1px solid var(--gold);color:var(--gold)!important;
+    padding:8px 16px;border-radius:2px;opacity:1!important;
+    transition:background .25s,color .25s;
+  }
+  .nav-cta:hover{background:var(--gold);color:var(--plum)!important}
+  .nav-toggle{display:none;background:none;border:0;color:var(--ivory);font-size:22px;cursor:pointer}
+
+  /* ---------- hero ---------- */
+  .hero{
+    background:var(--plum);color:var(--ivory);
+    min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+    padding:120px 0 0;position:relative;overflow:hidden;
+  }
+  .hero::before{
+    content:"";position:absolute;top:-25%;right:-10%;
+    width:60vw;height:60vw;border-radius:50%;
+    background:radial-gradient(circle,rgba(201,80,107,.22),transparent 65%);
+    pointer-events:none;
+  }
+  .hero-inner{position:relative;z-index:1}
+  .hero h1{
+    font-family:'Bodoni Moda',serif;font-weight:400;
+    font-size:clamp(56px,12vw,164px);line-height:.92;margin:14px 0 0;
+    letter-spacing:-.01em;
+  }
+  .hero h1 em{font-style:italic;color:var(--gold)}
+  .hero-lede{
+    max-width:46ch;margin:26px 0 0;font-size:clamp(15px,1.7vw,18px);
+    line-height:1.65;color:var(--muted);font-weight:300;
+  }
+  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+  .btn{
+    display:inline-block;padding:15px 30px;border-radius:2px;
+    font-size:13.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:500;
+    text-decoration:none;transition:transform .2s,background .25s,color .25s;
+  }
+  .btn-solid{background:var(--gold);color:var(--plum)}
+  .btn-solid:hover{background:var(--ivory)}
+  .btn-line{border:1px solid rgba(247,239,238,.35);color:var(--ivory)}
+  .btn-line:hover{border-color:var(--ivory);background:rgba(247,239,238,.07)}
+  .btn:active{transform:translateY(1px)}
+
+  /* ---------- SIGNATURE: shade strip ---------- */
+  .strip{display:flex;width:100%;margin-top:70px;height:82px}
+  .strip span{
+    flex:1;transform:scaleY(0);transform-origin:bottom;
+    animation:rise .7s cubic-bezier(.22,.9,.3,1) forwards;
+  }
+  @keyframes rise{to{transform:scaleY(1)}}
+  .strip-caption{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:14px 0 30px;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--muted);
+  }
+
+  /* ---------- sections ---------- */
+  section{padding:110px 0}
+  .sec-head{max-width:62ch;margin-bottom:52px}
+  .sec-head h2{
+    font-family:'Bodoni Moda',serif;font-weight:400;
+    font-size:clamp(32px,5vw,54px);line-height:1.1;margin:12px 0 0;
+  }
+  .sec-head p{margin:18px 0 0;color:var(--muted-dark);line-height:1.7;font-weight:300;font-size:16px}
+
+  /* catalogo index */
+  .catalogo{background:var(--ivory)}
+  .index-grid{
+    columns:4;column-gap:34px;
+    border-top:1px solid rgba(43,27,38,.14);padding-top:26px;
+  }
+  .index-grid li{
+    list-style:none;break-inside:avoid;
+    font-family:'Bodoni Moda',serif;font-size:16px;
+    padding:7px 0;border-bottom:1px solid rgba(43,27,38,.07);
+  }
+  .index-grid{margin:0;padding-left:0}
+  .index-note{
+    margin-top:26px;font-size:13px;color:var(--muted-dark);letter-spacing:.04em;
+  }
+
+  /* featured */
+  .featured{background:var(--plum);color:var(--ivory)}
+  .featured .sec-head p{color:var(--muted)}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .card{
+    position:relative;aspect-ratio:3/4;overflow:hidden;border-radius:3px;
+    background:linear-gradient(155deg,var(--plum-soft),#241621);
+    display:flex;align-items:flex-end;text-decoration:none;color:var(--ivory);
+  }
+  .card img{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    transition:transform .6s cubic-bezier(.2,.8,.2,1);
+  }
+  .card:hover img{transform:scale(1.05)}
+  .card::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(to top,rgba(29,17,25,.85) 8%,transparent 62%);
+  }
+  .card-label{position:relative;z-index:2;padding:22px}
+  .card-label .n{font-family:'Bodoni Moda',serif;font-size:22px;display:block}
+  .card-label .s{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:4px;display:block}
+
+  /* come funziona — a real 3-step sequence */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:44px;margin-top:16px}
+  .step{border-top:2px solid var(--gold);padding-top:20px}
+  .step .num{font-family:'Bodoni Moda',serif;font-size:13px;letter-spacing:.2em;color:var(--gold)}
+  .step h3{font-family:'Bodoni Moda',serif;font-weight:500;font-size:23px;margin:10px 0 10px}
+  .step p{margin:0;color:var(--muted-dark);line-height:1.7;font-size:15px;font-weight:300}
+
+  /* ordina CTA */
+  .ordina{
+    background:var(--blush);
+    padding:96px 0;
+  }
+  .ordina-box{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+  .ordina h2{font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(30px,4.4vw,46px);line-height:1.12;margin:12px 0 0}
+  .ordina p{color:var(--muted-dark);line-height:1.7;margin:18px 0 0;font-weight:300}
+  .ordina-panel{
+    background:var(--plum);color:var(--ivory);padding:34px;border-radius:3px;
+  }
+  .ordina-panel h4{font-family:'Bodoni Moda',serif;font-weight:400;font-size:20px;margin:0 0 8px}
+  .ordina-panel p{color:var(--muted);font-size:14.5px;margin:0 0 20px}
+  .btn-block{display:block;text-align:center}
+
+  /* footer */
+  footer{background:var(--plum);color:var(--ivory);padding:70px 0 34px}
+  .foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:40px}
+  .foot-mark{font-family:'Bodoni Moda',serif;font-style:italic;font-size:30px}
+  .foot-grid p,.foot-grid a{color:var(--muted);font-size:14px;line-height:1.9;text-decoration:none}
+  .foot-grid a:hover{color:var(--ivory)}
+  .foot-col h5{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:0 0 12px;font-weight:500}
+  .foot-bar{
+    margin-top:48px;padding-top:20px;border-top:1px solid rgba(247,239,238,.12);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    font-size:12px;color:rgba(247,239,238,.4);
+  }
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+  .rv.in{opacity:1;transform:none}
+
+  a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+  @media (max-width:900px){
+    .cards{grid-template-columns:repeat(2,1fr)}
+    .steps{grid-template-columns:1fr;gap:30px}
+    .index-grid{columns:2}
+    .ordina-box{grid-template-columns:1fr;gap:32px}
+    .foot-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:640px){
+    section{padding:74px 0}
+    .wrap{padding:0 20px}
+    .nav-links{display:none}
+    .nav-links.open{
+      display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;
+      background:rgba(43,27,38,.98);padding:20px;gap:16px;
+    }
+    .nav-toggle{display:block}
+    .cards{grid-template-columns:1fr}
+    .strip{height:56px}
+    .foot-grid{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .rv{opacity:1;transform:none}
+    .strip span{transform:scaleY(1)}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <a href="/" class="nav-mark">Bella Italia</a>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">☰</button>
+  <div class="nav-links" id="navLinks">
+    <a href="#catalogo">Catalogo</a>
+    <a href="#categorie">Categorie</a>
+    <a href="#come-funziona">Come funziona</a>
+    <a href="/contact.html">Contatti</a>
+    <a href="/contact.html" class="nav-cta">Richiedi listino</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-inner">
+    <span class="eyebrow">Ingrosso cosmetici · Italia</span>
+    <h1>Bella<br><em>Italia</em></h1>
+    <p class="hero-lede">
+      Oltre sessanta categorie di cosmetici e accessori beauty, a magazzino in Italia.
+      Riforniamo profumerie, centri estetici e nail salon con consegna rapida e listino dedicato.
+    </p>
+    <div class="hero-actions">
+      <a href="/contact.html" class="btn btn-solid">Richiedi il listino</a>
+      <a href="#catalogo" class="btn btn-line">Sfoglia le categorie</a>
+    </div>
+  </div>
+
+  <!-- SIGNATURE: la scala colore — il vero linguaggio di questo mestiere -->
+  <div class="strip" id="strip" aria-hidden="true"></div>
+  <div class="wrap strip-caption">
+    <span>Rossetti · Smalti · Gel · Ombretti</span>
+    <span>Gamma completa</span>
+  </div>
+</header>
+
+<main>
+
+<section class="catalogo" id="catalogo">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Il catalogo</span>
+      <h2>Tutto il reparto beauty,<br>da un solo fornitore.</h2>
+      <p>
+        Dal trucco labbra alla ricostruzione unghie, dagli accessori ai profumi.
+        Le referenze sono a magazzino: ordini oggi, spedizione dall'Italia.
+      </p>
+    </div>
+    <ul class="index-grid rv">
+      <li>Rossetto</li><li>Lucidalabbra</li><li>Gonfialabbra</li><li>Burrocacao</li>
+      <li>Mascara</li><li>Eyeliner</li><li>Ombretto</li><li>Trousse</li>
+      <li>Illuminante</li><li>Fard</li><li>Correttore</li><li>Fondotinta</li>
+      <li>Contouring</li><li>Terra</li><li>Cipria</li><li>Cipria in polvere</li>
+      <li>Matita sopracciglia</li><li>Primer</li><li>Fissante</li><li>Struccante</li>
+      <li>Cura della pelle</li><li>Massaggio</li><li>Spugne</li><li>Pennelli</li>
+      <li>Kit pennelli</li><li>Colla</li><li>Ciglia finte</li><li>Pinzette</li>
+      <li>Forbici</li><li>Unghie finte</li><li>Smalto</li><li>Gel colorato</li>
+      <li>Gel acrilico</li><li>Cartine</li><li>Lime</li><li>Lime per piedi</li>
+      <li>Profumo arabo</li><li>Kit profumo</li><li>Fascia per capelli</li><li>Bagnoschiuma</li>
+    </ul>
+    <p class="index-note">— e altre ancora. Il listino completo con prezzi è riservato ai clienti registrati.</p>
+  </div>
+</section>
+
+<section class="featured" id="categorie">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">In evidenza</span>
+      <h2>Le linee più richieste</h2>
+      <p>Le categorie che i nostri clienti riordinano più spesso.</p>
+    </div>
+    <div class="cards rv">
+      <!-- SOSTITUISCI src con le tue foto: <img src="/img/rossetto.jpg" alt=""> -->
+      <a class="card" href="/contact.html">
+        <span class="card-label"><span class="n">Rossetto</span><span class="s">Labbra</span></span>
+      </a>
+      <a class="card" href="/contact.html">
+        <span class="card-label"><span class="n">Gel &amp; Smalto</span><span class="s">Unghie</span></span>
+      </a>
+      <a class="card" href="/contact.html">
+        <span class="card-label"><span class="n">Ombretto</span><span class="s">Occhi</span></span>
+      </a>
+      <a class="card" href="/contact.html">
+        <span class="card-label"><span class="n">Pennelli</span><span class="s">Accessori</span></span>
+      </a>
+      <a class="card" href="/contact.html">
+        <span class="card-label"><span class="n">Profumo</span><span class="s">Fragranze</span></span>
+      </a>
+      <a class="card" href="/contact.html">
+        <span class="card-label"><span class="n">Trousse</span><span class="s">Cofanetti</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="come-funziona">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Diventare cliente</span>
+      <h2>Tre passaggi, una volta sola.</h2>
+      <p>Non serve scaricare app né creare password. Il link che ricevi è già il tuo listino.</p>
+    </div>
+    <div class="steps rv">
+      <div class="step">
+        <span class="num">PASSO I</span>
+        <h3>Ci contatti</h3>
+        <p>Scrivici su WhatsApp o vieni in sede. Ci basta sapere che tipo di attività hai.</p>
+      </div>
+      <div class="step">
+        <span class="num">PASSO II</span>
+        <h3>Ricevi il tuo link</h3>
+        <p>Ti inviamo un link personale con i tuoi prezzi. Si apre dal telefono, senza registrazione.</p>
+      </div>
+      <div class="step">
+        <span class="num">PASSO III</span>
+        <h3>Ordini quando vuoi</h3>
+        <p>Sfogli le categorie, aggiungi le quantità, invii. Prepariamo la merce e ti avvisiamo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ordina">
+  <div class="wrap ordina-box">
+    <div class="rv">
+      <span class="eyebrow">Ordini online</span>
+      <h2>Il tuo listino,<br>sempre in tasca.</h2>
+      <p>
+        Ogni cliente ha un link personale che mostra le categorie, le foto dei prodotti,
+        la disponibilità aggiornata e i suoi prezzi. Ordine minimo €500 per la spedizione.
+      </p>
+    </div>
+    <div class="ordina-panel rv">
+      <h4>Hai già il tuo link?</h4>
+      <p>Aprilo dal messaggio che ti abbiamo inviato — è personale e non richiede password.</p>
+      <a href="/contact.html" class="btn btn-solid btn-block">Non ce l'ho, richiedilo</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-mark">Bella Italia</div>
+        <p style="max-width:34ch;margin-top:10px">
+          Ingrosso di cosmetici e accessori beauty.<br>Consegna in tutta Italia.
+        </p>
+      </div>
+      <div class="foot-col">
+        <h5>Naviga</h5>
+        <p>
+          <a href="#catalogo">Catalogo</a><br>
+          <a href="#categorie">Categorie</a><br>
+          <a href="#come-funziona">Come funziona</a><br>
+          <a href="/contact.html">Contatti</a>
+        </p>
+      </div>
+      <div class="foot-col">
+        <h5>Contatti</h5>
+        <p>
+          <a href="tel:+390000000000">+39 000 000 0000</a><br>
+          <a href="mailto:info@bellaitalia.it">info@bellaitalia.it</a><br>
+          <a href="/contact.html">Dove siamo</a>
+        </p>
+      </div>
+    </div>
+    <div class="foot-bar">
+      <span>© <span id="yr"></span> Bella Italia — P.IVA 00000000000</span>
+      <span>Ingrosso riservato a operatori del settore</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* la scala colore: nudi, rosati, rossi, berry, bordeaux — la gamma reale di un rossetto */
+  (function buildStrip(){
+    const shades = ['#F0D5CE','#E8BCB0','#DFA294','#D98C82','#D4736F','#CD5C63',
+                    '#C9506B','#B94467','#A83C63','#96335C','#7F2A52','#6B2447',
+                    '#5A1E3C','#7A2E4E','#98395C','#B34A69','#C86077','#DA7C8B',
+                    '#E79AA3','#F0B8BC'];
+    const strip = document.getElementById('strip');
+    shades.forEach((c,i)=>{
+      const s = document.createElement('span');
+      s.style.background = c;
+      s.style.animationDelay = (i*38)+'ms';
+      strip.appendChild(s);
+    });
+  })();
+
+  /* nav solida allo scroll */
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('solid', window.scrollY > 40);
+  onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+
+  /* menu mobile */
+  const tog = document.getElementById('navToggle'), links = document.getElementById('navLinks');
+  tog.addEventListener('click', () => {
+    const open = links.classList.toggle('open');
+    tog.setAttribute('aria-expanded', open);
+  });
+  links.addEventListener('click', e => { if(e.target.tagName==='A') links.classList.remove('open'); });
+
+  /* reveal allo scroll */
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:.12});
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

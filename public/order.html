@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELLA ITALIA · 订货</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blush: #f7dde3;
+    --blush-deep: #eec3cf;
+    --rose: #cf7e93;
+    --rose-deep: #a85068;
+    --gold: #c6a15b;
+    --gold-soft: #e4cd9a;
+    --cream: #fff8f4;
+    --ink: #3c2b30;
+    --ink-soft: rgba(60,43,48,0.6);
+    --line: rgba(60,43,48,0.14);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Jost', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 100px;
+  }
+  .serif { font-family: 'Cormorant Garamond', serif; }
+
+  header.brand {
+    background: linear-gradient(160deg, var(--blush) 0%, var(--blush-deep) 100%);
+    padding: 30px 20px 22px;
+    border-bottom: 1px solid var(--gold-soft);
+    position: relative;
+    overflow: hidden;
+  }
+  header.brand::after {
+    content: "";
+    position: absolute; right: -30px; top: -30px;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.5), transparent 70%);
+  }
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 30px;
+    letter-spacing: 0.02em;
+    color: var(--rose-deep);
+    margin: 0;
+    position: relative;
+  }
+  .brand-tagline {
+    font-size: 10.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+  .brand-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 16px;
+    font-size: 13px;
+  }
+  #customerName { font-weight: 500; }
+  .tier-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: #fff;
+    padding: 3px 11px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+
+  main { padding: 16px 14px 4px; }
+
+  .product {
+    display: flex; gap: 13px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 13px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 10px rgba(207,126,147,0.08);
+  }
+  .product img {
+    width: 68px; height: 68px;
+    object-fit: cover;
+    border-radius: 12px;
+    background: var(--blush);
+    flex-shrink: 0;
+  }
+  .product-info { flex: 1; min-width: 0; }
+  .product-name { font-weight: 500; font-size: 15px; line-height: 1.3; }
+  .product-unit { font-size: 11.5px; color: var(--ink-soft); margin-top: 2px; }
+  .product-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 9px;
+  }
+  .product-price { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 600; color: var(--rose-deep); }
+  .product-price .cur { font-size: 12px; opacity: 0.7; margin-right: 1px; }
+  .stock-tag { font-size: 10.5px; margin-top: 4px; letter-spacing: 0.02em; }
+  .stock-tag.ok { color: #7c9473; }
+  .stock-tag.out { color: var(--rose-deep); font-weight: 500; }
+
+  .stepper {
+    display: flex; align-items: center;
+    background: var(--blush);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .stepper button {
+    width: 28px; height: 28px;
+    border: none; background: transparent;
+    font-size: 15px; font-weight: 600;
+    color: var(--rose-deep);
+  }
+  .stepper button:disabled { opacity: 0.3; }
+  .stepper input {
+    width: 30px; text-align: center;
+    border: none; background: transparent;
+    height: 28px; font-size: 13px; color: var(--ink);
+    -moz-appearance: textfield;
+  }
+  .stepper input::-webkit-outer-spin-button,
+  .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  .note-block { padding: 6px 14px 0; }
+  .note-block label {
+    display: block; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--ink-soft); margin-bottom: 6px;
+  }
+  .note-block textarea {
+    width: 100%; min-height: 58px;
+    border: 1px solid var(--line); border-radius: 12px;
+    background: #fff; padding: 10px; font-size: 14px;
+    font-family: 'Jost', sans-serif; resize: vertical;
+  }
+  .note-block textarea:focus { outline: 2px solid var(--rose); }
+
+  .cart-bar {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    background: #fff;
+    border-top: 1px solid var(--line);
+    padding: 13px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 -6px 20px rgba(207,126,147,0.15);
+  }
+  .cart-bar .total-block .label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+  .cart-bar .total-block .value { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--rose-deep); }
+  .cart-bar button {
+    background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+    color: #fff; border: none;
+    padding: 13px 26px;
+    font-size: 13.5px; font-weight: 500; letter-spacing: 0.04em;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(168,80,104,0.35);
+  }
+  .cart-bar button:disabled { opacity: 0.35; box-shadow: none; }
+
+  .toast {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: #fff;
+    padding: 10px 18px; font-size: 13px;
+    border-radius: 999px; z-index: 50;
+    max-width: 88%; text-align: center;
+  }
+
+  .seal-overlay {
+    position: fixed; inset: 0; background: rgba(60,43,48,0.45);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 60;
+  }
+  .seal-card {
+    background: var(--cream); border-radius: 20px;
+    padding: 30px 24px 24px; width: 82%; max-width: 300px;
+    text-align: center;
+    box-shadow: 0 12px 40px rgba(60,43,48,0.25);
+  }
+  .seal {
+    width: 64px; height: 64px; margin: 0 auto 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--gold-soft), var(--gold) 70%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 26px; font-weight: 600; color: #fff;
+    box-shadow: 0 4px 14px rgba(198,161,91,0.5);
+  }
+  .seal-card .big { font-family: 'Cormorant Garamond', serif; color: var(--rose-deep); font-size: 21px; font-weight: 600; }
+  .seal-card .oid { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+  .seal-card button {
+    margin-top: 20px; border: none; background: var(--blush);
+    color: var(--rose-deep); border-radius: 999px;
+    padding: 9px 22px; font-size: 13px; font-weight: 500;
+  }
+</style>
+</head>
+<body>
+<div id="profileOverlay" style="display:none;position:fixed;inset:0;background:#fff8f4;z-index:80;overflow-y:auto;padding:24px 18px 40px">
+  <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:#a85068;font-size:24px;margin:0 0 4px">Bella Italia</p>
+  <p style="font-size:12px;color:#888;margin-bottom:20px">Prima di ordinare, compila i dati per la fatturazione</p>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">Ragione Sociale *</label><input id="pf_ragione_sociale" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">P.IVA *</label><input id="pf_piva" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">Codice Fiscale</label><input id="pf_codice_fiscale" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">Indirizzo *</label><input id="pf_indirizzo" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">CAP *</label><input id="pf_cap" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">Citta *</label><input id="pf_citta" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">SDI *</label><input id="pf_sdi" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">PEC *</label><input id="pf_pec" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">Telefono *</label><input id="pf_telefono" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">Email *</label><input id="pf_email" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <button id="profileSubmit" onclick="submitProfile()" style="width:100%;padding:14px;background:linear-gradient(135deg,#cf7e93,#a85068);color:#fff;border:none;border-radius:999px;font-size:15px;font-weight:500;margin-top:8px">Salva e continua</button>
+</div>
+
+<header class="brand">
+  <p class="brand-name">Bella Italia</p>
+  <div class="brand-tagline">Cosmetics Wholesale · Ingrosso Cosmetici</div>
+  <div class="brand-meta">
+    <span id="customerName">加载中…</span>
+    
+  </div>
+</header>
+
+<main id="mainView">
+  <!-- 商品列表由 JS 渲染 -->
+</main>
+
+<div class="note-block">
+  <label>Note / Istruzioni di consegna</label>
+  <textarea id="note" placeholder="Es: consegnare entro venerdì, corriere espresso..."></textarea>
+</div>
+
+<div class="cart-bar">
+  <div class="total-block">
+    <div class="label">Totale</div>
+    <div class="value">€ <span id="totalValue">0.00</span></div>
+  </div>
+  <button id="submitBtn" disabled>Invia Ordine</button>
+</div>
+
+<script>
+const token = location.pathname.split('/o/')[1] || location.pathname.split('/').pop();
+
+
+function money(n) { return n.toFixed(2); }
+
+const cart = {};
+
+let currentView = 'cats'; // 'cats' | 'products'
+let currentCat = null;
+
+function renderCats() {
+  currentView = 'cats';
+  const main = document.getElementById('mainView');
+  if (CATEGORIES.length === 0) {
+    main.innerHTML = PRODUCTS.map(productCard).join('') || '<p style="text-align:center;color:#aaa;padding:30px;font-size:13px">Nessun prodotto</p>';
+    return;
+  }
+  main.innerHTML = CATEGORIES.map(c => {
+    const inCat = PRODUCTS.filter(p => String(p.category_id) === String(c.id));
+    if (inCat.length === 0) return '';
+    const cover = inCat.find(p => p.image && !p.image.includes('placehold'));
+    const imgSrc = cover ? cover.image : (inCat[0].image || '');
+    const imgHTML = imgSrc
+      ? `<img src="${imgSrc}" style="width:64px;height:64px;object-fit:cover;border-radius:12px;flex-shrink:0">`
+      : `<div style="width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,#f7dde3,#eec3cf);flex-shrink:0"></div>`;
+    return `<div onclick="openCat(${c.id}, '${c.name.replace(/'/g,"")}')" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #f0e6ea;border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 2px 8px rgba(207,126,147,0.08);cursor:pointer">
+      ${imgHTML}
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:15px">${c.name}</div>
+        <div style="font-size:12px;color:#aaa;margin-top:2px">${inCat.length} articoli</div>
+      </div>
+      <div style="color:#cf7e93;font-size:18px">›</div>
+    </div>`;
+  }).join('');
+}
+
+function openCat(id, name) {
+  currentView = 'products';
+  currentCat = id;
+  const main = document.getElementById('mainView');
+  const filtered = PRODUCTS.filter(p => String(p.category_id) === String(id));
+  main.innerHTML = `
+    <div onclick="renderCats()" style="display:flex;align-items:center;gap:8px;padding:10px 4px 14px;cursor:pointer;color:#a85068;font-size:14px;font-weight:500">
+      ‹ <span>Tutti</span>
+    </div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#a85068;margin-bottom:12px">${name}</div>
+    ${filtered.map(productCard).join('') || '<p style="text-align:center;color:#aaa;padding:30px;font-size:13px">Nessun prodotto in questa categoria</p>'}
+  `;
+}
+
+function productCard(p) {
+  const out = p.stock <= 0;
+  return `
+    <div class="product">
+      <img src="${p.image || 'https://placehold.co/80x80'}" alt="">
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div class="product-unit">${p.unit}</div>
+        <div class="stock-tag ${out ? 'out' : 'ok'}">${out ? 'Esaurito' : 'Disponibile ' + p.stock + ' ' + p.unit.split('(')[0]}</div>
+        <div class="product-bottom">
+          <div class="product-price"><span class="cur">€</span>${money(p.price)}</div>
+          <div class="stepper">
+            <button onclick="changeQty('${p.id}', -1)" ${out ? 'disabled' : ''}>−</button>
+            <input type="number" min="0" max="${p.stock}" value="${cart[p.id] || 0}"
+                   onchange="setQty('${p.id}', this.value)" ${out ? 'disabled' : ''}>
+            <button onclick="changeQty('${p.id}', 1)" ${out ? 'disabled' : ''}>+</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+
+async function load() {
+  try {
+    const res = await fetch('/api/customer/' + token);
+    const data = await res.json();
+    if (!res.ok) {
+      document.getElementById('customerName').textContent = data.error || 'Errore di caricamento';
+      return;
+    }
+    if (data.needProfile) {
+      document.getElementById('profileOverlay').style.display = 'block';
+      return;
+    }
+    document.getElementById('customerName').textContent = data.customer.name;
+    PRODUCTS = data.products;
+    CATEGORIES = data.categories || [];
+    renderCats();
+  } catch (e) {
+    document.getElementById('customerName').textContent = 'Errore di caricamento';
+  }
+}
+
+async function submitProfile() {
+  const val = id => document.getElementById(id).value.trim();
+  const payload = {
+    ragione_sociale: val('pf_ragione_sociale'),
+    piva: val('pf_piva'),
+    codice_fiscale: val('pf_codice_fiscale'),
+    indirizzo: val('pf_indirizzo'),
+    cap: val('pf_cap'),
+    citta: val('pf_citta'),
+    sdi: val('pf_sdi'),
+    pec: val('pf_pec'),
+    telefono: val('pf_telefono'),
+    email: val('pf_email'),
+  };
+  const btn = document.getElementById('profileSubmit');
+  btn.disabled = true; btn.textContent = 'Salvataggio…';
+  try {
+    const res = await fetch('/api/customer/' + token + '/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!res.ok) { toast(data.error || 'Errore nel salvataggio'); btn.disabled = false; btn.textContent = 'Salva e continua'; return; }
+    document.getElementById('profileOverlay').style.display = 'none';
+    load();
+  } catch (e) {
+    toast('Errore di rete, riprova'); btn.disabled = false; btn.textContent = 'Salva e continua';
+  }
+}
+
+function render() { renderCats(); }
+
+load();
+
+</script>
+</body>
+</html>

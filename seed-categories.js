@@ -1,0 +1,9 @@
+// 首次启动时自动导入分类(自动生成,勿手改)
+module.exports = function seedCategories(db) {
+  const n = db.prepare('SELECT COUNT(*) AS n FROM categories').get().n;
+  if (n > 0) return;
+  const ins = db.prepare('INSERT INTO categories (code, name, sort_order) VALUES (?, ?, ?)');
+  const rows = [["01","ROSSETTO",1],["02","LUCIDALABBRA",2],["02","LUCIDALABBRA (釉)",3],["03","GONFIALABBRA",4],["04","BURROCACAO",5],["05","MASCARA",6],["06","EYELINER",7],["07","OMBRETTO",8],["07","OMBRETTO (纸本)",9],["08","TROUSSE",10],["08","ILLUMINANTE",11],["09","FARD",12],["10","CORRETTORE",13],["11","FONDOTINTA",14],["12","CONTURING",15],["13","TERRA",16],["14","CIPRIA",17],["15","CIPRIA IN POLVERE",18],["16","MATITA SOPRACCIGLIA",19],["16","MATITA (眉+唇)",20],["18","PRIMER PER TRUCCO",21],["19","FISSANTE",22],["20","STRUCCANTE",23],["21","CURA DELLA PELLE",24],["22","MASSAGGIO",25],["22","LAVERE VISO",26],["23","SPUGNA (吸卡)",27],["23","SPUGNA (礼盒)",28],["23","SPUGNA (袋装)",29],["24","PENNELLO DA TRUCCO",30],["25","KIT PENNELLI",31],["26","COLLA",32],["26","TEMPERINO",33],["27","CIGLIA FINTE",34],["28","ATTREZZI CIGLIA",35],["29","FOBICI SOPRACIGLIA",36],["30","FORBICI",37],["31","PINZETTA",38],["32","UNGHIE FINTE (甲片)",39],["33","UNGHIE FINTE (穿戴)",40],["34","SMALTO",41],["35","GEL (新款彩胶)",42],["36","GEL (方瓶)",43],["38","GEL ACRILICO 3IN1",44],["39","GEL ACRILICO",45],["40","DECORAZIONI UNGHIE",46],["41","CARTINA",47],["42","LIME",48],["43","SPAZOLA PER UNGHIE",49],["43","LIME PER PIEDI",50],["44","MANO FINTA",51],["44","DIVISORE DITA",52],["44","CUSCINO MANO",53],["44","SUPPORTO MANO",54],["74","PROFUMO YESENSY",55],["75","PROFUMO MAIS",56],["76","PROFUMO CONVER",57],["78","PROFUMO CHATLER",59],["79","PROFUMO ARABO",60],["79","KIT PROFUMO",61],["80","FASCIA PER CAPELLI",62],["81","BAGNOSCIUMA",63]];
+  for (const r of rows) ins.run(r[0], r[1], r[2]);
+  console.log('已导入', rows.length, '个分类');
+};

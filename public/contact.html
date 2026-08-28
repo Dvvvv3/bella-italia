@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contatti — BELLA ITALIA</title>
+<meta name="description" content="Dove siamo, orari e contatti. Richiedi il tuo link d'ordine personale.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --plum:#2B1B26;--plum-soft:#3D2836;--ivory:#F7EFEE;
+    --rose:#C9506B;--gold:#C6A15B;--blush:#EFD9DD;
+    --muted:rgba(247,239,238,.55);--muted-dark:rgba(43,27,38,.55);
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ivory);color:var(--plum);font-family:'Jost',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+  .eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;font-weight:500;color:var(--gold)}
+
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 28px;background:var(--plum);
+  }
+  .nav a{color:var(--ivory);text-decoration:none}
+  .nav-mark{font-family:'Bodoni Moda',serif;font-style:italic;font-size:21px}
+  .nav-links{display:flex;gap:26px;align-items:center;font-size:13px;letter-spacing:.06em}
+  .nav-links a{opacity:.75;transition:opacity .2s}
+  .nav-links a:hover,.nav-links a:focus-visible{opacity:1}
+  .nav-toggle{display:none;background:none;border:0;color:var(--ivory);font-size:22px;cursor:pointer}
+
+  .page-head{background:var(--plum);color:var(--ivory);padding:76px 0 92px}
+  .page-head h1{
+    font-family:'Bodoni Moda',serif;font-weight:400;
+    font-size:clamp(40px,7vw,80px);line-height:1.02;margin:14px 0 0;
+  }
+  .page-head h1 em{font-style:italic;color:var(--gold)}
+  .page-head p{max-width:48ch;margin:20px 0 0;color:var(--muted);line-height:1.7;font-weight:300}
+
+  .content{padding:0 0 100px;margin-top:-46px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+  .panel{background:#fff;border:1px solid rgba(43,27,38,.1);border-radius:3px;padding:34px}
+  .panel h2{font-family:'Bodoni Moda',serif;font-weight:400;font-size:27px;margin:12px 0 22px}
+
+  .row{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid rgba(43,27,38,.08)}
+  .row:last-child{border-bottom:0;padding-bottom:0}
+  .row .k{
+    flex:0 0 96px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted-dark);padding-top:3px;
+  }
+  .row .v{flex:1;font-size:15.5px;line-height:1.6}
+  .row .v a{color:var(--plum);text-decoration:none;border-bottom:1px solid var(--gold)}
+  .row .v a:hover{color:var(--rose)}
+  .row .v small{display:block;color:var(--muted-dark);font-size:13px;margin-top:3px}
+
+  .map{
+    grid-column:1 / -1;height:400px;border-radius:3px;overflow:hidden;
+    border:1px solid rgba(43,27,38,.1);background:var(--blush);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .map iframe{width:100%;height:100%;border:0;display:block}
+  .map-ph{text-align:center;color:var(--muted-dark);font-size:14px;padding:20px;line-height:1.7}
+
+  .cta{
+    grid-column:1 / -1;background:var(--plum);color:var(--ivory);
+    border-radius:3px;padding:46px;display:grid;grid-template-columns:1.3fr .7fr;
+    gap:36px;align-items:center;
+  }
+  .cta h2{font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(26px,3.6vw,38px);line-height:1.15;margin:12px 0 0}
+  .cta p{color:var(--muted);line-height:1.7;margin:16px 0 0;font-weight:300}
+  .btn{
+    display:inline-block;padding:15px 30px;border-radius:2px;text-align:center;
+    font-size:13.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:500;
+    text-decoration:none;transition:background .25s,transform .2s;
+  }
+  .btn-solid{background:var(--gold);color:var(--plum)}
+  .btn-solid:hover{background:var(--ivory)}
+  .btn:active{transform:translateY(1px)}
+  .btn-block{display:block}
+  .cta-note{font-size:12.5px;color:rgba(247,239,238,.4);margin-top:14px;text-align:center}
+
+  footer{background:var(--plum-soft);color:var(--ivory);padding:40px 0}
+  .foot-bar{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12.5px;color:rgba(247,239,238,.45)}
+  .foot-bar a{color:rgba(247,239,238,.45);text-decoration:none}
+  .foot-bar a:hover{color:var(--ivory)}
+
+  a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+  @media (max-width:820px){
+    .grid{grid-template-columns:1fr}
+    .cta{grid-template-columns:1fr;padding:34px}
+  }
+  @media (max-width:640px){
+    .wrap{padding:0 20px}
+    .nav-links{display:none}
+    .nav-links.open{display:flex;flex-direction:column;position:absolute;left:0;right:0;background:var(--plum);padding:18px 20px;gap:14px;z-index:20}
+    .nav{position:relative}
+    .nav-toggle{display:block}
+    .row{flex-direction:column;gap:5px}
+    .row .k{flex:none}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-mark">Bella Italia</a>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">☰</button>
+  <div class="nav-links" id="navLinks">
+    <a href="/#catalogo">Catalogo</a>
+    <a href="/#categorie">Categorie</a>
+    <a href="/#come-funziona">Come funziona</a>
+    <a href="/contact.html">Contatti</a>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Contatti</span>
+    <h1>Vieni a <em>trovarci</em></h1>
+    <p>
+      Il magazzino è aperto agli operatori del settore. Passa in sede per vedere i prodotti dal vivo,
+      oppure scrivici e ti mandiamo il listino.
+    </p>
+  </div>
+</header>
+
+<main class="content">
+  <div class="wrap grid">
+
+    <div class="panel">
+      <span class="eyebrow">Sede</span>
+      <h2>Dove siamo</h2>
+      <div class="row">
+        <span class="k">Indirizzo</span>
+        <span class="v">
+          Via Esempio 00<br>00000 Città (Provincia)
+          <small>Parcheggio disponibile davanti al magazzino</small>
+        </span>
+      </div>
+      <div class="row">
+        <span class="k">Orari</span>
+        <span class="v">
+          Lun – Ven &nbsp; 9:00 – 18:00<br>
+          Sabato &nbsp; 9:00 – 13:00
+          <small>Domenica chiuso</small>
+        </span>
+      </div>
+      <div class="row">
+        <span class="k">Accesso</span>
+        <span class="v">
+          Ingrosso riservato a operatori del settore
+          <small>Portare partita IVA o documento dell'attività</small>
+        </span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <span class="eyebrow">Scrivici</span>
+      <h2>Contatti diretti</h2>
+      <div class="row">
+        <span class="k">WhatsApp</span>
+        <span class="v">
+          <a href="https://wa.me/390000000000">+39 000 000 0000</a>
+          <small>Il canale più veloce per ordini e disponibilità</small>
+        </span>
+      </div>
+      <div class="row">
+        <span class="k">Telefono</span>
+        <span class="v"><a href="tel:+390000000000">+39 000 000 0000</a></span>
+      </div>
+      <div class="row">
+        <span class="k">Email</span>
+        <span class="v"><a href="mailto:info@bellaitalia.it">info@bellaitalia.it</a></span>
+      </div>
+      <div class="row">
+        <span class="k">WeChat</span>
+        <span class="v">
+          bellaitalia_id
+          <small>微信同号，中文接待</small>
+        </span>
+      </div>
+    </div>
+
+    <!-- MAPPA: sostituisci il blocco .map-ph con l'iframe di Google Maps.
+         Google Maps → cerca l'indirizzo → Condividi → Incorpora una mappa → copia l'iframe. -->
+    <div class="map">
+      <div class="map-ph">
+        Qui va la mappa.<br>
+        Google&nbsp;Maps → cerca l'indirizzo → <em>Condividi</em> → <em>Incorpora una mappa</em> → incolla l'iframe qui.
+      </div>
+    </div>
+
+    <div class="cta">
+      <div>
+        <span class="eyebrow">Nuovi clienti</span>
+        <h2>Richiedi il tuo<br>link d'ordine</h2>
+        <p>
+          Ti creiamo un link personale con i tuoi prezzi e la disponibilità aggiornata.
+          Si apre dal telefono, senza app e senza registrazione.
+        </p>
+      </div>
+      <div>
+        <a class="btn btn-solid btn-block" href="https://wa.me/390000000000?text=Salve%2C%20vorrei%20richiedere%20il%20link%20per%20ordinare.%20La%20mia%20attivit%C3%A0%20%C3%A8%3A%20">
+          Scrivici su WhatsApp
+        </a>
+        <p class="cta-note">Rispondiamo in giornata negli orari di apertura.</p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot-bar">
+    <span>© <span id="yr"></span> Bella Italia — P.IVA 00000000000</span>
+    <span><a href="/">Torna alla home</a></span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  const tog = document.getElementById('navToggle'), links = document.getElementById('navLinks');
+  tog.addEventListener('click', () => {
+    const open = links.classList.toggle('open');
+    tog.setAttribute('aria-expanded', open);
+  });
+</script>
+</body>
+</html>

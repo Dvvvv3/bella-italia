@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>后台管理 · BELLA ITALIA</title>
+<style>
+  :root { --ink: #2a2a2a; --line: #e2ddd4; --bg: #faf8f4; --card: #fff; --accent: #a85068; --accent-soft: #f7dde3; --ok: #3f6b4f; --danger: #b23a2e; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  header { padding: 16px 18px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+  header h1 { font-size: 17px; margin: 0; }
+  header .status { font-size: 12px; color: #888; }
+  nav { display: flex; gap: 6px; padding: 10px 14px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+  nav button { border: 1px solid var(--line); background: var(--card); padding: 7px 14px; border-radius: 999px; font-size: 13px; white-space: nowrap; }
+  nav button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  main { padding: 14px; max-width: 720px; margin: 0 auto; }
+  section { display: none; }
+  section.active { display: block; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 10px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .row > div { flex: 1; min-width: 90px; }
+  label { display: block; font-size: 11px; color: #888; margin-bottom: 3px; }
+  input, select { width: 100%; padding: 7px 8px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; }
+  img.thumb { width: 42px; height: 42px; object-fit: cover; border-radius: 6px; border: 1px solid var(--line); }
+  .item-title { font-weight: 600; font-size: 14px; }
+  .item-sub { font-size: 12px; color: #888; margin-top: 2px; }
+  .prod-facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
+  .prod-facts > div { display: flex; flex-direction: column; }
+  .f-label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.04em; }
+  .f-val { font-size: 14px; font-weight: 600; margin-top: 2px; }
+  .f-danger { color: var(--danger); }
+  .actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  button.btn { border: none; border-radius: 6px; padding: 7px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-ghost { background: var(--accent-soft); color: var(--accent); }
+  .btn-danger { background: #fbe6e2; color: var(--danger); }
+  .add-form { border: 1px dashed var(--line); border-radius: 12px; padding: 12px; margin-bottom: 14px; }
+  .add-form h3 { margin: 0 0 10px; font-size: 13px; }
+  .badge { display: inline-block; font-size: 10.5px; padding: 2px 8px; border-radius: 999px; }
+  .badge.pending { background: #fdf0dc; color: #a06a1a; }
+  .badge.confirmed { background: #e3f0e6; color: var(--ok); }
+  .badge.shipped { background: #e5e8f5; color: #4a5aa8; }
+  .mono { font-family: monospace; }
+  .gate { position: fixed; inset: 0; background: rgba(60,43,48,0.45); display: flex; align-items: center; justify-content: center; z-index: 100; }
+  .gate-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px; width: 84%; max-width: 380px; }
+  .gate-card h2 { font-size: 16px; margin: 0 0 14px; }
+  .modal-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px; width: 90%; max-width: 440px; max-height: 85vh; overflow-y: auto; }
+  .profile-row { font-size: 13px; line-height: 1.8; }
+  .profile-row b { color: #555; font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="gate" id="gate">
+  <div class="gate-card" style="text-align:center">
+    <h2>BELLA ITALIA 后台</h2>
+    <input type="password" id="keyInput" placeholder="输入管理密钥" style="margin-bottom:10px">
+    <button class="btn btn-primary" style="width:100%" onclick="unlock()">进入</button>
+  </div>
+</div>
+<header>
+  <h1>BELLA ITALIA 后台</h1>
+  <span class="status" id="statusMsg"></span>
+</header>
+<nav>
+  <button class="active" data-tab="products">商品</button>
+  <button data-tab="categories">分类</button>
+  <button data-tab="customers">客户</button>
+  <button data-tab="orders">订单</button>
+</nav>
+<main>
+  <section id="products" class="active">
+    <div class="add-form">
+      <h3>新增商品</h3>
+      <div class="row">
+        <div><label>编号</label><input id="p_id" placeholder="sku004"></div>
+        <div><label>名称</label><input id="p_name" placeholder="精华液 30ml"></div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <div><label>分类</label><select id="p_category"></select></div>
+        <div><label>库存</label><input id="p_stock" type="number" value="0"></div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <div><label>规格单位</label><input id="p_unit" placeholder="箱(20瓶/箱)"></div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <div><label>价格 €</label><input id="p_price" type="number" step="0.01"></div>
+      </div>
+      <div style="margin-top:8px">
+        <label>商品图片</label>
+        <input type="file" id="p_image_file" accept="image/*" onchange="uploadImage(this,'p_image_url','p_image_preview')">
+        <img id="p_image_preview" class="thumb" style="margin-top:6px;display:none">
+        <input type="hidden" id="p_image_url">
+      </div>
+      <button class="btn btn-primary" style="margin-top:10px" onclick="addProduct()">添加商品</button>
+    </div>
+    <div id="productList"></div>
+  </section>
+  <section id="categories">
+    <div class="add-form">
+      <h3>新增分类</h3>
+      <div class="row">
+        <div style="max-width:80px"><label>编号</label><input id="cat_code" placeholder="01"></div>
+        <div><label>分类名称</label><input id="cat_name" placeholder="ROSSETTO"></div>
+        <div style="max-width:80px"><label>排序</label><input id="cat_sort" type="number" value="0"></div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:10px" onclick="addCategory()">添加分类</button>
+    </div>
+    <div id="categoryList"></div>
+  </section>
+  <section id="customers">
+    <div class="add-form">
+      <h3>新增客户(自动生成免密下单链接)</h3>
+      <div class="row">
+        <div><label>客户名称</label><input id="c_name" placeholder="王老板 - 佛罗伦萨"></div>
+        <div><label>价格等级</label><select id="c_tier"><option value="A">普通</option></select></div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:10px" onclick="addCustomer()">生成链接</button>
+    </div>
+    <div id="customerList"></div>
+  </section>
+  <section id="orders">
+    <div style="display:flex;gap:6px;margin-bottom:14px;border-bottom:1px solid var(--line);padding-bottom:10px">
+      <button class="btn btn-primary" id="tab_pending" onclick="setOrderTab('pending')">新订单</button>
+      <button class="btn btn-ghost" id="tab_shipped" onclick="setOrderTab('shipped')">已发货</button>
+      <button class="btn btn-ghost" id="tab_cancelled" onclick="setOrderTab('cancelled')">废弃订单</button>
+    </div>
+    <div id="orderList"></div>
+  </section>
+</main>
+<div class="gate" id="editModal" style="display:none">
+  <div class="gate-card" style="max-width:380px">
+    <h2 style="margin-bottom:12px">编辑商品</h2>
+    <input type="hidden" id="e_id">
+    <label>名称</label><input id="e_name" style="margin-bottom:8px">
+    <label>分类</label><select id="e_category" style="margin-bottom:8px"></select>
+    <label>规格单位</label><input id="e_unit" style="margin-bottom:8px">
+    <div class="row" style="margin-bottom:8px">
+      <div><label>库存</label><input id="e_stock" type="number"></div>
+      <div><label>价格 €</label><input id="e_price" type="number" step="0.01"></div>
+    </div>
+    <label>商品图片</label>
+    <input type="file" id="e_image_file" accept="image/*" onchange="uploadImage(this,'e_image_url','e_image_preview')" style="margin-bottom:6px">
+    <img id="e_image_preview" class="thumb" style="margin-bottom:8px">
+    <input type="hidden" id="e_image_url">
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="closeEdit()">取消</button>
+      <button class="btn btn-primary" onclick="saveEdit()">保存</button>
+    </div>
+  </div>
+</div>
+<div class="gate" id="custModal" style="display:none">
+  <div class="modal-card">
+    <h2 id="cust_title" style="margin:0 0 12px;font-size:16px"></h2>
+    <div id="cust_profile" class="profile-row"></div>
+    <h3 style="font-size:13px;margin:16px 0 8px">历史订单</h3>
+    <div id="cust_orders"></div>
+    <div class="actions" style="margin-top:14px">
+      <button class="btn btn-ghost" onclick="document.getElementById('custModal').style.display='none'">关闭</button>
+    </div>
+  </div>
+</div>
+<script>
+let ADMIN_KEY = localStorage.getItem('adminKey') || '';
+let CATEGORIES = [];
+function unlock() {
+  ADMIN_KEY = document.getElementById('keyInput').value.trim();
+  if (!ADMIN_KEY) return;
+  localStorage.setItem('adminKey', ADMIN_KEY);
+  document.getElementById('gate').style.display = 'none';
+  loadAll();
+}
+if (ADMIN_KEY) document.getElementById('gate').style.display = 'none';
+async function api(path, opts={}) {
+  const res = await fetch(path, { ...opts, headers: {'Content-Type':'application/json','x-admin-key':ADMIN_KEY,...(opts.headers||{})} });
+  const data = await res.json();
+  if (!res.ok) { if (res.status===401){localStorage.removeItem('adminKey');location.reload();} throw new Error(data.error||'请求失败'); }
+  return data;
+}
+function flash(msg) { const el=document.getElementById('statusMsg'); el.textContent=msg; setTimeout(()=>{if(el.textContent===msg)el.textContent='';},2500); }
+document.querySelectorAll('nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+async function loadCategoryCache() {
+  CATEGORIES = await api('/api/admin/categories');
+  const opts = '<option value="">— 未分类 —</option>' + CATEGORIES.map(c=>`<option value="${c.id}">${c.code?c.code+' ':''}${c.name}</option>`).join('');
+  ['p_category','e_category'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=opts; });
+}
+async function loadProducts() {
+  const products = await api('/api/admin/products');
+  document.getElementById('productList').innerHTML = products.map(p=>`
+    <div class="card">
+      <div class="row" style="align-items:flex-start">
+        <img class="thumb" style="width:56px;height:56px" src="${p.image||'https://placehold.co/80x80'}" alt="">
+        <div style="flex:1">
+          <div class="item-title">${p.name}</div>
+          <div class="item-sub" style="margin-top:3px">
+            ${p.category_name?`<span class="badge confirmed">${p.category_code?p.category_code+' ':''}${p.category_name}</span>`:'<span class="badge pending">未分类</span>'}
+            <span class="mono" style="color:#aaa;font-size:11px"> ${p.id}</span>
+          </div>
+        </div>
+      </div>
+      <div class="prod-facts">
+        <div><span class="f-label">规格</span><span class="f-val" style="font-size:12px">${p.unit||'—'}</span></div>
+        <div><span class="f-label">库存</span><span class="f-val ${p.stock<=0?'f-danger':''}">${p.stock}</span></div>
+        <div><span class="f-label">价格</span><span class="f-val">€${p.price}</span></div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="editProduct('${p.id}')">编辑</button>
+        <button class="btn btn-danger" onclick="deleteProduct('${p.id}')">删除</button>
+      </div>
+    </div>`).join('') || '<p style="color:#888;font-size:13px">还没有商品</p>';
+}
+async function uploadImage(inputEl,urlFieldId,previewId) {
+  const file=inputEl.files[0]; if(!file) return;
+  const fd=new FormData(); fd.append('image',file);
+  try {
+    const res=await fetch('/api/admin/upload',{method:'POST',headers:{'x-admin-key':ADMIN_KEY},body:fd});
+    const data=await res.json(); if(!res.ok) throw new Error(data.error);
+    document.getElementById(urlFieldId).value=data.url;
+    const pr=document.getElementById(previewId); pr.src=data.url; pr.style.display='inline-block';
+    flash('图片已上传');
+  } catch(e){alert('上传失败:'+e.message);}
+}
+async function addProduct() {
+  try {
+    await api('/api/admin/products',{method:'POST',body:JSON.stringify({
+      id:document.getElementById('p_id').value.trim(),
+      name:document.getElementById('p_name').value.trim(),
+      category_id:document.getElementById('p_category').value||null,
+      unit:document.getElementById('p_unit').value.trim(),
+      image:document.getElementById('p_image_url').value.trim(),
+      stock:document.getElementById('p_stock').value,
+      price:document.getElementById('p_price').value,
+    })});
+    ['p_id','p_name','p_unit','p_image_url'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('p_image_preview').style.display='none';
+    flash('已添加'); loadProducts();
+  } catch(e){alert(e.message);}
+}
+async function editProduct(id) {
+  const products=await api('/api/admin/products');
+  const p=products.find(x=>x.id===id);
+  document.getElementById('e_id').value=p.id;
+  document.getElementById('e_name').value=p.name;
+  document.getElementById('e_category').value=p.category_id||'';
+  document.getElementById('e_unit').value=p.unit;
+  document.getElementById('e_stock').value=p.stock;
+  document.getElementById('e_price').value=p.price;
+  document.getElementById('e_image_url').value=p.image||'';
+  document.getElementById('e_image_preview').src=p.image||'https://placehold.co/80x80';
+  document.getElementById('editModal').style.display='flex';
+}
+function closeEdit(){document.getElementById('editModal').style.display='none';}
+async function saveEdit() {
+  const id=document.getElementById('e_id').value;
+  try {
+    await api(`/api/admin/products/${id}`,{method:'PUT',body:JSON.stringify({
+      name:document.getElementById('e_name').value.trim(),
+      category_id:document.getElementById('e_category').value||null,
+      unit:document.getElementById('e_unit').value.trim(),
+      image:document.getElementById('e_image_url').value.trim(),
+      stock:document.getElementById('e_stock').value,
+      price:document.getElementById('e_price').value,
+    })});
+    closeEdit(); flash('已更新'); loadProducts();
+  } catch(e){alert(e.message);}
+}
+async function deleteProduct(id) {
+  if(!confirm('确定删除?')) return;
+  await api(`/api/admin/products/${id}`,{method:'DELETE'});
+  loadProducts();
+}
+async function loadCategories() {
+  const cats=await api('/api/admin/categories');
+  document.getElementById('categoryList').innerHTML=cats.map(c=>`
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div class="item-title"><span class="mono" style="color:var(--accent)">${c.code||'—'}</span> ${c.name}</div>
+        <span class="item-sub">排序 ${c.sort_order}</span>
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="editCategory(${c.id},'${(c.code||'').replace(/'/g,'')}','${c.name.replace(/'/g,'')}',${c.sort_order})">编辑</button>
+        <button class="btn btn-danger" onclick="deleteCategory(${c.id})">删除</button>
+      </div>
+    </div>`).join('')||'<p style="color:#888;font-size:13px">还没有分类</p>';
+}
+async function addCategory() {
+  const code=document.getElementById('cat_code').value.trim();
+  const name=document.getElementById('cat_name').value.trim();
+  const sort_order=document.getElementById('cat_sort').value;
+  if(!name) return alert('请填分类名称');
+  await api('/api/admin/categories',{method:'POST',body:JSON.stringify({code,name,sort_order})});
+  document.getElementById('cat_code').value=''; document.getElementById('cat_name').value='';
+  flash('分类已添加'); await loadCategoryCache(); loadCategories();
+}
+async function editCategory(id,code,name,sort) {
+  const newName=prompt('分类名称',name); if(newName===null) return;
+  const newCode=prompt('编号',code); if(newCode===null) return;
+  const newSort=prompt('排序',sort); if(newSort===null) return;
+  await api(`/api/admin/categories/${id}`,{method:'PUT',body:JSON.stringify({code:newCode,name:newName,sort_order:newSort})});
+  flash('已更新'); await loadCategoryCache(); loadCategories(); loadProducts();
+}
+async function deleteCategory(id) {
+  if(!confirm('删除这个分类?')) return;
+  await api(`/api/admin/categories/${id}`,{method:'DELETE'});
+  await loadCategoryCache(); loadCategories(); loadProducts();
+}
+async function loadCustomers() {
+  const customers=await api('/api/admin/customers');
+  document.getElementById('customerList').innerHTML=customers.map(c=>`
+    <div class="card">
+      <div class="row" style="justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="item-title">${c.name} <span class="badge pending">${c.tier} 级</span></div>
+          <div class="item-sub mono">/o/${c.token}</div>
+        </div>
+        <span class="badge ${c.profile_done?'confirmed':'shipped'}">${c.profile_done?'已填资料':'未填资料'}</span>
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="copyLink('${c.token}')">复制链接</button>
+        <button class="btn btn-ghost" onclick="viewCustomer('${c.token}')">查看资料/订单</button>
+        <button class="btn btn-danger" onclick="deleteCustomer('${c.token}','${c.name.replace(/'/g,'')}')">删除</button>
+      </div>
+    </div>`).join('')||'<p style="color:#888;font-size:13px">还没有客户</p>';
+}
+async function addCustomer() {
+  const name=document.getElementById('c_name').value.trim();
+  const tier=document.getElementById('c_tier').value;
+  if(!name) return;
+  const data=await api('/api/admin/customers',{method:'POST',body:JSON.stringify({name,tier})});
+  document.getElementById('c_name').value='';
+  flash('已生成: '+data.orderUrl); loadCustomers();
+}
+function copyLink(token) {
+  const url=location.origin+'/o/'+token;
+  navigator.clipboard?.writeText(url);
+  flash('已复制: '+url);
+}
+async function viewCustomer(token) {
+  try {
+    const data=await api(`/api/admin/customers/${token}`);
+    const c=data.customer;
+    document.getElementById('cust_title').textContent=c.name;
+    const row=(label,val)=>val?`<div><b>${label}:</b> ${val}</div>`:'';
+    document.getElementById('cust_profile').innerHTML=c.profile_done?`
+      ${row('Ragione Sociale',c.ragione_sociale)}
+      ${row('P.IVA',c.piva)}
+      ${row('Codice Fiscale',c.codice_fiscale)}
+      ${row('Indirizzo',c.indirizzo)}
+      ${row('CAP',c.cap)}
+      ${row('Città',c.citta)}
+      ${row('SDI',c.sdi)}
+      ${row('PEC',c.pec)}
+      ${row('Telefono',c.telefono)}
+      ${row('Email',c.email)}
+    `:'<span style="color:#aaa">客户还没填写公司信息</span>';
+    document.getElementById('cust_orders').innerHTML=data.orders.length?data.orders.map(o=>`
+      <div class="card" style="margin-bottom:6px">
+        <div class="item-sub">${new Date(o.created_at).toLocaleString('zh-CN')} · <b>€${o.total}</b> · <span class="badge ${o.status}">${({pending:'待处理',confirmed:'已确认',shipped:'已发货'})[o.status]||o.status}</span></div>
+        <div class="item-sub">${o.items.map(i=>i.product_name+' x'+i.qty).join(', ')}</div>
+        <button class="btn btn-ghost" style="margin-top:6px" onclick="printOrder('${o.id}')">打印/PDF</button>
+      </div>`).join(''):'<span style="color:#aaa;font-size:12px">暂无订单</span>';
+    document.getElementById('custModal').style.display='flex';
+  } catch(e){alert(e.message);}
+}
+async function deleteCustomer(token,name) {
+  if(!confirm('删除客户「'+name+'」?')) return;
+  await api(`/api/admin/customers/${token}`,{method:'DELETE'});
+  flash('已删除'); loadCustomers();
+}
+let currentOrderTab = 'pending';
+function setOrderTab(tab) {
+  currentOrderTab = tab;
+  ['pending','shipped','cancelled'].forEach(t => {
+    const btn = document.getElementById('tab_'+t);
+    if (btn) btn.className = 'btn ' + (t===tab ? 'btn-primary' : 'btn-ghost');
+  });
+  loadOrders();
+}
+async function loadOrders() {
+  const orders = await api('/api/admin/orders');
+  const statusLabel = {pending:'待处理',confirmed:'已确认',shipped:'已发货',cancelled:'废弃'};
+  let filtered;
+  if (currentOrderTab === 'pending') {
+    filtered = orders.filter(o => o.status === 'pending' || o.status === 'confirmed');
+  } else if (currentOrderTab === 'shipped') {
+    filtered = orders.filter(o => o.status === 'shipped');
+  } else {
+    filtered = orders.filter(o => o.status === 'cancelled');
+  }
+  document.getElementById('orderList').innerHTML = filtered.map(o => `
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div class="item-title">${o.customer_name}</div>
+        <span class="badge ${o.status}">${statusLabel[o.status]||o.status}</span>
+      </div>
+      <div class="item-sub">${new Date(o.created_at).toLocaleString('zh-CN')} · 合计 €${o.total}</div>
+      <div class="item-sub">${o.items.map(i=>i.product_name+' x'+i.qty).join(', ')}</div>
+      ${o.note ? `<div class="item-sub">备注: ${o.note}</div>` : ''}
+      <div class="actions">
+        ${o.status !== 'cancelled' ? `
+          <button class="btn btn-ghost" onclick="setStatus('${o.id}','confirmed')">确认</button>
+          <button class="btn btn-primary" onclick="setStatus('${o.id}','shipped')">发货</button>
+          <button class="btn btn-ghost" onclick="printOrder('${o.id}')">打印/PDF</button>
+          <button class="btn btn-danger" onclick="setStatus('${o.id}','cancelled')">废弃</button>
+        ` : `
+          <button class="btn btn-ghost" onclick="setStatus('${o.id}','pending')">恢复</button>
+          <button class="btn btn-ghost" onclick="printOrder('${o.id}')">打印/PDF</button>
+        `}
+      </div>
+    </div>`).join('') || '<p style="color:#888;font-size:13px">暂无订单</p>';
+}
+function printOrder(id){window.open(`/api/admin/orders/${id}/print?key=${encodeURIComponent(ADMIN_KEY)}`,'_blank');}
+async function setStatus(id,status){await api(`/api/admin/orders/${id}/status`,{method:'PUT',body:JSON.stringify({status})});loadOrders();}
+async function loadAll(){await loadCategoryCache();loadProducts();loadCategories();loadCustomers();loadOrders();}
+if(ADMIN_KEY) loadAll();
+</script>
+</body>
+</html>
