@@ -288,53 +288,72 @@ app.get('/api/admin/orders/:id/print', requireAdminViaQuery, (req, res) => {
       ? (i.image.startsWith('http') ? i.image : host + i.image)
       : '';
     const imgCell = imgSrc
-      ? `<img src="${imgSrc}" style="width:52px;height:52px;object-fit:cover;border-radius:6px;display:block">`
-      : `<div style="width:52px;height:52px;border-radius:6px;background:#f5e8ec"></div>`;
+      ? `<img src="${imgSrc}" style="width:56px;height:56px;object-fit:cover;border-radius:8px;display:block">`
+      : `<div style="width:56px;height:56px;border-radius:8px;background:#f5e8ec;display:flex;align-items:center;justify-content:center;color:#ddd;font-size:20px">☁</div>`;
     return `
     <tr>
-      <td style="width:60px;padding:6px 4px">${imgCell}</td>
-      <td style="padding:6px 8px">
-        <div style="font-weight:600;font-size:13px">${i.product_name}</div>
-        ${i.name_cn ? `<div style="font-size:11px;color:#888;margin-top:2px">${i.name_cn}</div>` : ''}
-        <div style="font-size:11px;color:#aaa;margin-top:2px">
-          ${i.p_id ? 'ID: ' + i.p_id : ''}
-          ${i.barcode ? ' · 条码: ' + i.barcode : ''}
-        </div>
+      <td class="c-img">${imgCell}</td>
+      <td class="c-id"><span class="mono">${i.p_id||'—'}</span></td>
+      <td class="c-bc"><span class="mono">${i.barcode||'—'}</span></td>
+      <td class="c-name">
+        <div class="name-it">${i.product_name}</div>
+        ${i.name_cn ? `<div class="name-cn">${i.name_cn}</div>` : ''}
       </td>
-      <td class="num" style="padding:6px 8px;font-size:13px">${i.qty}<br><span style="font-size:10px;color:#aaa">${i.unit||''}</span></td>
-      <td class="num" style="padding:6px 8px;font-size:13px">€${i.unit_price.toFixed(2)}</td>
-      <td class="num" style="padding:6px 8px;font-size:13px;font-weight:600">€${(i.qty * i.unit_price).toFixed(2)}</td>
+      <td class="c-qty num">${i.qty}<div class="sub">${i.unit||''}</div></td>
+      <td class="c-price num">€${i.unit_price.toFixed(2)}</td>
+      <td class="c-total num">€${(i.qty * i.unit_price).toFixed(2)}</td>
     </tr>`;
   }).join('');
 
   res.send(`<!DOCTYPE html>
 <html lang="it"><head><meta charset="UTF-8"><title>DDT #${order.id.slice(0,8)}</title>
 <style>
-  @page { size: A4; margin: 14mm 14mm 18mm; }
+  @page { size: A4 landscape; margin: 12mm 14mm; }
   * { box-sizing: border-box; }
-  body { font-family: "PingFang SC","Helvetica Neue",Arial,sans-serif; color: #1a1a1a; margin:0; padding:20px; font-size:13px; }
-  .brand { font-size: 24px; font-weight: 800; letter-spacing: 0.04em; color: #a85068; }
-  .brand small { display:block; font-size: 11px; font-weight: 400; color: #aaa; margin-top: 3px; letter-spacing:0.01em; }
-  .header { display:flex; justify-content:space-between; align-items:flex-start; border-bottom: 2px solid #a85068; padding-bottom:14px; margin-bottom:16px; }
-  .dest-label { font-size:9px; text-transform:uppercase; color:#aaa; letter-spacing:0.08em; margin-bottom:5px; }
-  .dest-name { font-size:15px; font-weight:700; margin-bottom:4px; }
-  .dest-info { font-size:11.5px; color:#555; line-height:1.7; }
+  body { font-family: "PingFang SC","Helvetica Neue",Arial,sans-serif; color: #1a1a1a; margin:0; padding:16px 20px; font-size:12px; }
+  .brand { font-size: 22px; font-weight: 800; letter-spacing: 0.04em; color: #a85068; }
+  .brand small { display:block; font-size: 10px; font-weight: 400; color: #aaa; margin-top: 2px; }
+  .header { display:flex; justify-content:space-between; align-items:flex-start; border-bottom: 2px solid #a85068; padding-bottom:12px; margin-bottom:14px; }
+  .dest-label { font-size:9px; text-transform:uppercase; color:#aaa; letter-spacing:0.08em; margin-bottom:4px; }
+  .dest-name { font-size:14px; font-weight:700; margin-bottom:3px; }
+  .dest-info { font-size:11px; color:#555; line-height:1.7; }
   .doc-box { text-align:right; min-width:160px; }
-  .doc-box .doc-label { font-size:9px; text-transform:uppercase; color:#aaa; letter-spacing:0.08em; margin-bottom:5px; }
-  .doc-box .doc-num { font-size:18px; font-weight:700; color:#a85068; }
-  .doc-box .doc-date { font-size:12px; color:#888; margin-top:3px; }
-  table { width:100%; border-collapse:collapse; margin-top:6px; }
-  thead th { font-size:10px; text-transform:uppercase; color:#aaa; letter-spacing:0.06em; border-bottom:1.5px solid #e0d0d5; padding:6px 8px; text-align:left; }
+  .doc-box .doc-num { font-size:20px; font-weight:700; color:#a85068; }
+  .doc-box .doc-date { font-size:11px; color:#888; margin-top:2px; }
+
+  table { width:100%; border-collapse:collapse; table-layout:fixed; }
+  col.c-img   { width: 72px; }
+  col.c-id    { width: 90px; }
+  col.c-bc    { width: 110px; }
+  col.c-name  { width: auto; }
+  col.c-qty   { width: 70px; }
+  col.c-price { width: 80px; }
+  col.c-total { width: 90px; }
+
+  thead tr { background: #a85068; color: #fff; }
+  thead th { font-size:10px; text-transform:uppercase; letter-spacing:0.05em; padding:8px 6px; text-align:left; font-weight:600; }
   thead th.num { text-align:right; }
-  tbody tr { border-bottom:1px solid #f0e6ea; }
-  tbody tr:last-child { border-bottom: 1.5px solid #c0a0aa; }
-  .num { text-align:right; }
-  tfoot td { padding:10px 8px; font-weight:700; font-size:14px; }
-  tfoot .total-label { color:#888; font-size:12px; }
-  tfoot .total-val { color:#a85068; font-size:16px; }
-  .note-box { margin-top:16px; padding:10px 14px; background:#fdf5f7; border-radius:8px; font-size:12px; color:#666; }
-  .footer { margin-top:28px; border-top:1px solid #e0d0d5; padding-top:10px; font-size:10px; color:#bbb; display:flex; justify-content:space-between; }
-  .print-btn { margin-top:20px; padding:9px 22px; background:#a85068; color:#fff; border:none; border-radius:999px; font-size:13px; cursor:pointer; }
+
+  tbody tr { border-bottom: 1px solid #f0e6ea; }
+  tbody tr:nth-child(even) { background: #fdf5f7; }
+  tbody tr:last-child { border-bottom: 2px solid #c0a0aa; }
+
+  td { padding: 7px 6px; vertical-align: middle; }
+  .c-img { padding: 5px 4px; }
+  .num { text-align: right; }
+  .mono { font-family: "Courier New", monospace; font-size: 11px; color: #555; }
+  .name-it { font-weight: 600; font-size: 12px; }
+  .name-cn { font-size: 11px; color: #999; margin-top: 2px; }
+  .sub { font-size: 10px; color: #aaa; margin-top: 2px; }
+  .c-total { font-weight: 700; color: #a85068; }
+
+  tfoot tr { background: #f9f0f3; }
+  tfoot td { padding: 10px 6px; font-weight: 700; font-size: 13px; border-top: 2px solid #a85068; }
+  .total-val { color: #a85068; font-size: 16px; }
+
+  .note-box { margin-top:14px; padding:8px 12px; background:#fdf5f7; border-left:3px solid #cf7e93; border-radius:4px; font-size:11px; color:#666; }
+  .footer { margin-top:20px; border-top:1px solid #e0d0d5; padding-top:8px; font-size:10px; color:#bbb; display:flex; justify-content:space-between; }
+  .print-btn { margin-top:16px; padding:9px 22px; background:#a85068; color:#fff; border:none; border-radius:999px; font-size:13px; cursor:pointer; }
   @media print { .print-btn { display:none; } body { padding:0; } }
 </style></head>
 <body>
@@ -363,19 +382,25 @@ app.get('/api/admin/orders/:id/print', requireAdminViaQuery, (req, res) => {
   </div>
 
   <table>
+    <colgroup>
+      <col class="c-img"><col class="c-id"><col class="c-bc">
+      <col class="c-name"><col class="c-qty"><col class="c-price"><col class="c-total">
+    </colgroup>
     <thead>
       <tr>
-        <th style="width:60px"></th>
-        <th>Prodotto</th>
-        <th class="num">Qtà</th>
-        <th class="num">Prezzo/pz</th>
-        <th class="num">Totale</th>
+        <th>图片</th>
+        <th>编号</th>
+        <th>条码</th>
+        <th>产品名称 / 名称</th>
+        <th class="num">总数量</th>
+        <th class="num">价格/pz</th>
+        <th class="num">合计</th>
       </tr>
     </thead>
     <tbody>${rows}</tbody>
     <tfoot>
       <tr>
-        <td colspan="4" class="total-label num">Totale Ordine</td>
+        <td colspan="6" class="num" style="color:#888;font-size:12px">Totale Ordine</td>
         <td class="num total-val">€${order.total.toFixed(2)}</td>
       </tr>
     </tfoot>
