@@ -270,7 +270,7 @@ function money(n) { return n.toFixed(2); }
 // 提取不到就当作 1(按件卖)
 function packSize(unit) {
   if (!unit) return 1;
-  const m = String(unit).match(/\((\d+)/);
+  const m = String(unit).match(/(\d+)/);
   return m ? parseInt(m[1], 10) : 1;
 }
 

@@ -99,7 +99,7 @@ app.post('/api/customer/:token/profile', (req, res) => {
 // 提取不到就当作 1(按件卖)
 function packSizeFromUnit(unit) {
   if (!unit) return 1;
-  const m = String(unit).match(/\((\d+)/);
+  const m = String(unit).match(/(\d+)/);
   return m ? parseInt(m[1], 10) : 1;
 }
 
