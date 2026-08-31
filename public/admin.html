@@ -339,8 +339,27 @@ async function addCustomer() {
 }
 function copyLink(token) {
   const url=location.origin+'/o/'+token;
-  navigator.clipboard?.writeText(url);
-  flash('已复制: '+url);
+  copyText(url);
+}
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(()=>flash('已复制: '+text)).catch(()=>fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+function fallbackCopy(text) {
+  const ta=document.createElement('textarea');
+  ta.value=text;
+  ta.style.position='fixed';
+  ta.style.left='-9999px';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  let ok=false;
+  try { ok=document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+  if (ok) { flash('已复制: '+text); }
+  else { prompt('请手动复制链接:', text); }
 }
 async function viewCustomer(token) {
   try {
