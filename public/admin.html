@@ -108,8 +108,7 @@
     <div class="add-form">
       <h3>新增分类</h3>
       <div class="row">
-        <div style="max-width:80px"><label>编号</label><input id="cat_code" placeholder="01"></div>
-        <div><label>分类名称</label><input id="cat_name" placeholder="ROSSETTO"></div>
+<div><label>分类名称</label><input id="cat_name" placeholder="ROSSETTO"></div>
         <div style="max-width:80px"><label>排序</label><input id="cat_sort" type="number" value="0"></div>
       </div>
       <button class="btn btn-primary" style="margin-top:10px" onclick="addCategory()">添加分类</button>
@@ -198,7 +197,7 @@ document.querySelectorAll('nav button').forEach(btn => {
 });
 async function loadCategoryCache() {
   CATEGORIES = await api('/api/admin/categories');
-  const opts = '<option value="">— 未分类 —</option>' + CATEGORIES.map(c=>`<option value="${c.id}">${c.code?c.code+' ':''}${c.name}</option>`).join('');
+  const opts = '<option value="">— 未分类 —</option>' + CATEGORIES.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
   ['p_category','e_category'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=opts; });
 }
 let ALL_PRODUCTS = [];
@@ -213,7 +212,7 @@ async function loadProducts() {
           <div class="item-title">${p.name}</div>
           ${p.name_cn?`<div style="font-size:12px;color:var(--accent);margin-top:1px">🈶 ${p.name_cn}</div>`:''}
           <div class="item-sub" style="margin-top:3px">
-            ${p.category_name?`<span class="badge confirmed">${p.category_code?p.category_code+' ':''}${p.category_name}</span>`:'<span class="badge pending">未分类</span>'}
+            ${p.category_name?`<span class="badge confirmed">${p.category_name}</span>`:'<span class="badge pending">未分类</span>'}
             <span class="mono" style="color:#aaa;font-size:11px"> ${p.id}</span>
             ${p.barcode?`<span class="mono" style="color:#aaa;font-size:11px"> · 条码 ${p.barcode}</span>`:''}
           </div>
@@ -302,29 +301,27 @@ async function loadCategories() {
   document.getElementById('categoryList').innerHTML=cats.map(c=>`
     <div class="card">
       <div class="row" style="justify-content:space-between">
-        <div class="item-title"><span class="mono" style="color:var(--accent)">${c.code||'—'}</span> ${c.name}</div>
+        <div class="item-title">${c.name}</div>
         <span class="item-sub">排序 ${c.sort_order}</span>
       </div>
       <div class="actions">
-        <button class="btn btn-ghost" onclick="editCategory(${c.id},'${(c.code||'').replace(/'/g,'')}','${c.name.replace(/'/g,'')}',${c.sort_order})">编辑</button>
+        <button class="btn btn-ghost" onclick="editCategory(${c.id},'${c.name.replace(/'/g,'')}',${c.sort_order})">编辑</button>
         <button class="btn btn-danger" onclick="deleteCategory(${c.id})">删除</button>
       </div>
     </div>`).join('')||'<p style="color:#888;font-size:13px">还没有分类</p>';
 }
 async function addCategory() {
-  const code=document.getElementById('cat_code').value.trim();
   const name=document.getElementById('cat_name').value.trim();
   const sort_order=document.getElementById('cat_sort').value;
   if(!name) return alert('请填分类名称');
-  await api('/api/admin/categories',{method:'POST',body:JSON.stringify({code,name,sort_order})});
-  document.getElementById('cat_code').value=''; document.getElementById('cat_name').value='';
+  await api('/api/admin/categories',{method:'POST',body:JSON.stringify({name,sort_order})});
+  document.getElementById('cat_name').value='';
   flash('分类已添加'); await loadCategoryCache(); loadCategories();
 }
-async function editCategory(id,code,name,sort) {
+async function editCategory(id,name,sort) {
   const newName=prompt('分类名称',name); if(newName===null) return;
-  const newCode=prompt('编号',code); if(newCode===null) return;
   const newSort=prompt('排序',sort); if(newSort===null) return;
-  await api(`/api/admin/categories/${id}`,{method:'PUT',body:JSON.stringify({code:newCode,name:newName,sort_order:newSort})});
+  await api(`/api/admin/categories/${id}`,{method:'PUT',body:JSON.stringify({name:newName,sort_order:newSort})});
   flash('已更新'); await loadCategoryCache(); loadCategories(); loadProducts();
 }
 async function deleteCategory(id) {
