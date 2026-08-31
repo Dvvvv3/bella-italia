@@ -273,62 +273,122 @@ app.put('/api/admin/orders/:id/status', requireAdmin, (req, res) => {
 app.get('/api/admin/orders/:id/print', requireAdminViaQuery, (req, res) => {
   const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
   if (!order) return res.status(404).send('订单不存在');
-  const items = db.prepare('SELECT * FROM order_items WHERE order_id = ?').all(order.id);
+  const items = db.prepare(`
+    SELECT oi.*, p.id as p_id, p.name_cn, p.barcode, p.image, p.unit
+    FROM order_items oi
+    LEFT JOIN products p ON p.id = oi.product_id
+    WHERE oi.order_id = ?
+  `).all(order.id);
   const customer = db.prepare('SELECT * FROM customers WHERE id = ?').get(order.customer_id) || {};
 
-  const rows = items.map(i => `
+  const host = req.protocol + '://' + req.get('host');
+
+  const rows = items.map(i => {
+    const imgSrc = i.image
+      ? (i.image.startsWith('http') ? i.image : host + i.image)
+      : '';
+    const imgCell = imgSrc
+      ? `<img src="${imgSrc}" style="width:52px;height:52px;object-fit:cover;border-radius:6px;display:block">`
+      : `<div style="width:52px;height:52px;border-radius:6px;background:#f5e8ec"></div>`;
+    return `
     <tr>
-      <td>${i.product_name}</td>
-      <td class="num">${i.qty}</td>
-      <td class="num">€${i.unit_price.toFixed(2)}</td>
-      <td class="num">€${(i.qty * i.unit_price).toFixed(2)}</td>
-    </tr>`).join('');
+      <td style="width:60px;padding:6px 4px">${imgCell}</td>
+      <td style="padding:6px 8px">
+        <div style="font-weight:600;font-size:13px">${i.product_name}</div>
+        ${i.name_cn ? `<div style="font-size:11px;color:#888;margin-top:2px">${i.name_cn}</div>` : ''}
+        <div style="font-size:11px;color:#aaa;margin-top:2px">
+          ${i.p_id ? 'ID: ' + i.p_id : ''}
+          ${i.barcode ? ' · 条码: ' + i.barcode : ''}
+        </div>
+      </td>
+      <td class="num" style="padding:6px 8px;font-size:13px">${i.qty}<br><span style="font-size:10px;color:#aaa">${i.unit||''}</span></td>
+      <td class="num" style="padding:6px 8px;font-size:13px">€${i.unit_price.toFixed(2)}</td>
+      <td class="num" style="padding:6px 8px;font-size:13px;font-weight:600">€${(i.qty * i.unit_price).toFixed(2)}</td>
+    </tr>`;
+  }).join('');
 
   res.send(`<!DOCTYPE html>
-<html lang="zh"><head><meta charset="UTF-8"><title>送货单 #${order.id.slice(0,8)}</title>
+<html lang="it"><head><meta charset="UTF-8"><title>DDT #${order.id.slice(0,8)}</title>
 <style>
-  @page { size: A4; margin: 16mm; }
-  body { font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif; color: #222; padding: 20px; }
-  .brand { font-size: 22px; font-weight: 700; letter-spacing: 0.02em; }
-  .brand small { display:block; font-size: 11px; font-weight: 400; color: #888; margin-top: 2px; }
-  .meta { display: flex; justify-content: space-between; margin: 18px 0; font-size: 13px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 10px 0; }
-  table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }
-  th, td { border-bottom: 1px solid #e2e2e2; padding: 8px 6px; text-align: left; }
-  th { font-size: 11px; text-transform: uppercase; color: #888; }
-  .num { text-align: right; }
-  tfoot td { border-top: 2px solid #222; border-bottom: none; font-weight: 700; padding-top: 10px; }
-  .note { margin-top: 18px; font-size: 13px; color: #555; }
-  .print-btn { margin-top: 24px; padding: 8px 16px; }
-  @media print { .print-btn { display: none; } }
+  @page { size: A4; margin: 14mm 14mm 18mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "PingFang SC","Helvetica Neue",Arial,sans-serif; color: #1a1a1a; margin:0; padding:20px; font-size:13px; }
+  .brand { font-size: 24px; font-weight: 800; letter-spacing: 0.04em; color: #a85068; }
+  .brand small { display:block; font-size: 11px; font-weight: 400; color: #aaa; margin-top: 3px; letter-spacing:0.01em; }
+  .header { display:flex; justify-content:space-between; align-items:flex-start; border-bottom: 2px solid #a85068; padding-bottom:14px; margin-bottom:16px; }
+  .dest-label { font-size:9px; text-transform:uppercase; color:#aaa; letter-spacing:0.08em; margin-bottom:5px; }
+  .dest-name { font-size:15px; font-weight:700; margin-bottom:4px; }
+  .dest-info { font-size:11.5px; color:#555; line-height:1.7; }
+  .doc-box { text-align:right; min-width:160px; }
+  .doc-box .doc-label { font-size:9px; text-transform:uppercase; color:#aaa; letter-spacing:0.08em; margin-bottom:5px; }
+  .doc-box .doc-num { font-size:18px; font-weight:700; color:#a85068; }
+  .doc-box .doc-date { font-size:12px; color:#888; margin-top:3px; }
+  table { width:100%; border-collapse:collapse; margin-top:6px; }
+  thead th { font-size:10px; text-transform:uppercase; color:#aaa; letter-spacing:0.06em; border-bottom:1.5px solid #e0d0d5; padding:6px 8px; text-align:left; }
+  thead th.num { text-align:right; }
+  tbody tr { border-bottom:1px solid #f0e6ea; }
+  tbody tr:last-child { border-bottom: 1.5px solid #c0a0aa; }
+  .num { text-align:right; }
+  tfoot td { padding:10px 8px; font-weight:700; font-size:14px; }
+  tfoot .total-label { color:#888; font-size:12px; }
+  tfoot .total-val { color:#a85068; font-size:16px; }
+  .note-box { margin-top:16px; padding:10px 14px; background:#fdf5f7; border-radius:8px; font-size:12px; color:#666; }
+  .footer { margin-top:28px; border-top:1px solid #e0d0d5; padding-top:10px; font-size:10px; color:#bbb; display:flex; justify-content:space-between; }
+  .print-btn { margin-top:20px; padding:9px 22px; background:#a85068; color:#fff; border:none; border-radius:999px; font-size:13px; cursor:pointer; }
+  @media print { .print-btn { display:none; } body { padding:0; } }
 </style></head>
 <body>
-  <div class="brand">BELLA ITALIA <small>Cosmetics Wholesale · Documento di Trasporto</small></div>
-  <div style="display:flex;justify-content:space-between;margin-top:18px;gap:20px">
-    <div style="flex:1">
-      <div style="font-size:10px;text-transform:uppercase;color:#aaa;margin-bottom:6px">Destinatario</div>
-      <div style="font-size:13px;font-weight:600">${customer.ragione_sociale||order.customer_name}</div>
-      ${customer.piva ? '<div style="font-size:12px;color:#555">P.IVA: '+customer.piva+'</div>' : ''}
-      ${customer.codice_fiscale ? '<div style="font-size:12px;color:#555">C.F.: '+customer.codice_fiscale+'</div>' : ''}
-      ${customer.indirizzo ? '<div style="font-size:12px;color:#555">'+customer.indirizzo+'</div>' : ''}
-      ${(customer.cap||customer.citta) ? '<div style="font-size:12px;color:#555">'+(customer.cap||'')+' '+(customer.citta||'')+'</div>' : ''}
-      ${customer.sdi ? '<div style="font-size:12px;color:#555">SDI: '+customer.sdi+'</div>' : ''}
-      ${customer.pec ? '<div style="font-size:12px;color:#555">PEC: '+customer.pec+'</div>' : ''}
-      ${customer.telefono ? '<div style="font-size:12px;color:#555">Tel: '+customer.telefono+'</div>' : ''}
-      ${customer.email ? '<div style="font-size:12px;color:#555">Email: '+customer.email+'</div>' : ''}
+  <div class="header">
+    <div>
+      <div class="brand">BELLA ITALIA <small>Cosmetics Wholesale · Documento di Trasporto</small></div>
+      <div style="margin-top:16px">
+        <div class="dest-label">Destinatario</div>
+        <div class="dest-name">${customer.ragione_sociale||order.customer_name}</div>
+        <div class="dest-info">
+          ${customer.piva ? 'P.IVA: '+customer.piva+'<br>' : ''}
+          ${customer.codice_fiscale ? 'C.F.: '+customer.codice_fiscale+'<br>' : ''}
+          ${customer.indirizzo ? customer.indirizzo+'<br>' : ''}
+          ${(customer.cap||customer.citta) ? (customer.cap||'')+' '+(customer.citta||'')+'<br>' : ''}
+          ${customer.sdi ? 'SDI: '+customer.sdi+'<br>' : ''}
+          ${customer.pec ? 'PEC: '+customer.pec+'<br>' : ''}
+          ${customer.telefono ? 'Tel: '+customer.telefono : ''}
+        </div>
+      </div>
     </div>
-    <div style="text-align:right;font-size:12px;color:#555;min-width:160px">
-      <div style="font-size:10px;text-transform:uppercase;color:#aaa;margin-bottom:6px">Documento</div>
-      <div><b>Data:</b> ${new Date(order.created_at).toLocaleDateString('it-IT')}</div>
-      <div><b>N. Ordine:</b> #${order.id.slice(0,8)}</div>
+    <div class="doc-box">
+      <div class="doc-label">Documento</div>
+      <div class="doc-num">#${order.id.slice(0,8)}</div>
+      <div class="doc-date">${new Date(order.created_at).toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'})}</div>
     </div>
   </div>
-  <table style="margin-top:18px">
-    <thead><tr><th>商品</th><th class="num">数量</th><th class="num">单价</th><th class="num">小计</th></tr></thead>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:60px"></th>
+        <th>Prodotto</th>
+        <th class="num">Qtà</th>
+        <th class="num">Prezzo/pz</th>
+        <th class="num">Totale</th>
+      </tr>
+    </thead>
     <tbody>${rows}</tbody>
-    <tfoot><tr><td colspan="3">合计</td><td class="num">€${order.total.toFixed(2)}</td></tr></tfoot>
+    <tfoot>
+      <tr>
+        <td colspan="4" class="total-label num">Totale Ordine</td>
+        <td class="num total-val">€${order.total.toFixed(2)}</td>
+      </tr>
+    </tfoot>
   </table>
-  ${order.note ? `<div class="note">备注: ${order.note}</div>` : ''}
-  <button class="print-btn" onclick="window.print()">打印 / 存为 PDF</button>
+
+  ${order.note ? `<div class="note-box">📝 Note: ${order.note}</div>` : ''}
+
+  <div class="footer">
+    <span>TNC GOLD A8 · Via Galileo Ferraris 136, 80146 Napoli NA · Tel: +39 348 518 0143</span>
+    <span>Bella Italia Cosmetics Wholesale</span>
+  </div>
+
+  <button class="print-btn" onclick="window.print()">🖨️ Stampa / Salva PDF</button>
 </body></html>`);
 });
 
