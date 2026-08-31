@@ -92,6 +92,15 @@ app.post('/api/customer/:token/profile', (req, res) => {
   res.json({ ok: true });
 });
 
+// 从规格文字里提取"每件数量",比如 "盒(24支/盒)" -> 24, "箱(30包/箱)" -> 30
+// 提取不到就当作 1(按件卖)。商品价格 price 字段存的是单支/单件价,
+// 客户下单选的是"几盒/几箱",所以整件价 = price * packSize
+function packSizeFromUnit(unit) {
+  if (!unit) return 1;
+  const m = String(unit).match(/\((\d+)/);
+  return m ? parseInt(m[1], 10) : 1;
+}
+
 app.post('/api/order/:token', async (req, res) => {
   const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
   if (!customer) return res.status(404).json({ error: '链接无效或已过期' });
@@ -109,7 +118,8 @@ app.post('/api/order/:token', async (req, res) => {
     if (item.qty > p.stock) {
       return res.status(400).json({ error: `${p.name} 库存不足,现有 ${p.stock}` });
     }
-    const unitPrice = p.price;
+    const packSize = packSizeFromUnit(p.unit);
+    const unitPrice = p.price * packSize; // 整件(盒/箱)的实际售价
     total += unitPrice * item.qty;
     lines.push({ id: p.id, name: p.name, qty: item.qty, unitPrice });
   }

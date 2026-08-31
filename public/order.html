@@ -266,6 +266,14 @@ const token = location.pathname.split('/o/')[1] || location.pathname.split('/').
 
 function money(n) { return n.toFixed(2); }
 
+// 从规格文字里提取"每件数量",比如 "盒(24支/盒)" -> 24, "箱(30包/箱)" -> 30
+// 提取不到就当作 1(按件卖)
+function packSize(unit) {
+  if (!unit) return 1;
+  const m = String(unit).match(/\((\d+)/);
+  return m ? parseInt(m[1], 10) : 1;
+}
+
 let PRODUCTS = [];
 let CATEGORIES = [];
 const cart = {};
@@ -320,10 +328,10 @@ function productCard(p) {
       <img src="${p.image || 'https://placehold.co/160x160'}" alt="" onclick="event.stopPropagation();zoomImage('${(p.image || 'https://placehold.co/800x800').replace(/'/g, '')}', '${p.name.replace(/'/g, '')}')">
       <div class="product-info">
         <div class="product-name">${p.name}</div>
-        <div class="product-unit">${p.unit}</div>
+        <div class="product-unit">${p.unit} · €${money(p.price)}/pz</div>
         <div class="stock-tag ${out ? 'out' : 'ok'}">${out ? 'Esaurito' : 'Disponibile ' + p.stock + ' ' + p.unit.split('(')[0]}</div>
         <div class="product-bottom">
-          <div class="product-price"><span class="cur">€</span>${money(p.price)}</div>
+          <div class="product-price"><span class="cur">€</span>${money(p.price * packSize(p.unit))}</div>
           <div class="stepper">
             <button onclick="changeQty('${p.id}', -1)" ${out ? 'disabled' : ''}>−</button>
             <input type="number" min="0" max="${p.stock}" value="${cart[p.id] || 0}" data-pid="${p.id}"
@@ -351,7 +359,7 @@ function updateTotals() {
     const qty = cart[id];
     if (!qty) continue;
     const p = PRODUCTS.find(x => x.id === id);
-    if (p) total += p.price * qty;
+    if (p) total += p.price * packSize(p.unit) * qty;
   }
   document.getElementById('totalValue').textContent = money(total);
   document.getElementById('submitBtn').disabled = total <= 0;
