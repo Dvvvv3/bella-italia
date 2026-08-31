@@ -62,6 +62,83 @@ function requireAdminViaQuery(req, res, next) {
 // 客户端 API
 // ---------------------------------------------------------------------------
 
+function buildShortcutPlist(url) {
+  const escapedUrl = String(url).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>WFWorkflowActions</key>
+    <array>
+        <dict>
+            <key>WFWorkflowActionIdentifier</key>
+            <string>is.workflow.actions.openurl</string>
+            <key>WFWorkflowActionParameters</key>
+            <dict>
+                <key>WFInput</key>
+                <string>${escapedUrl}</string>
+            </dict>
+        </dict>
+    </array>
+    <key>WFWorkflowClientVersion</key>
+    <string>2302.0.5</string>
+    <key>WFWorkflowIcon</key>
+    <dict>
+        <key>WFWorkflowIconStartColor</key>
+        <integer>4271458815</integer>
+        <key>WFWorkflowIconGlyphNumber</key>
+        <integer>59511</integer>
+    </dict>
+    <key>WFWorkflowImportQuestions</key>
+    <array/>
+    <key>WFWorkflowInputContentItemClasses</key>
+    <array>
+        <string>WFAppStoreAppContentItem</string>
+        <string>WFArticleContentItem</string>
+        <string>WFContactContentItem</string>
+        <string>WFDateContentItem</string>
+        <string>WFEmailAddressContentItem</string>
+        <string>WFGenericFileContentItem</string>
+        <string>WFImageContentItem</string>
+        <string>WFiTunesProductContentItem</string>
+        <string>WFLocationContentItem</string>
+        <string>WFDCMapsLinkContentItem</string>
+        <string>WFAVAssetContentItem</string>
+        <string>WFPDFContentItem</string>
+        <string>WFPhoneNumberContentItem</string>
+        <string>WFRichTextContentItem</string>
+        <string>WFSafariWebPageContentItem</string>
+        <string>WFStringContentItem</string>
+        <string>WFURLContentItem</string>
+    </array>
+    <key>WFWorkflowMinimumClientVersion</key>
+    <integer>900</integer>
+    <key>WFWorkflowMinimumClientVersionString</key>
+    <string>900</string>
+    <key>WFWorkflowName</key>
+    <string>Bella Italia</string>
+    <key>WFWorkflowOutputContentItemClasses</key>
+    <array/>
+    <key>WFWorkflowTypes</key>
+    <array>
+        <string>NCWidget</string>
+        <string>WatchKit</string>
+    </array>
+</dict>
+</plist>`;
+}
+
+// 生成客户专属的 iOS 快捷指令文件,打开后会跳转到该客户的下单链接
+app.get('/api/customer/:token/shortcut', (req, res) => {
+  const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
+  if (!customer) return res.status(404).send('链接无效');
+  const orderUrl = `${req.protocol}://${req.get('host')}/o/${req.params.token}`;
+  const plist = buildShortcutPlist(orderUrl);
+  res.setHeader('Content-Type', 'application/octet-stream');
+  res.setHeader('Content-Disposition', 'attachment; filename="BellaItalia.shortcut"');
+  res.send(plist);
+});
+
 app.get('/api/customer/:token', (req, res) => {
   const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
   if (!customer) return res.status(404).json({ error: '链接无效或已过期' });
