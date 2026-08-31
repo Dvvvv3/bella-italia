@@ -198,6 +198,24 @@
     color: var(--rose-deep); border-radius: 999px;
     padding: 9px 22px; font-size: 13px; font-weight: 500;
   }
+
+  .product img { cursor: zoom-in; }
+
+  .img-zoom-overlay {
+    position: fixed; inset: 0; background: rgba(20,12,14,0.88);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 90; padding: 24px; cursor: zoom-out;
+  }
+  .img-zoom-overlay img {
+    max-width: 100%; max-height: 100%;
+    border-radius: 16px;
+    box-shadow: 0 12px 50px rgba(0,0,0,0.4);
+  }
+  .img-zoom-overlay .close-hint {
+    position: absolute; top: 18px; right: 20px;
+    color: #fff; font-size: 26px; opacity: 0.8;
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  }
 </style>
 </head>
 <body>
@@ -299,7 +317,7 @@ function productCard(p) {
   const out = p.stock <= 0;
   return `
     <div class="product">
-      <img src="${p.image || 'https://placehold.co/160x160'}" alt="">
+      <img src="${p.image || 'https://placehold.co/160x160'}" alt="" onclick="event.stopPropagation();zoomImage('${(p.image || 'https://placehold.co/800x800').replace(/'/g, '')}', '${p.name.replace(/'/g, '')}')">
       <div class="product-info">
         <div class="product-name">${p.name}</div>
         <div class="product-unit">${p.unit}</div>
@@ -366,6 +384,14 @@ function toast(msg) {
   el.textContent = msg;
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 2600);
+}
+
+function zoomImage(src, alt) {
+  const overlay = document.createElement('div');
+  overlay.className = 'img-zoom-overlay';
+  overlay.onclick = () => overlay.remove();
+  overlay.innerHTML = `<span class="close-hint">✕</span><img src="${src}" alt="${alt || ''}">`;
+  document.body.appendChild(overlay);
 }
 
 async function submitOrder() {
