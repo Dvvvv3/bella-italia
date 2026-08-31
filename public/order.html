@@ -254,19 +254,38 @@ function showInstallPrompt() {
 
 function showiOSInstallGuide() {
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(60,43,48,0.45);display:flex;align-items:center;justify-content:center;z-index:100';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(60,43,48,0.55);display:flex;align-items:flex-end;justify-content:center;z-index:100;padding-bottom:0';
   overlay.innerHTML = `
-    <div style="background:#fff8f4;border-radius:20px;padding:30px 24px;width:82%;max-width:320px;text-align:center;box-shadow:0 12px 40px rgba(60,43,48,0.25)">
-      <div style="font-size:28px;margin-bottom:12px">📱</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#a85068;margin-bottom:12px">Aggiungi al telefono</div>
-      <div style="font-size:13px;color:#666;margin-bottom:18px;line-height:1.6">
-        Scarica la scorciatoia e aggiungila alla schermata Home per accedere ai tuoi ordini con un tocco.
+    <div style="background:#fff8f4;border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(60,43,48,0.2)">
+      <div style="width:36px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 20px"></div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:#a85068;margin-bottom:6px;text-align:center">Aggiungi alla schermata Home</div>
+      <div style="font-size:13px;color:#888;text-align:center;margin-bottom:22px">Accedi ai tuoi ordini in un tocco, come un'app</div>
+
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;background:#fff;border-radius:14px;padding:14px">
+        <div style="background:linear-gradient(135deg,#cf7e93,#a85068);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">①</div>
+        <div>
+          <div style="font-weight:600;font-size:14px;margin-bottom:3px">Tocca il pulsante Condividi</div>
+          <div style="font-size:12px;color:#999">In basso al centro di Safari, il simbolo <strong style="font-size:15px">⎙</strong> (quadrato con freccia su)</div>
+        </div>
       </div>
-      <a href="/api/customer/${token}/shortcut" style="display:block;width:100%;padding:12px;background:linear-gradient(135deg,#cf7e93,#a85068);border-radius:999px;color:#fff;font-weight:500;text-decoration:none;box-sizing:border-box;margin-bottom:10px">📥 Scarica la scorciatoia</a>
-      <div style="font-size:11.5px;color:#999;margin-bottom:14px;line-height:1.5">
-        Dopo il download, tocca "Aggiungi scorciatoia" nell'app Comandi, poi apri i dettagli e scegli "Aggiungi alla schermata Home".
+
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;background:#fff;border-radius:14px;padding:14px">
+        <div style="background:linear-gradient(135deg,#cf7e93,#a85068);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">②</div>
+        <div>
+          <div style="font-weight:600;font-size:14px;margin-bottom:3px">Scorri e tocca</div>
+          <div style="font-size:12px;color:#999">"<strong>Aggiungi alla schermata Home</strong>" nel menu che si apre</div>
+        </div>
       </div>
-      <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:10px;background:var(--blush);border:none;border-radius:999px;color:var(--rose-deep);font-weight:500;cursor:pointer">Chiudi</button>
+
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;background:#fff;border-radius:14px;padding:14px">
+        <div style="background:linear-gradient(135deg,#cf7e93,#a85068);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">③</div>
+        <div>
+          <div style="font-weight:600;font-size:14px;margin-bottom:3px">Tocca "Aggiungi"</div>
+          <div style="font-size:12px;color:#999">L'icona di Bella Italia apparirà sulla tua schermata Home</div>
+        </div>
+      </div>
+
+      <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:14px;background:linear-gradient(135deg,#cf7e93,#a85068);border:none;border-radius:999px;color:#fff;font-size:15px;font-weight:500;cursor:pointer">Ho capito ✓</button>
     </div>
   `;
   document.body.appendChild(overlay);
