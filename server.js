@@ -198,21 +198,21 @@ app.get('/api/admin/products', requireAdmin, (req, res) => {
 });
 
 app.post('/api/admin/products', requireAdmin, (req, res) => {
-  const { id, name, name_cn, unit, image, stock, price, category_id } = req.body;
+  const { id, name, name_cn, barcode, unit, image, stock, price, category_id } = req.body;
   if (!id || !name) return res.status(400).json({ error: '缺少商品编号或名称' });
   db.prepare(
-    `INSERT INTO products (id, name, name_cn, unit, image, stock, price, category_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-  ).run(id, name, (name_cn||'').trim(), unit || '', image || '', Number(stock) || 0, Number(price) || 0, category_id || null);
+    `INSERT INTO products (id, name, name_cn, barcode, unit, image, stock, price, category_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).run(id, name, (name_cn||'').trim(), (barcode||'').trim(), unit || '', image || '', Number(stock) || 0, Number(price) || 0, category_id || null);
   res.json({ ok: true });
 });
 
 app.put('/api/admin/products/:id', requireAdmin, (req, res) => {
-  const { name, name_cn, unit, image, stock, price, category_id } = req.body;
+  const { name, name_cn, barcode, unit, image, stock, price, category_id } = req.body;
   const exists = db.prepare('SELECT id FROM products WHERE id = ?').get(req.params.id);
   if (!exists) return res.status(404).json({ error: '商品不存在' });
   db.prepare(
-    `UPDATE products SET name=?, name_cn=?, unit=?, image=?, stock=?, price=?, category_id=? WHERE id=?`
-  ).run(name, (name_cn||'').trim(), unit, image, Number(stock) || 0, Number(price) || 0, category_id || null, req.params.id);
+    `UPDATE products SET name=?, name_cn=?, barcode=?, unit=?, image=?, stock=?, price=?, category_id=? WHERE id=?`
+  ).run(name, (name_cn||'').trim(), (barcode||'').trim(), unit, image, Number(stock) || 0, Number(price) || 0, category_id || null, req.params.id);
   res.json({ ok: true });
 });
 
