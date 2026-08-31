@@ -322,21 +322,23 @@ function openCat(id, name) {
 }
 
 function productCard(p) {
-  const out = p.stock <= 0;
+  const pack = packSize(p.unit);
+  const availablePacks = Math.floor(p.stock / pack);
+  const out = availablePacks <= 0;
   return `
     <div class="product">
       <img src="${p.image || 'https://placehold.co/160x160'}" alt="" onclick="event.stopPropagation();zoomImage('${(p.image || 'https://placehold.co/800x800').replace(/'/g, '')}', '${p.name.replace(/'/g, '')}')">
       <div class="product-info">
         <div class="product-name">${p.name}</div>
-        <div class="product-unit">${p.unit} · €${money(p.price)}/pz</div>
-        <div class="stock-tag ${out ? 'out' : 'ok'}">${out ? 'Esaurito' : 'Disponibile ' + p.stock + ' ' + p.unit.split('(')[0]}</div>
+        <div class="product-unit">${p.unit}</div>
+        <div class="stock-tag ${out ? 'out' : 'ok'}">${out ? 'Esaurito (scorta inferiore a una confezione)' : availablePacks + ' confezioni disponibili · ' + pack + ' pz/confezione'}</div>
         <div class="product-bottom">
-          <div class="product-price"><span class="cur">€</span>${money(p.price * packSize(p.unit))}</div>
+          <div class="product-price"><span class="cur">€</span>${money(p.price)}<span style="font-size:11px;color:var(--ink-soft);font-weight:400"> /pz</span></div>
           <div class="stepper">
-            <button onclick="changeQty('${p.id}', -1)" ${out ? 'disabled' : ''}>−</button>
-            <input type="number" min="0" max="${p.stock}" value="${cart[p.id] || 0}" data-pid="${p.id}"
+            <button onclick="changeQty('${p.id}', -${pack})" ${out ? 'disabled' : ''}>−</button>
+            <input type="number" min="0" step="${pack}" max="${p.stock}" value="${cart[p.id] || 0}" data-pid="${p.id}"
                    onchange="setQty('${p.id}', this.value)" ${out ? 'disabled' : ''}>
-            <button onclick="changeQty('${p.id}', 1)" ${out ? 'disabled' : ''}>+</button>
+            <button onclick="changeQty('${p.id}', ${pack})" ${out ? 'disabled' : ''}>+</button>
           </div>
         </div>
       </div>
@@ -359,7 +361,7 @@ function updateTotals() {
     const qty = cart[id];
     if (!qty) continue;
     const p = PRODUCTS.find(x => x.id === id);
-    if (p) total += p.price * packSize(p.unit) * qty;
+    if (p) total += p.price * qty;
   }
   document.getElementById('totalValue').textContent = money(total);
   document.getElementById('submitBtn').disabled = total <= 0;
@@ -368,10 +370,12 @@ function updateTotals() {
 function changeQty(id, delta) {
   const p = PRODUCTS.find(x => x.id === id);
   if (!p) return;
+  const pack = packSize(p.unit);
   const current = cart[id] || 0;
   let next = current + delta;
   if (next < 0) next = 0;
   if (p.stock != null && next > p.stock) next = p.stock;
+  next = Math.floor(next / pack) * pack; // 保证永远是整件的倍数
   if (next === 0) delete cart[id]; else cart[id] = next;
   updateCartUI(id);
 }
@@ -379,9 +383,11 @@ function changeQty(id, delta) {
 function setQty(id, value) {
   const p = PRODUCTS.find(x => x.id === id);
   if (!p) return;
+  const pack = packSize(p.unit);
   let next = parseInt(value, 10);
   if (isNaN(next) || next < 0) next = 0;
-  if (p.stock != null && next > p.stock) next = p.stock;
+  next = Math.round(next / pack) * pack; // 手动输入时也吸附到整件的倍数
+  if (p.stock != null && next > p.stock) next = Math.floor(p.stock / pack) * pack;
   if (next === 0) delete cart[id]; else cart[id] = next;
   updateCartUI(id);
 }

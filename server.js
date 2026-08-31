@@ -95,6 +95,8 @@ app.post('/api/customer/:token/profile', (req, res) => {
 // 从规格文字里提取"每件数量",比如 "盒(24支/盒)" -> 24, "箱(30包/箱)" -> 30
 // 提取不到就当作 1(按件卖)。商品价格 price 字段存的是单支/单件价,
 // 客户下单选的是"几盒/几箱",所以整件价 = price * packSize
+// 从规格文字里提取"每件数量",比如 "盒(24支/盒)" -> 24, "箱(30包/箱)" -> 30
+// 提取不到就当作 1(按件卖)
 function packSizeFromUnit(unit) {
   if (!unit) return 1;
   const m = String(unit).match(/\((\d+)/);
@@ -115,11 +117,14 @@ app.post('/api/order/:token', async (req, res) => {
   for (const item of items) {
     const p = db.prepare('SELECT * FROM products WHERE id = ?').get(item.id);
     if (!p) return res.status(400).json({ error: `商品不存在: ${item.id}` });
+    const packSize = packSizeFromUnit(p.unit);
+    if (item.qty % packSize !== 0) {
+      return res.status(400).json({ error: `${p.name} 只能整件购买,每件 ${packSize} 支/片,请修改数量` });
+    }
     if (item.qty > p.stock) {
       return res.status(400).json({ error: `${p.name} 库存不足,现有 ${p.stock}` });
     }
-    const packSize = packSizeFromUnit(p.unit);
-    const unitPrice = p.price * packSize; // 整件(盒/箱)的实际售价
+    const unitPrice = p.price; // 单支/单件价,qty 就是件数,直接相乘即可
     total += unitPrice * item.qty;
     lines.push({ id: p.id, name: p.name, qty: item.qty, unitPrice });
   }
