@@ -218,12 +218,21 @@
   }
 </style>
 <script>
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isAndroid = /Android/.test(navigator.userAgent);
 let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  showInstallPrompt();
-});
+
+if (isAndroid) {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallPrompt();
+  });
+}
+
+if (isIOS) {
+  setTimeout(showiOSInstallGuide, 1000);
+}
 
 function showInstallPrompt() {
   const overlay = document.createElement('div');
@@ -241,6 +250,25 @@ function showInstallPrompt() {
   `;
   document.body.appendChild(overlay);
   setTimeout(() => overlay.remove(), 8000);
+}
+
+function showiOSInstallGuide() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(60,43,48,0.45);display:flex;align-items:center;justify-content:center;z-index:100';
+  overlay.innerHTML = `
+    <div style="background:#fff8f4;border-radius:20px;padding:30px 24px;width:82%;max-width:320px;text-align:center;box-shadow:0 12px 40px rgba(60,43,48,0.25)">
+      <div style="font-size:28px;margin-bottom:12px">📱</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#a85068;margin-bottom:12px">Aggiungi al telefono</div>
+      <div style="font-size:13px;color:#666;margin-bottom:16px;line-height:1.6">
+        <strong>Passo 1:</strong> Tocca il pulsante Condividi<br>
+        <strong>Passo 2:</strong> Scorri e tocca "Aggiungi alla schermata principale"<br>
+        <strong>Passo 3:</strong> Tocca Aggiungi
+      </div>
+      <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:10px;background:linear-gradient(135deg,#cf7e93,#a85068);border:none;border-radius:999px;color:#fff;font-weight:500;cursor:pointer">Ho capito</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  setTimeout(() => overlay.remove(), 10000);
 }
 
 async function installApp() {
