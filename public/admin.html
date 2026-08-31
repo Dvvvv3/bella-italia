@@ -74,7 +74,10 @@
       <h3>新增商品</h3>
       <div class="row">
         <div><label>编号</label><input id="p_id" placeholder="sku004"></div>
-        <div><label>名称</label><input id="p_name" placeholder="精华液 30ml"></div>
+        <div><label>名称(客户可见)</label><input id="p_name" placeholder="精华液 30ml"></div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <div><label>中文备注名(仅后台可见)</label><input id="p_name_cn" placeholder="内部方便查找用,客户看不到"></div>
       </div>
       <div class="row" style="margin-top:8px">
         <div><label>分类</label><select id="p_category"></select></div>
@@ -132,7 +135,8 @@
   <div class="gate-card" style="max-width:380px">
     <h2 style="margin-bottom:12px">编辑商品</h2>
     <input type="hidden" id="e_id">
-    <label>名称</label><input id="e_name" style="margin-bottom:8px">
+    <label>名称(客户可见)</label><input id="e_name" style="margin-bottom:8px">
+    <label>中文备注名(仅后台可见)</label><input id="e_name_cn" style="margin-bottom:8px">
     <label>分类</label><select id="e_category" style="margin-bottom:8px"></select>
     <label>规格单位</label><input id="e_unit" style="margin-bottom:8px">
     <div class="row" style="margin-bottom:8px">
@@ -199,6 +203,7 @@ async function loadProducts() {
         <img class="thumb" style="width:56px;height:56px" src="${p.image||'https://placehold.co/80x80'}" alt="">
         <div style="flex:1">
           <div class="item-title">${p.name}</div>
+          ${p.name_cn?`<div style="font-size:12px;color:var(--accent);margin-top:1px">🈶 ${p.name_cn}</div>`:''}
           <div class="item-sub" style="margin-top:3px">
             ${p.category_name?`<span class="badge confirmed">${p.category_code?p.category_code+' ':''}${p.category_name}</span>`:'<span class="badge pending">未分类</span>'}
             <span class="mono" style="color:#aaa;font-size:11px"> ${p.id}</span>
@@ -232,13 +237,14 @@ async function addProduct() {
     await api('/api/admin/products',{method:'POST',body:JSON.stringify({
       id:document.getElementById('p_id').value.trim(),
       name:document.getElementById('p_name').value.trim(),
+      name_cn:document.getElementById('p_name_cn').value.trim(),
       category_id:document.getElementById('p_category').value||null,
       unit:document.getElementById('p_unit').value.trim(),
       image:document.getElementById('p_image_url').value.trim(),
       stock:document.getElementById('p_stock').value,
       price:document.getElementById('p_price').value,
     })});
-    ['p_id','p_name','p_unit','p_image_url'].forEach(id=>document.getElementById(id).value='');
+    ['p_id','p_name','p_name_cn','p_unit','p_image_url'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('p_image_preview').style.display='none';
     flash('已添加'); loadProducts();
   } catch(e){alert(e.message);}
@@ -248,6 +254,7 @@ async function editProduct(id) {
   const p=products.find(x=>x.id===id);
   document.getElementById('e_id').value=p.id;
   document.getElementById('e_name').value=p.name;
+  document.getElementById('e_name_cn').value=p.name_cn||'';
   document.getElementById('e_category').value=p.category_id||'';
   document.getElementById('e_unit').value=p.unit;
   document.getElementById('e_stock').value=p.stock;
@@ -262,6 +269,7 @@ async function saveEdit() {
   try {
     await api(`/api/admin/products/${id}`,{method:'PUT',body:JSON.stringify({
       name:document.getElementById('e_name').value.trim(),
+      name_cn:document.getElementById('e_name_cn').value.trim(),
       category_id:document.getElementById('e_category').value||null,
       unit:document.getElementById('e_unit').value.trim(),
       image:document.getElementById('e_image_url').value.trim(),

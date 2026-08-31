@@ -62,6 +62,12 @@ db.exec(`
   );
 `);
 
+// 迁移: 给 products 表加"内部中文名"字段(只有后台管理能看到,客户下单页不显示)
+const productCols = db.prepare("PRAGMA table_info(products)").all().map(c => c.name);
+if (!productCols.includes('name_cn')) {
+  db.exec(`ALTER TABLE products ADD COLUMN name_cn TEXT`);
+}
+
 // 首次启动,表是空的就塞一点示例数据,方便你直接测试
 const productCount = db.prepare('SELECT COUNT(*) AS n FROM products').get().n;
 if (productCount === 0) {
