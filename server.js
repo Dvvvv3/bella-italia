@@ -128,13 +128,13 @@ app.post('/api/customer/:token/profile', (req, res) => {
   const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
   if (!customer) return res.status(404).json({ error: '链接无效或已过期' });
   const f = req.body || {};
-  const required = { ragione_sociale: 'Ragione Sociale', piva: 'P.IVA', indirizzo: 'Indirizzo', cap: 'CAP', citta: 'Citta', sdi: 'SDI', pec: 'PEC', telefono: 'Telefono', email: 'Email' };
+  const required = { ragione_sociale: 'Ragione Sociale', piva: 'P.IVA', indirizzo: 'Indirizzo', cap: 'CAP', citta: 'Citta', telefono: 'Telefono' };
   const missing = Object.keys(required).filter(k => !String(f[k] || '').trim());
   if (missing.length) return res.status(400).json({ error: '请填写: ' + missing.map(k => required[k]).join(', ') });
   db.prepare('UPDATE customers SET profile_done=1, ragione_sociale=?, piva=?, codice_fiscale=?, indirizzo=?, cap=?, citta=?, sdi=?, pec=?, telefono=?, email=? WHERE token=?').run(
     f.ragione_sociale.trim(), f.piva.trim(), (f.codice_fiscale||'').trim(),
-    f.indirizzo.trim(), f.cap.trim(), f.citta.trim(), f.sdi.trim(),
-    f.pec.trim(), f.telefono.trim(), f.email.trim(), req.params.token
+    f.indirizzo.trim(), f.cap.trim(), f.citta.trim(), (f.sdi||'').trim(),
+    (f.pec||'').trim(), f.telefono.trim(), (f.email||'').trim(), req.params.token
   );
   res.json({ ok: true });
 });
