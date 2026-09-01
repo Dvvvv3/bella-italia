@@ -144,7 +144,9 @@
 <div class="gate" id="editModal" style="display:none">
   <div class="gate-card" style="max-width:380px">
     <h2 style="margin-bottom:12px;display:flex;align-items:center;gap:8px">编辑商品 <span id="e_status_badge"></span></h2>
-    <input type="hidden" id="e_id">
+    <input type="hidden" id="e_id_original">
+    <label>编号 <span style="color:#c0392b;font-weight:400;font-size:11px">(修改会同步更新历史订单)</span></label>
+    <input id="e_id" style="margin-bottom:8px">
     <label>名称(客户可见)</label><input id="e_name" style="margin-bottom:8px">
     <label>中文备注名(仅后台可见)</label><input id="e_name_cn" style="margin-bottom:8px">
     <label>条码</label><input id="e_barcode" style="margin-bottom:8px">
@@ -289,6 +291,7 @@ async function editProduct(id) {
   const products=await api('/api/admin/products');
   const p=products.find(x=>x.id===id);
   document.getElementById('e_id').value=p.id;
+  document.getElementById('e_id_original').value=p.id;
   document.getElementById('e_name').value=p.name;
   document.getElementById('e_name_cn').value=p.name_cn||'';
   document.getElementById('e_barcode').value=p.barcode||'';
@@ -317,8 +320,13 @@ async function toggleActiveFromEdit() {
 }
 function closeEdit(){document.getElementById('editModal').style.display='none';}
 async function saveEdit() {
-  const id=document.getElementById('e_id').value;
+  const originalId=document.getElementById('e_id_original').value;
+  const newId=document.getElementById('e_id').value.trim();
   try {
+    if (newId !== originalId) {
+      await api(`/api/admin/products/${originalId}/rename`,{method:'PUT',body:JSON.stringify({newId})});
+    }
+    const id=newId;
     await api(`/api/admin/products/${id}`,{method:'PUT',body:JSON.stringify({
       name:document.getElementById('e_name').value.trim(),
       name_cn:document.getElementById('e_name_cn').value.trim(),

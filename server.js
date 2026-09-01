@@ -72,6 +72,22 @@ app.put('/api/admin/products/:id/toggle-active', requireAdmin, (req, res) => {
   res.json({ ok: true, active: next });
 });
 
+// 修改商品编号(相当于给这条记录换主键),同时把历史订单里的关联记录也一并改掉,
+// 不然老订单打印/查询时会因为找不到旧编号对应的商品而丢失图片/条码等信息
+app.put('/api/admin/products/:id/rename', requireAdmin, (req, res) => {
+  const oldId = req.params.id;
+  const newId = (req.body.newId || '').trim();
+  if (!newId) return res.status(400).json({ error: '新编号不能为空' });
+  if (newId === oldId) return res.json({ ok: true, id: oldId });
+  const exists = db.prepare('SELECT id FROM products WHERE id = ?').get(newId);
+  if (exists) return res.status(400).json({ error: '这个编号已经被别的商品占用了' });
+  const p = db.prepare('SELECT id FROM products WHERE id = ?').get(oldId);
+  if (!p) return res.status(404).json({ error: '商品不存在' });
+  db.prepare('UPDATE products SET id = ? WHERE id = ?').run(newId, oldId);
+  db.prepare('UPDATE order_items SET product_id = ? WHERE product_id = ?').run(newId, oldId);
+  res.json({ ok: true, id: newId });
+});
+
 app.get('/api/customer/:token/manifest.json', (req, res) => {
   const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
   if (!customer) return res.status(404).json({ error: '链接无效' });
