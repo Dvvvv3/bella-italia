@@ -72,7 +72,7 @@
   <section id="products" class="active">
     <div class="add-form" style="border-color:var(--accent);background:var(--accent-soft)">
       <h3>📷 扫码查找 / 快速定位</h3>
-      <input id="scanInput" placeholder="光标放这里,用扫码枪扫条码(或手动输入后回车)" autocomplete="off">
+      <input id="scanInput" placeholder="扫条码,或直接输入商品编号(如sku001)后回车" autocomplete="off">
     </div>
     <div class="add-form">
       <h3>新增商品</h3>
@@ -486,12 +486,14 @@ async function setStatus(id,status){await api(`/api/admin/orders/${id}/status`,{
 function handleScan(code) {
   code = code.trim();
   if (!code) return;
-  const match = ALL_PRODUCTS.find(p => p.barcode && p.barcode === code);
+  // 先按条码精确匹配,找不到再按商品编号(id)精确匹配
+  const match = ALL_PRODUCTS.find(p => p.barcode && p.barcode === code)
+    || ALL_PRODUCTS.find(p => p.id === code);
   if (match) {
-    flash('找到商品: ' + match.name);
+    flash('找到商品: ' + match.name + (match.active===0?' (已下架)':''));
     editProduct(match.id);
   } else {
-    flash('未找到该条码,已自动填入新增表单');
+    flash('未找到该条码/编号,已自动填入新增表单');
     document.getElementById('p_barcode').value = code;
     document.getElementById('p_id').focus();
   }
