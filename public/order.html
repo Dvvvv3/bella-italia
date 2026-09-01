@@ -320,21 +320,18 @@
     50% { box-shadow: 0 4px 22px rgba(37,211,102,0.7); }
   }
 
-  .delivery-block { padding: 10px 14px 0; }
-  .delivery-block .lbl {
+  .delivery-modal .lbl {
     font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em;
-    color: var(--ink-soft); margin-bottom: 7px;
+    color: var(--ink-soft); margin-bottom: 10px; text-align: center;
   }
-  .delivery-opts { display: flex; gap: 8px; }
+  .delivery-opts { display: flex; gap: 10px; padding: 0 18px 18px; }
   .delivery-opt {
-    flex: 1; padding: 11px 8px; border: 1.5px solid var(--line); border-radius: 12px;
-    background: #fff; text-align: center; font-size: 12.5px; font-weight: 500;
+    flex: 1; padding: 18px 10px; border: 1.5px solid var(--line); border-radius: 14px;
+    background: #fff; text-align: center; font-size: 13px; font-weight: 500;
     color: var(--ink-soft); cursor: pointer; transition: all 0.15s;
   }
-  .delivery-opt.selected {
-    border-color: var(--rose-deep); background: var(--blush); color: var(--rose-deep);
-  }
-  .delivery-opt .ic { font-size: 18px; display: block; margin-bottom: 3px; }
+  .delivery-opt:active { transform: scale(0.97); }
+  .delivery-opt .ic { font-size: 26px; display: block; margin-bottom: 6px; }
 </style>
 <script>
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -473,18 +470,6 @@ window.addEventListener('appinstalled', () => {
   <!-- 商品列表由 JS 渲染 -->
 </main>
 
-<div class="delivery-block">
-  <div class="lbl" data-i18n="o_delivery_label">Modalità di consegna *</div>
-  <div class="delivery-opts">
-    <div class="delivery-opt" id="deliveryShip" onclick="selectDelivery('shipping')">
-      <span class="ic">🚚</span><span data-i18n="o_delivery_ship">Spedizione</span>
-    </div>
-    <div class="delivery-opt" id="deliveryPickup" onclick="selectDelivery('pickup')">
-      <span class="ic">🏪</span><span data-i18n="o_delivery_pickup">Ritiro in negozio</span>
-    </div>
-  </div>
-</div>
-
 <div class="note-block">
   <label data-i18n="o_note_label">Note / Istruzioni di consegna</label>
   <textarea id="note" data-i18n-placeholder="o_note_placeholder" placeholder="Es: consegnare entro venerdì, corriere espresso..."></textarea>
@@ -525,10 +510,34 @@ let CATEGORIES = [];
 const cart = {};
 let deliveryMode = null;
 
-function selectDelivery(mode) {
+function openDeliveryModal() {
+  if (document.getElementById('deliveryOverlay')) return;
+  const ov = document.createElement('div');
+  ov.className = 'cart-overlay';
+  ov.id = 'deliveryOverlay';
+  ov.innerHTML = `
+    <div class="cart-panel delivery-modal">
+      <div class="handle"></div>
+      <div class="head">
+        <h3 data-i18n="o_delivery_label">Modalità di consegna *</h3>
+        <button onclick="document.getElementById('deliveryOverlay').remove()">&times;</button>
+      </div>
+      <div class="delivery-opts" style="padding-top:14px">
+        <div class="delivery-opt" onclick="chooseDelivery('shipping')">
+          <span class="ic">🚚</span><span>${I18N.t('o_delivery_ship')}</span>
+        </div>
+        <div class="delivery-opt" onclick="chooseDelivery('pickup')">
+          <span class="ic">🏪</span><span>${I18N.t('o_delivery_pickup')}</span>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+}
+
+function chooseDelivery(mode) {
   deliveryMode = mode;
-  document.getElementById('deliveryShip').classList.toggle('selected', mode === 'shipping');
-  document.getElementById('deliveryPickup').classList.toggle('selected', mode === 'pickup');
+  document.getElementById('deliveryOverlay')?.remove();
+  submitOrder();
 }
 
 let currentView = 'cats'; // 'cats' | 'products'
@@ -839,7 +848,7 @@ async function submitOrder() {
     return;
   }
   if (!deliveryMode) {
-    toast(I18N.t('o_delivery_required'));
+    openDeliveryModal();
     return;
   }
   const modeLabel = deliveryMode === 'shipping' ? I18N.t('o_delivery_ship') : I18N.t('o_delivery_pickup');
