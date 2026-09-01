@@ -126,7 +126,7 @@ app.get('/api/customer/:token', (req, res) => {
     id: p.id, name: p.name, unit: p.unit, image: p.image, stock: p.stock,
     price: p.price, category_id: p.category_id,
   }));
-  res.json({ needProfile: false, customer: { name: customer.name, tier: customer.tier },
+  res.json({ needProfile: false, customer: { name: customer.name, tier: customer.tier, ragione_sociale: customer.ragione_sociale, piva: customer.piva },
     categories: cats.map(c => ({ id: c.id, code: c.code, name: c.name })), products });
 });
 

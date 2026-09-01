@@ -978,7 +978,9 @@ async function load() {
       document.getElementById('profileOverlay').style.display = 'block';
       return;
     }
-    document.getElementById('customerName').textContent = data.customer.name;
+    const c = data.customer;
+    const displayLine = (c.ragione_sociale || c.name) + (c.piva ? ' · P.IVA ' + c.piva : '');
+    document.getElementById('customerName').textContent = displayLine;
     PRODUCTS = data.products;
     CATEGORIES = data.categories || [];
     renderCats();
