@@ -482,7 +482,18 @@ window.addEventListener('appinstalled', () => {
   <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_indirizzo">Indirizzo *</label><input id="pf_indirizzo" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
   <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_cap">CAP *</label><input id="pf_cap" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
   <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_citta">Citta *</label><input id="pf_citta" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
-  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_tel">Telefono *</label><input id="pf_telefono" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px">
+    <label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_tel">Telefono *</label>
+    <div style="display:flex;gap:6px">
+      <select id="pf_tel_prefix" style="padding:10px 4px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;background:#fff;flex-shrink:0;width:88px">
+        <option value="+39">🇮🇹 +39</option>
+        <option value="+33">🇫🇷 +33</option>
+        <option value="+34">🇪🇸 +34</option>
+        <option value="+49">🇩🇪 +49</option>
+      </select>
+      <input id="pf_telefono" style="flex:1;min-width:0;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box" placeholder="333 1234567">
+    </div>
+  </div>
   <button id="profileSubmit" onclick="submitProfile()" style="width:100%;padding:14px;background:linear-gradient(135deg,#cf7e93,#a85068);color:#fff;border:none;border-radius:999px;font-size:15px;font-weight:500;margin-top:8px" data-i18n="o_pf_save">Salva e continua</button>
 </div>
 
@@ -1000,7 +1011,7 @@ async function submitProfile() {
     citta: val('pf_citta'),
     sdi: '',
     pec: '',
-    telefono: val('pf_telefono'),
+    telefono: document.getElementById('pf_tel_prefix').value + ' ' + val('pf_telefono'),
     email: '',
   };
   const btn = document.getElementById('profileSubmit');
