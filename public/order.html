@@ -737,7 +737,7 @@ function showSuccess(data) {
       <div class="seal">✓</div>
       <div class="big">Ordine inviato!</div>
       <div class="oid">N. Ordine: ${String(data.orderId).slice(0,8)}<br>Totale: €${money(data.total)}</div>
-      <div style="font-size:13px;color:#888;margin-top:12px;line-height:1.6;padding:0 4px">La contatteremo a breve per le modalità di pagamento e spedizione.</div>
+      <div style="font-size:15px;color:#a85068;font-weight:600;margin-top:14px;line-height:1.6;padding:0 4px;font-family:'Cormorant Garamond',serif;">La contatteremo a breve per le modalità di pagamento e spedizione.</div>
       <button onclick="location.reload()">Chiudi</button>
     </div>`;
   document.body.appendChild(overlay);
