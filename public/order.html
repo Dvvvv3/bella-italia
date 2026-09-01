@@ -273,10 +273,11 @@
     border-radius: 22px 22px 0 0; display: flex; flex-direction: column;
     box-shadow: 0 -8px 40px rgba(60,43,48,0.25);
   }
-  .cart-panel .handle { width: 38px; height: 4px; background: #ddd; border-radius: 2px; margin: 10px auto 4px; }
+  .cart-panel .handle { width: 38px; height: 4px; background: #ddd; border-radius: 2px; margin: 10px auto 4px; flex-shrink: 0; }
   .cart-panel .head {
     display: flex; align-items: center; justify-content: space-between;
     padding: 8px 18px 12px; border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
   }
   .cart-panel .head h3 {
     margin: 0; font-family: 'Cormorant Garamond', serif;
@@ -285,7 +286,7 @@
   .cart-panel .head button {
     background: none; border: none; font-size: 22px; color: var(--ink-soft); padding: 0 4px;
   }
-  .cart-list { overflow-y: auto; padding: 8px 14px 4px; flex: 1; }
+  .cart-list { overflow-y: auto; padding: 8px 14px 4px; flex: 1; min-height: 0; }
   .cart-row {
     display: flex; gap: 11px; align-items: center;
     background: #fff; border: 1px solid var(--line);
@@ -748,7 +749,7 @@ function openSearch() {
         <h3>🔍</h3>
         <button onclick="closeSearch()">&times;</button>
       </div>
-      <div style="padding:0 18px 10px">
+      <div style="padding:0 18px 10px;flex-shrink:0">
         <input id="searchInput" type="text" inputmode="search" placeholder="Cerca per codice prodotto (es. sku001)"
           style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font-size:16px;box-sizing:border-box;font-family:'Jost',sans-serif"
           oninput="renderSearchResults(this.value)">
