@@ -101,9 +101,12 @@
       </div>
       <button class="btn btn-primary" style="margin-top:10px" onclick="addProduct()">添加商品</button>
     </div>
-    <div class="row" style="margin-bottom:10px;gap:8px">
+    <div class="row" style="margin-bottom:10px;gap:8px;flex-wrap:wrap">
       <button class="btn btn-primary" id="ptab_active" onclick="setProductTab('active')">在售</button>
       <button class="btn btn-ghost" id="ptab_inactive" onclick="setProductTab('inactive')">已下架</button>
+      <select id="productCatFilter" onchange="renderProductList()" style="margin-left:auto">
+        <option value="">全部分类</option>
+      </select>
     </div>
     <div id="productList"></div>
   </section>
@@ -201,6 +204,8 @@ async function loadCategoryCache() {
   CATEGORIES = await api('/api/admin/categories');
   const opts = '<option value="">— 未分类 —</option>' + CATEGORIES.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
   ['p_category','e_category'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=opts; });
+  const filterEl = document.getElementById('productCatFilter');
+  if (filterEl) filterEl.innerHTML = '<option value="">全部分类</option>' + CATEGORIES.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
 }
 let ALL_PRODUCTS = [];
 let currentProductTab = 'active';
@@ -218,7 +223,12 @@ async function loadProducts() {
   renderProductList();
 }
 function renderProductList() {
-  const filtered = ALL_PRODUCTS.filter(p => currentProductTab==='inactive' ? p.active===0 : p.active!==0);
+  const catFilter = document.getElementById('productCatFilter')?.value || '';
+  const filtered = ALL_PRODUCTS.filter(p => {
+    const statusOk = currentProductTab==='inactive' ? p.active===0 : p.active!==0;
+    const catOk = !catFilter || String(p.category_id) === String(catFilter);
+    return statusOk && catOk;
+  });
   document.getElementById('productList').innerHTML = filtered.map(p=>`
     <div class="card">
       <div class="row" style="align-items:flex-start">
