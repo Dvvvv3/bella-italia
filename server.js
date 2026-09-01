@@ -129,6 +129,12 @@ app.post('/api/order/:token', async (req, res) => {
     lines.push({ id: p.id, name: p.name, qty: item.qty, unitPrice });
   }
 
+  // 最低起订金额校验(前端可被绕过,服务端必须自己再判一次)
+  const MIN_ORDER = 300;
+  if (total < MIN_ORDER) {
+    return res.status(400).json({ error: `订单最低金额 €${MIN_ORDER},当前 €${total.toFixed(2)}` });
+  }
+
   const orderId = randomUUID();
   const createdAt = new Date().toISOString();
   total = Math.round(total * 100) / 100;

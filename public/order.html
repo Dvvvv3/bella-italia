@@ -222,6 +222,81 @@
     color: #fff; font-size: 26px; opacity: 0.8;
     width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
   }
+
+  .info-banner {
+    margin: 10px 14px 4px;
+    background: linear-gradient(135deg, #a85068, #cf7e93);
+    color: #fff; border-radius: 14px; padding: 13px 16px;
+    font-size: 12.5px; line-height: 1.65;
+    box-shadow: 0 3px 12px rgba(168,80,104,0.22);
+  }
+  .info-banner .min {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px; font-weight: 600;
+    letter-spacing: 0.02em; margin-bottom: 4px;
+  }
+  .info-banner .line { opacity: 0.93; }
+  .iva-note {
+    margin: 6px 14px 0; font-size: 11px; color: var(--ink-soft);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .cart-bar .cart-btn {
+    position: relative; background: var(--blush); color: var(--rose-deep);
+    border: none; border-radius: 999px; padding: 0; width: 44px; height: 44px;
+    font-size: 19px; flex-shrink: 0; box-shadow: none; margin-right: 4px;
+  }
+  .cart-bar .cart-btn:disabled { opacity: 0.35; }
+  .cart-badge {
+    position: absolute; top: -3px; right: -3px;
+    background: var(--rose-deep); color: #fff;
+    font-size: 10px; font-weight: 600; min-width: 18px; height: 18px;
+    border-radius: 999px; display: flex; align-items: center; justify-content: center;
+    padding: 0 4px; border: 2px solid var(--cream);
+  }
+  .min-warning {
+    text-align: center; font-size: 11.5px; color: #b5484c;
+    background: #fdeaea; padding: 7px 14px; border-top: 1px solid #f6d6d6;
+  }
+  .cart-overlay {
+    position: fixed; inset: 0; background: rgba(60,43,48,0.5);
+    z-index: 95; display: flex; align-items: flex-end;
+  }
+  .cart-panel {
+    background: var(--cream); width: 100%; max-height: 82vh;
+    border-radius: 22px 22px 0 0; display: flex; flex-direction: column;
+    box-shadow: 0 -8px 40px rgba(60,43,48,0.25);
+  }
+  .cart-panel .handle { width: 38px; height: 4px; background: #ddd; border-radius: 2px; margin: 10px auto 4px; }
+  .cart-panel .head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 18px 12px; border-bottom: 1px solid var(--line);
+  }
+  .cart-panel .head h3 {
+    margin: 0; font-family: 'Cormorant Garamond', serif;
+    font-size: 21px; font-weight: 600; color: var(--rose-deep);
+  }
+  .cart-panel .head button {
+    background: none; border: none; font-size: 22px; color: var(--ink-soft); padding: 0 4px;
+  }
+  .cart-list { overflow-y: auto; padding: 8px 14px 4px; flex: 1; }
+  .cart-row {
+    display: flex; gap: 11px; align-items: center;
+    background: #fff; border: 1px solid var(--line);
+    border-radius: 14px; padding: 10px; margin-bottom: 9px;
+  }
+  .cart-row img { width: 54px; height: 54px; object-fit: cover; border-radius: 10px; flex-shrink: 0; background: var(--blush); }
+  .cart-row .ci { flex: 1; min-width: 0; }
+  .cart-row .ci .n { font-size: 13px; font-weight: 600; }
+  .cart-row .ci .s { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+  .cart-row .ci .p { font-size: 13px; color: var(--rose-deep); font-weight: 600; margin-top: 3px; }
+  .cart-row .ops { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+  .cart-row .stepper { margin: 0; }
+  .cart-row .del { background: none; border: none; color: #c98; font-size: 11px; padding: 0; }
+  .cart-empty { text-align: center; color: var(--ink-soft); font-size: 13px; padding: 40px 0; }
+  .cart-foot { padding: 12px 18px 22px; border-top: 1px solid var(--line); }
+  .cart-foot .sum { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .cart-foot .sum .l { font-size: 12px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.08em; }
+  .cart-foot .sum .v { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; color: var(--rose-deep); }
 </style>
 <script>
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -339,6 +414,13 @@ window.addEventListener('appinstalled', () => {
   </div>
 </header>
 
+<div class="info-banner">
+  <div class="min">ORDINE MINIMO €300</div>
+  <div class="line">🚚 SPEDIZIONE €15 fino a 25kg in tutto Italia 🇮🇹</div>
+  <div class="line">🌍 SPEDIZIONE IN TUTTO EUROPA!</div>
+</div>
+<div class="iva-note">Prezzo non compreso IVA</div>
+
 <main id="mainView">
   <!-- 商品列表由 JS 渲染 -->
 </main>
@@ -348,9 +430,13 @@ window.addEventListener('appinstalled', () => {
   <textarea id="note" placeholder="Es: consegnare entro venerdì, corriere espresso..."></textarea>
 </div>
 
+<div id="minWarning" class="min-warning" style="display:none"></div>
 <div class="cart-bar">
+  <button class="cart-btn" id="cartBtn" onclick="openCart()" disabled>
+    🛒<span class="cart-badge" id="cartBadge" style="display:none">0</span>
+  </button>
   <div class="total-block">
-    <div class="label">Totale</div>
+    <div class="label">Totale (IVA escl.)</div>
     <div class="value">€ <span id="totalValue">0.00</span></div>
   </div>
   <button id="submitBtn" onclick="submitOrder()" disabled>Invia Ordine</button>
@@ -448,9 +534,12 @@ function updateCartUI(id) {
   const input = getQtyInput(id);
   if (input) input.value = cart[id] || 0;
   updateTotals();
+  if (document.getElementById('cartOverlay')) renderCartList();
 }
 
-function updateTotals() {
+const MIN_ORDER = 300;
+
+function cartTotal() {
   let total = 0;
   for (const id in cart) {
     const qty = cart[id];
@@ -458,8 +547,114 @@ function updateTotals() {
     const p = PRODUCTS.find(x => x.id === id);
     if (p) total += p.price * qty;
   }
+  return total;
+}
+
+function cartLines() {
+  return Object.keys(cart)
+    .filter(id => cart[id] > 0)
+    .map(id => ({ id, qty: cart[id], p: PRODUCTS.find(x => x.id === id) }))
+    .filter(l => l.p);
+}
+
+function updateTotals() {
+  const total = cartTotal();
+  const lines = cartLines();
   document.getElementById('totalValue').textContent = money(total);
-  document.getElementById('submitBtn').disabled = total <= 0;
+
+  const badge = document.getElementById('cartBadge');
+  const cartBtn = document.getElementById('cartBtn');
+  if (badge && cartBtn) {
+    badge.textContent = lines.length;
+    badge.style.display = lines.length ? 'flex' : 'none';
+    cartBtn.disabled = lines.length === 0;
+  }
+
+  const warn = document.getElementById('minWarning');
+  const missing = MIN_ORDER - total;
+  if (warn) {
+    if (total > 0 && missing > 0) {
+      warn.textContent = `Mancano €${money(missing)} per raggiungere l'ordine minimo di €${MIN_ORDER}`;
+      warn.style.display = 'block';
+    } else {
+      warn.style.display = 'none';
+    }
+  }
+
+  document.getElementById('submitBtn').disabled = total < MIN_ORDER;
+  const cf = document.getElementById('cartFootTotal');
+  if (cf) cf.textContent = money(total);
+  const cs = document.getElementById('cartSubmitBtn');
+  if (cs) cs.disabled = total < MIN_ORDER;
+}
+
+function openCart() {
+  if (document.getElementById('cartOverlay')) return;
+  const ov = document.createElement('div');
+  ov.className = 'cart-overlay';
+  ov.id = 'cartOverlay';
+  ov.onclick = (e) => { if (e.target === ov) closeCart(); };
+  ov.innerHTML = `
+    <div class="cart-panel">
+      <div class="handle"></div>
+      <div class="head">
+        <h3>Il tuo ordine</h3>
+        <button onclick="closeCart()">&times;</button>
+      </div>
+      <div class="cart-list" id="cartList"></div>
+      <div class="cart-foot">
+        <div class="sum">
+          <span class="l">Totale (IVA escl.)</span>
+          <span class="v">€ <span id="cartFootTotal">0.00</span></span>
+        </div>
+        <button id="cartSubmitBtn" onclick="closeCart();submitOrder()" style="width:100%;padding:13px;border:none;border-radius:999px;background:linear-gradient(135deg,#cf7e93,#a85068);color:#fff;font-size:15px;font-weight:500">Invia Ordine</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  renderCartList();
+  updateTotals();
+}
+
+function closeCart() {
+  document.getElementById('cartOverlay')?.remove();
+}
+
+function renderCartList() {
+  const list = document.getElementById('cartList');
+  if (!list) return;
+  const lines = cartLines();
+  if (lines.length === 0) {
+    list.innerHTML = '<div class="cart-empty">Il carrello è vuoto</div>';
+    return;
+  }
+  list.innerHTML = lines.map(({ id, qty, p }) => {
+    const pack = packSize(p.unit);
+    return `
+    <div class="cart-row">
+      <img src="${p.image || 'https://placehold.co/160x160'}" alt="">
+      <div class="ci">
+        <div class="n">${p.name}</div>
+        <div class="s">${p.unit || ''} · €${money(p.price)}/pz</div>
+        <div class="p">€${money(p.price * qty)}</div>
+      </div>
+      <div class="ops">
+        <div class="stepper">
+          <button onclick="changeQty('${id}', -${pack})">−</button>
+          <input type="number" min="0" step="${pack}" value="${qty}" onchange="setQty('${id}', this.value)">
+          <button onclick="changeQty('${id}', ${pack})">+</button>
+        </div>
+        <button class="del" onclick="removeFromCart('${id}')">Rimuovi</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function removeFromCart(id) {
+  delete cart[id];
+  const input = getQtyInput(id);
+  if (input) input.value = 0;
+  updateTotals();
+  renderCartList();
 }
 
 function changeQty(id, delta) {
@@ -506,6 +701,10 @@ function zoomImage(src, alt) {
 async function submitOrder() {
   const items = Object.keys(cart).filter(id => cart[id] > 0).map(id => ({ id, qty: cart[id] }));
   if (items.length === 0) return;
+  if (cartTotal() < MIN_ORDER) {
+    toast(`Ordine minimo €${MIN_ORDER}`);
+    return;
+  }
   const note = document.getElementById('note').value.trim();
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
