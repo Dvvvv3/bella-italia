@@ -526,16 +526,6 @@ function packSize(unit) {
 let PRODUCTS = [];
 let CATEGORIES = [];
 const cart = {};
-
-// 键盘弹出时,让底部弹窗(购物车/搜索/配送方式)的高度跟着真实可见区域走,
-// 不会被键盘顶飞或者留在看不见的地方
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', () => {
-    document.querySelectorAll('.cart-overlay').forEach(ov => {
-      ov.style.height = window.visualViewport.height + 'px';
-    });
-  });
-}
 let deliveryMode = null;
 
 function openDeliveryModal() {
@@ -696,6 +686,22 @@ function updateTotals() {
   if (cs) cs.disabled = total < MIN_ORDER;
 }
 
+function lockScroll() {
+  document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.width = '100%';
+  document.body.dataset.scrollY = window.scrollY;
+  document.body.style.top = `-${window.scrollY}px`;
+}
+function unlockScroll() {
+  const y = parseInt(document.body.dataset.scrollY || '0', 10);
+  document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.width = '';
+  document.body.style.top = '';
+  window.scrollTo(0, y);
+}
+
 function openCart() {
   if (document.getElementById('cartOverlay')) return;
   const ov = document.createElement('div');
@@ -719,12 +725,14 @@ function openCart() {
       </div>
     </div>`;
   document.body.appendChild(ov);
+  lockScroll();
   renderCartList();
   updateTotals();
 }
 
 function closeCart() {
   document.getElementById('cartOverlay')?.remove();
+  unlockScroll();
 }
 
 function openSearch() {
@@ -742,18 +750,20 @@ function openSearch() {
       </div>
       <div style="padding:0 18px 10px">
         <input id="searchInput" type="text" inputmode="search" placeholder="Cerca per codice prodotto (es. sku001)"
-          style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font-size:14px;box-sizing:border-box;font-family:'Jost',sans-serif"
+          style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font-size:16px;box-sizing:border-box;font-family:'Jost',sans-serif"
           oninput="renderSearchResults(this.value)">
       </div>
       <div class="cart-list" id="searchResults"></div>
     </div>`;
   document.body.appendChild(ov);
+  lockScroll();
   renderSearchResults('');
-  setTimeout(() => document.getElementById('searchInput')?.focus(), 100);
+  // 不自动聚焦弹键盘,等用户自己点输入框,避免开窗瞬间就跳动
 }
 
 function closeSearch() {
   document.getElementById('searchOverlay')?.remove();
+  unlockScroll();
 }
 
 function renderSearchResults(query) {
