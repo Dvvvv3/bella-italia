@@ -435,18 +435,15 @@ window.addEventListener('appinstalled', () => {
 </head>
 <body>
 <div id="profileOverlay" style="display:none;position:fixed;inset:0;background:#fff8f4;z-index:80;overflow-y:auto;padding:24px 18px 40px">
+  <div class="lang-switch" id="langSwitchProfile" style="justify-content:flex-end;margin-bottom:14px"></div>
   <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:#a85068;font-size:24px;margin:0 0 4px">Bella Italia</p>
   <p style="font-size:12px;color:#888;margin-bottom:20px" data-i18n="o_profile_sub">Prima di ordinare, compila i dati per la fatturazione</p>
   <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_ragione">Ragione Sociale *</label><input id="pf_ragione_sociale" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
   <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_piva">P.IVA *</label><input id="pf_piva" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
-  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_cf">Codice Fiscale</label><input id="pf_codice_fiscale" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
   <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_indirizzo">Indirizzo *</label><input id="pf_indirizzo" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
   <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_cap">CAP *</label><input id="pf_cap" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
   <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_citta">Citta *</label><input id="pf_citta" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
-  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_sdi">SDI *</label><input id="pf_sdi" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
-  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_pec">PEC *</label><input id="pf_pec" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
   <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_tel">Telefono *</label><input id="pf_telefono" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
-  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_email">Email *</label><input id="pf_email" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
   <button id="profileSubmit" onclick="submitProfile()" style="width:100%;padding:14px;background:linear-gradient(135deg,#cf7e93,#a85068);color:#fff;border:none;border-radius:999px;font-size:15px;font-weight:500;margin-top:8px" data-i18n="o_pf_save">Salva e continua</button>
 </div>
 
@@ -931,14 +928,14 @@ async function submitProfile() {
   const payload = {
     ragione_sociale: val('pf_ragione_sociale'),
     piva: val('pf_piva'),
-    codice_fiscale: val('pf_codice_fiscale'),
+    codice_fiscale: '',
     indirizzo: val('pf_indirizzo'),
     cap: val('pf_cap'),
     citta: val('pf_citta'),
-    sdi: val('pf_sdi'),
-    pec: val('pf_pec'),
+    sdi: '',
+    pec: '',
     telefono: val('pf_telefono'),
-    email: val('pf_email'),
+    email: '',
   };
   const btn = document.getElementById('profileSubmit');
   btn.disabled = true; btn.textContent = I18N.t('o_pf_saving');
@@ -960,6 +957,7 @@ async function submitProfile() {
 function render() { renderCats(); }
 
 I18N.initLangSwitch('langSwitch');
+I18N.initLangSwitch('langSwitchProfile');
 window.addEventListener('i18nchange', () => {
   if (currentView === 'products' && currentCat != null) {
     const cat = CATEGORIES.find(c => String(c.id) === String(currentCat));
