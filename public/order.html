@@ -451,6 +451,7 @@ window.addEventListener('appinstalled', () => {
 
 <div id="minWarning" class="min-warning" style="display:none"></div>
 <div class="cart-bar">
+  <button class="cart-btn" id="searchBtn" onclick="openSearch()">🔍</button>
   <button class="cart-btn" id="cartBtn" onclick="openCart()" disabled>
     🛒<span class="cart-badge" id="cartBadge" style="display:none">0</span>
   </button>
@@ -529,6 +530,7 @@ function productCard(p) {
       <div class="product-info">
         <div class="product-name">${p.name}</div>
         <div class="product-unit">${p.unit}</div>
+        <div style="font-size:10.5px;color:#bbb;margin-top:1px;letter-spacing:0.02em">ID: ${p.id}</div>
         <div class="product-bottom">
           <div class="product-price"><span class="cur">€</span>${money(p.price)}<span style="font-size:11px;color:var(--ink-soft);font-weight:400"> ${I18N.t('o_per_pc')}</span></div>
           <div class="stepper">
@@ -551,6 +553,7 @@ function updateCartUI(id) {
   if (input) input.value = cart[id] || 0;
   updateTotals();
   if (document.getElementById('cartOverlay')) renderCartList();
+  if (document.getElementById('searchOverlay')) renderSearchResults(document.getElementById('searchInput').value);
 }
 
 const MIN_ORDER = 300;
@@ -633,6 +636,70 @@ function openCart() {
 
 function closeCart() {
   document.getElementById('cartOverlay')?.remove();
+}
+
+function openSearch() {
+  if (document.getElementById('searchOverlay')) return;
+  const ov = document.createElement('div');
+  ov.className = 'cart-overlay';
+  ov.id = 'searchOverlay';
+  ov.onclick = (e) => { if (e.target === ov) closeSearch(); };
+  ov.innerHTML = `
+    <div class="cart-panel">
+      <div class="handle"></div>
+      <div class="head">
+        <h3>🔍</h3>
+        <button onclick="closeSearch()">&times;</button>
+      </div>
+      <div style="padding:0 18px 10px">
+        <input id="searchInput" type="text" inputmode="search" placeholder="Cerca per codice prodotto (es. sku001)"
+          style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font-size:14px;box-sizing:border-box;font-family:'Jost',sans-serif"
+          oninput="renderSearchResults(this.value)">
+      </div>
+      <div class="cart-list" id="searchResults"></div>
+    </div>`;
+  document.body.appendChild(ov);
+  renderSearchResults('');
+  setTimeout(() => document.getElementById('searchInput')?.focus(), 100);
+}
+
+function closeSearch() {
+  document.getElementById('searchOverlay')?.remove();
+}
+
+function renderSearchResults(query) {
+  const list = document.getElementById('searchResults');
+  if (!list) return;
+  const q = query.trim().toLowerCase();
+  if (!q) {
+    list.innerHTML = '<div class="cart-empty">Digita un codice o un nome prodotto</div>';
+    return;
+  }
+  const matches = PRODUCTS.filter(p => p.id.toLowerCase().includes(q) || p.name.toLowerCase().includes(q));
+  if (matches.length === 0) {
+    list.innerHTML = '<div class="cart-empty">Nessun risultato</div>';
+    return;
+  }
+  list.innerHTML = matches.map(p => {
+    const pack = packSize(p.unit);
+    const qty = cart[p.id] || 0;
+    return `
+    <div class="cart-row">
+      <img src="${p.image || 'https://placehold.co/160x160'}" alt="">
+      <div class="ci">
+        <div class="n">${p.name}</div>
+        <div class="s">ID: ${p.id} · ${p.unit || ''} · €${money(p.price)}${I18N.t('o_per_pc')}</div>
+      </div>
+      <div class="ops">
+        <div class="stepper">
+          <button onclick="changeQty('${p.id}', -${pack});renderSearchResults(document.getElementById('searchInput').value)">−</button>
+          <input type="number" min="0" step="${pack}" value="${qty}"
+            onchange="setQty('${p.id}', this.value);renderSearchResults(document.getElementById('searchInput').value)">
+          <button onclick="changeQty('${p.id}', ${pack});renderSearchResults(document.getElementById('searchInput').value)">+</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function renderCartList() {
