@@ -143,7 +143,7 @@
 </main>
 <div class="gate" id="editModal" style="display:none">
   <div class="gate-card" style="max-width:380px">
-    <h2 style="margin-bottom:12px">编辑商品</h2>
+    <h2 style="margin-bottom:12px;display:flex;align-items:center;gap:8px">编辑商品 <span id="e_status_badge"></span></h2>
     <input type="hidden" id="e_id">
     <label>名称(客户可见)</label><input id="e_name" style="margin-bottom:8px">
     <label>中文备注名(仅后台可见)</label><input id="e_name_cn" style="margin-bottom:8px">
@@ -159,6 +159,7 @@
     <input type="hidden" id="e_image_url">
     <div class="actions">
       <button class="btn btn-ghost" onclick="closeEdit()">取消</button>
+      <button class="btn" id="e_toggle_btn" onclick="toggleActiveFromEdit()">缺货/下架</button>
       <button class="btn btn-primary" onclick="saveEdit()">保存</button>
     </div>
   </div>
@@ -296,7 +297,23 @@ async function editProduct(id) {
   document.getElementById('e_price').value=p.price;
   document.getElementById('e_image_url').value=p.image||'';
   document.getElementById('e_image_preview').src=p.image||'https://placehold.co/80x80';
+  const badge=document.getElementById('e_status_badge');
+  const toggleBtn=document.getElementById('e_toggle_btn');
+  if (p.active===0) {
+    badge.innerHTML='<span class="badge" style="background:#fbe6e2;color:#c0392b">已下架</span>';
+    toggleBtn.textContent='重新上架';
+    toggleBtn.className='btn btn-primary';
+  } else {
+    badge.innerHTML='';
+    toggleBtn.textContent='缺货/下架';
+    toggleBtn.className='btn btn-danger';
+  }
   document.getElementById('editModal').style.display='flex';
+}
+async function toggleActiveFromEdit() {
+  const id=document.getElementById('e_id').value;
+  await api(`/api/admin/products/${id}/toggle-active`,{method:'PUT'});
+  closeEdit(); flash('状态已更新'); loadProducts();
 }
 function closeEdit(){document.getElementById('editModal').style.display='none';}
 async function saveEdit() {
@@ -486,9 +503,10 @@ async function setStatus(id,status){await api(`/api/admin/orders/${id}/status`,{
 function handleScan(code) {
   code = code.trim();
   if (!code) return;
-  // 先按条码精确匹配,找不到再按商品编号(id)精确匹配
-  const match = ALL_PRODUCTS.find(p => p.barcode && p.barcode === code)
-    || ALL_PRODUCTS.find(p => p.id === code);
+  const codeLower = code.toLowerCase();
+  // 先按条码匹配,找不到再按商品编号(id)匹配,都不分大小写
+  const match = ALL_PRODUCTS.find(p => p.barcode && p.barcode.toLowerCase() === codeLower)
+    || ALL_PRODUCTS.find(p => p.id.toLowerCase() === codeLower);
   if (match) {
     flash('找到商品: ' + match.name + (match.active===0?' (已下架)':''));
     editProduct(match.id);
