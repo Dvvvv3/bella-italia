@@ -26,6 +26,7 @@
     --line: rgba(60,43,48,0.14);
   }
   * { box-sizing: border-box; }
+  html { overflow-x: hidden; }
   body {
     margin: 0;
     background: var(--cream);
@@ -34,6 +35,8 @@
     -webkit-font-smoothing: antialiased;
     touch-action: manipulation;
     padding-bottom: 100px;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
   .serif { font-family: 'Cormorant Garamond', serif; }
 
@@ -103,8 +106,8 @@
     flex-shrink: 0;
   }
   .product-info { flex: 1; min-width: 0; }
-  .product-name { font-weight: 500; font-size: 15px; line-height: 1.3; }
-  .product-unit { font-size: 11.5px; color: var(--ink-soft); margin-top: 2px; }
+  .product-name { font-weight: 500; font-size: 15px; line-height: 1.3; overflow-wrap: break-word; word-break: break-word; }
+  .product-unit { font-size: 11.5px; color: var(--ink-soft); margin-top: 2px; overflow-wrap: break-word; word-break: break-word; }
   .product-bottom {
     display: flex; align-items: center; justify-content: space-between;
     margin-top: 9px;
