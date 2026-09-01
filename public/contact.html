@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Contatti — BELLA ITALIA</title>
 <meta name="description" content="Dove siamo, orari e contatti. Richiedi il tuo link d'ordine personale.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +17,7 @@
     --maxw:1180px;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--ivory);color:var(--plum);font-family:'Jost',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  body{margin:0;background:var(--ivory);color:var(--plum);font-family:'Jost',system-ui,sans-serif;-webkit-font-smoothing:antialiased;touch-action:manipulation}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
   .eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;font-weight:500;color:var(--gold)}
 
@@ -213,6 +213,7 @@
   <div class="wrap foot-bar">
     <span>© <span id="yr"></span> Bella Italia — P.IVA 00000000000</span>
     <span><a href="/" data-i18n="c_foot_back">Torna alla home</a></span>
+    <span><a href="/privacy.html">Privacy Policy</a></span>
   </div>
 </footer>
 
