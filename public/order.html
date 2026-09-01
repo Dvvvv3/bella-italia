@@ -41,7 +41,7 @@
 
   header.brand {
     background: linear-gradient(160deg, var(--blush) 0%, var(--blush-deep) 100%);
-    padding: 30px 20px 22px;
+    padding: max(30px, calc(env(safe-area-inset-top) + 14px)) 20px 22px;
     border-bottom: 1px solid var(--gold-soft);
     position: relative;
     overflow: hidden;
