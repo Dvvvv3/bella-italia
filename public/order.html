@@ -373,6 +373,10 @@
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 const isAndroid = /Android/.test(navigator.userAgent);
 
+// 已经从主屏幕图标打开的(standalone模式),说明已经装过了,不用再弹安装提示
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+  || window.navigator.standalone === true;
+
 // manifest 只有安卓装PWA用得到,用JS动态插入,iOS的HTML源码里从一开始就没有这个标签
 // (iOS Safari在页面加载时就会读取manifest准备"添加到主屏幕",JS事后删除来不及)
 if (isAndroid) {
@@ -384,7 +388,7 @@ if (isAndroid) {
 }
 let deferredPrompt;
 
-if (isAndroid) {
+if (isAndroid && !isStandalone) {
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
@@ -392,7 +396,7 @@ if (isAndroid) {
   });
 }
 
-if (isIOS) {
+if (isIOS && !isStandalone) {
   setTimeout(showiOSInstallGuide, 1000);
 }
 
