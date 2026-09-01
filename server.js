@@ -143,9 +143,6 @@ app.post('/api/order/:token', async (req, res) => {
     if (item.qty % packSize !== 0) {
       return res.status(400).json({ error: `${p.name} 只能整件购买,每件 ${packSize} 支/片,请修改数量` });
     }
-    if (item.qty > p.stock) {
-      return res.status(400).json({ error: `${p.name} 库存不足,现有 ${p.stock}` });
-    }
     const unitPrice = p.price; // 单支/单件价,qty 就是件数,直接相乘即可
     total += unitPrice * item.qty;
     lines.push({ id: p.id, name: p.name, qty: item.qty, unitPrice });
