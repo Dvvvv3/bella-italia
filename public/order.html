@@ -490,7 +490,7 @@ window.addEventListener('appinstalled', () => {
   <p class="brand-name">Bella Italia</p>
   <div class="brand-tagline" data-i18n="o_tagline">Cosmetics Wholesale · Ingrosso Cosmetici</div>
   <div class="brand-meta">
-    <span id="customerName" data-i18n="o_loading">加载中…</span>
+    <span id="customerName">…</span>
     <div class="lang-switch" id="langSwitch"></div>
   </div>
 </header>
@@ -640,7 +640,7 @@ function productCard(p) {
       <img src="${p.image || 'https://placehold.co/160x160'}" alt="" onclick="event.stopPropagation();zoomImage('${(p.image || 'https://placehold.co/800x800').replace(/'/g, '')}', '${p.name.replace(/'/g, '')}')">
       <div class="product-info">
         <div class="product-name">${p.name}</div>
-        <div class="product-unit">${p.unit}</div>
+        <div class="product-unit">${pack} pz/confezione</div>
         <div style="font-size:10.5px;color:#bbb;margin-top:1px;letter-spacing:0.02em">ID: ${p.id}</div>
         <div class="product-bottom">
           <div class="product-price"><span class="cur">€</span>${money(p.price)}<span style="font-size:11px;color:var(--ink-soft);font-weight:400"> ${I18N.t('o_per_pc')}</span></div>
@@ -814,7 +814,7 @@ function renderSearchResults(query) {
       <img src="${p.image || 'https://placehold.co/160x160'}" alt="">
       <div class="ci">
         <div class="n">${p.name}</div>
-        <div class="s">ID: ${p.id} · ${p.unit || ''} · €${money(p.price)}${I18N.t('o_per_pc')}</div>
+        <div class="s">ID: ${p.id} · ${pack} pz/confezione · €${money(p.price)}${I18N.t('o_per_pc')}</div>
       </div>
       <div class="ops">
         <div class="stepper">
@@ -843,7 +843,7 @@ function renderCartList() {
       <img src="${p.image || 'https://placehold.co/160x160'}" alt="">
       <div class="ci">
         <div class="n">${p.name}</div>
-        <div class="s">${p.unit || ''} · €${money(p.price)}${I18N.t('o_per_pc')}</div>
+        <div class="s">${pack} pz/confezione · €${money(p.price)}${I18N.t('o_per_pc')}</div>
         <div class="p">€${money(p.price * qty)}</div>
       </div>
       <div class="ops">
@@ -966,6 +966,7 @@ function showSuccess(data) {
 }
 
 async function load() {
+  document.getElementById('customerName').textContent = I18N.t('o_loading');
   try {
     const res = await fetch('/api/customer/' + token);
     const data = await res.json();
