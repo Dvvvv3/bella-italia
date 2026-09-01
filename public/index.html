@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="/js/i18n.js"></script>
 <style>
   :root{
     --plum:#2B1B26;
@@ -180,6 +181,15 @@
   .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
   .rv.in{opacity:1;transform:none}
 
+  /* language switch */
+  .lang-switch{display:flex;gap:4px;margin-left:10px}
+  .lang-switch button{
+    background:none;border:1px solid rgba(247,239,238,.3);color:rgba(247,239,238,.6);
+    font-size:10.5px;letter-spacing:.04em;padding:5px 8px;border-radius:2px;
+    cursor:pointer;font-family:'Jost',sans-serif;transition:all .2s;
+  }
+  .lang-switch button.active,.lang-switch button:hover{border-color:var(--gold);color:var(--gold)}
+
   a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 
   /* whatsapp floating bubble */
@@ -237,31 +247,32 @@
   <a href="/" class="nav-mark">Bella Italia</a>
   <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">☰</button>
   <div class="nav-links" id="navLinks">
-    <a href="#categorie">Categorie</a>
-    <a href="#come-funziona">Come funziona</a>
-    <a href="/contact.html">Contatti</a>
-    <a href="/contact.html" class="nav-cta">Richiedi listino</a>
+    <a href="#categorie" data-i18n="nav_categorie">Categorie</a>
+    <a href="#come-funziona" data-i18n="nav_come_funziona">Come funziona</a>
+    <a href="/contact.html" data-i18n="nav_contatti">Contatti</a>
+    <a href="/contact.html" class="nav-cta" data-i18n="nav_cta">Richiedi listino</a>
+    <div class="lang-switch" id="langSwitch"></div>
   </div>
 </nav>
 
 <header class="hero">
   <div class="wrap hero-inner">
-    <span class="eyebrow">Ingrosso cosmetici · Italia</span>
+    <span class="eyebrow" data-i18n="hero_eyebrow">Ingrosso cosmetici · Italia</span>
     <h1>Bella<br><em>Italia</em></h1>
-    <p class="hero-lede">
+    <p class="hero-lede" data-i18n="hero_lede">
       Oltre sessanta categorie di cosmetici e accessori beauty, a magazzino in Italia.
       Riforniamo profumerie, centri estetici e nail salon con consegna rapida e listino dedicato.
     </p>
     <div class="hero-actions">
-      <a href="/contact.html" class="btn btn-solid">Richiedi il listino</a>
-      <a href="#categorie" class="btn btn-line">Sfoglia le categorie</a>
+      <a href="/contact.html" class="btn btn-solid" data-i18n="hero_btn_listino">Richiedi il listino</a>
+      <a href="#categorie" class="btn btn-line" data-i18n="hero_btn_categorie">Sfoglia le categorie</a>
     </div>
   </div>
 
   <div class="strip" id="strip" aria-hidden="true"></div>
   <div class="wrap strip-caption">
-    <span>Rossetti · Smalti · Gel · Ombretti</span>
-    <span>Gamma completa</span>
+    <span data-i18n="strip_1">Rossetti · Smalti · Gel · Ombretti</span>
+    <span data-i18n="strip_2">Gamma completa</span>
   </div>
 </header>
 
@@ -270,28 +281,28 @@
 <section class="featured" id="categorie">
   <div class="wrap">
     <div class="sec-head rv">
-      <span class="eyebrow">In evidenza</span>
-      <h2>Le linee più richieste</h2>
-      <p>Le categorie che i nostri clienti riordinano più spesso.</p>
+      <span class="eyebrow" data-i18n="featured_eyebrow">In evidenza</span>
+      <h2 data-i18n="featured_h2">Le linee più richieste</h2>
+      <p data-i18n="featured_p">Le categorie che i nostri clienti riordinano più spesso.</p>
     </div>
     <div class="cards rv">
       <a class="card" href="/contact.html">
-        <span class="card-label"><span class="n">Rossetto</span><span class="s">Labbra</span></span>
+        <span class="card-label"><span class="n" data-i18n="card1_n">Rossetto</span><span class="s" data-i18n="card1_s">Labbra</span></span>
       </a>
       <a class="card" href="/contact.html">
-        <span class="card-label"><span class="n">Gel &amp; Smalto</span><span class="s">Unghie</span></span>
+        <span class="card-label"><span class="n" data-i18n-html data-i18n="card2_n">Gel &amp; Smalto</span><span class="s" data-i18n="card2_s">Unghie</span></span>
       </a>
       <a class="card" href="/contact.html">
-        <span class="card-label"><span class="n">Ombretto</span><span class="s">Occhi</span></span>
+        <span class="card-label"><span class="n" data-i18n="card3_n">Ombretto</span><span class="s" data-i18n="card3_s">Occhi</span></span>
       </a>
       <a class="card" href="/contact.html">
-        <span class="card-label"><span class="n">Pennelli</span><span class="s">Accessori</span></span>
+        <span class="card-label"><span class="n" data-i18n="card4_n">Pennelli</span><span class="s" data-i18n="card4_s">Accessori</span></span>
       </a>
       <a class="card" href="/contact.html">
-        <span class="card-label"><span class="n">Profumo</span><span class="s">Fragranze</span></span>
+        <span class="card-label"><span class="n" data-i18n="card5_n">Profumo</span><span class="s" data-i18n="card5_s">Fragranze</span></span>
       </a>
       <a class="card" href="/contact.html">
-        <span class="card-label"><span class="n">Trousse</span><span class="s">Cofanetti</span></span>
+        <span class="card-label"><span class="n" data-i18n="card6_n">Trousse</span><span class="s" data-i18n="card6_s">Cofanetti</span></span>
       </a>
     </div>
   </div>
@@ -300,34 +311,34 @@
 <section id="come-funziona">
   <div class="wrap">
     <div class="sec-head rv">
-      <span class="eyebrow">Diventare cliente</span>
-      <h2>Tre passaggi, una volta sola.</h2>
-      <p>Non serve scaricare app né creare password. Il link che ricevi è già il tuo listino.</p>
+      <span class="eyebrow" data-i18n="funziona_eyebrow">Diventare cliente</span>
+      <h2 data-i18n="funziona_h2">Tre passaggi, una volta sola.</h2>
+      <p data-i18n="funziona_p">Non serve scaricare app né creare password. Il link che ricevi è già il tuo listino.</p>
     </div>
     <div class="steps rv">
       <div class="step">
         <div class="step-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
         </div>
-        <span class="num">PASSO I</span>
-        <h3>Ci contatti</h3>
-        <p>Scrivici su WhatsApp o vieni in sede. Ci basta sapere che tipo di attività hai.</p>
+        <span class="num" data-i18n="step1_num">PASSO I</span>
+        <h3 data-i18n="step1_h3">Ci contatti</h3>
+        <p data-i18n="step1_p">Scrivici su WhatsApp o vieni in sede. Ci basta sapere che tipo di attività hai.</p>
       </div>
       <div class="step">
         <div class="step-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
         </div>
-        <span class="num">PASSO II</span>
-        <h3>Ricevi il tuo link</h3>
-        <p>Ti inviamo un link personale con i tuoi prezzi. Si apre dal telefono, senza registrazione.</p>
+        <span class="num" data-i18n="step2_num">PASSO II</span>
+        <h3 data-i18n="step2_h3">Ricevi il tuo link</h3>
+        <p data-i18n="step2_p">Ti inviamo un link personale con i tuoi prezzi. Si apre dal telefono, senza registrazione.</p>
       </div>
       <div class="step">
         <div class="step-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
         </div>
-        <span class="num">PASSO III</span>
-        <h3>Ordini quando vuoi</h3>
-        <p>Sfogli le categorie, aggiungi le quantità, invii. Prepariamo la merce e ti avvisiamo.</p>
+        <span class="num" data-i18n="step3_num">PASSO III</span>
+        <h3 data-i18n="step3_h3">Ordini quando vuoi</h3>
+        <p data-i18n="step3_p">Sfogli le categorie, aggiungi le quantità, invii. Prepariamo la merce e ti avvisiamo.</p>
       </div>
     </div>
   </div>
@@ -336,17 +347,17 @@
 <section class="ordina">
   <div class="wrap ordina-box">
     <div class="rv">
-      <span class="eyebrow">Ordini online</span>
-      <h2>Il tuo listino,<br>sempre in tasca.</h2>
-      <p>
+      <span class="eyebrow" data-i18n="ordina_eyebrow">Ordini online</span>
+      <h2 data-i18n-html data-i18n="ordina_h2">Il tuo listino,<br>sempre in tasca.</h2>
+      <p data-i18n="ordina_p">
         Ogni cliente ha un link personale che mostra le categorie, le foto dei prodotti,
         la disponibilità aggiornata e i suoi prezzi. Ordine minimo €500 per la spedizione.
       </p>
     </div>
     <div class="ordina-panel rv">
-      <h4>Hai già il tuo link?</h4>
-      <p>Aprilo dal messaggio che ti abbiamo inviato — è personale e non richiede password.</p>
-      <a href="/contact.html" class="btn btn-solid btn-block">Non ce l'ho, richiedilo</a>
+      <h4 data-i18n="panel_h4">Hai già il tuo link?</h4>
+      <p data-i18n="panel_p">Aprilo dal messaggio che ti abbiamo inviato — è personale e non richiede password.</p>
+      <a href="/contact.html" class="btn btn-solid btn-block" data-i18n="panel_btn">Non ce l'ho, richiedilo</a>
     </div>
   </div>
 </section>
@@ -358,42 +369,43 @@
     <div class="foot-grid">
       <div>
         <div class="foot-mark">Bella Italia</div>
-        <p style="max-width:34ch;margin-top:10px">
+        <p style="max-width:34ch;margin-top:10px" data-i18n-html data-i18n="foot_tagline">
           Ingrosso di cosmetici e accessori beauty.<br>Consegna in tutta Italia.
         </p>
       </div>
       <div class="foot-col">
-        <h5>Naviga</h5>
+        <h5 data-i18n="foot_naviga">Naviga</h5>
         <p>
-          <a href="#categorie">Categorie</a><br>
-          <a href="#come-funziona">Come funziona</a><br>
-          <a href="/contact.html">Contatti</a>
+          <a href="#categorie" data-i18n="nav_categorie">Categorie</a><br>
+          <a href="#come-funziona" data-i18n="nav_come_funziona">Come funziona</a><br>
+          <a href="/contact.html" data-i18n="nav_contatti">Contatti</a>
         </p>
       </div>
       <div class="foot-col">
-        <h5>Contatti</h5>
+        <h5 data-i18n="foot_contatti">Contatti</h5>
         <p>
           TNC GOLD A8<br>
           <a href="https://maps.app.goo.gl/ZqHhxGBQMCTcr6Uc7?g_st=ic" target="_blank" rel="noopener">Via Galileo Ferraris, 136, 80146 Napoli NA</a><br>
           <a href="tel:+393485180143">+39 348 518 0143</a><br>
-          Lun&ndash;Sab 8:00&ndash;18:00 &middot; Dom 8:00&ndash;15:00
+          <span data-i18n="foot_hours">Lun&ndash;Sab 8:00&ndash;18:00 &middot; Dom 8:00&ndash;15:00</span>
         </p>
       </div>
     </div>
     <div class="foot-bar">
       <span>© <span id="yr"></span> Bella Italia — P.IVA 00000000000</span>
-      <span>Ingrosso riservato a operatori del settore</span>
+      <span data-i18n="foot_bar">Ingrosso riservato a operatori del settore</span>
     </div>
   </div>
 </footer>
 
 <a href="https://wa.me/393485180143" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contatta su WhatsApp">
   <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.386.702 4.607 1.909 6.472L4 29l7.72-1.877A11.94 11.94 0 0 0 16.001 27C22.628 27 28 21.627 28 15S22.628 3 16.001 3zm6.995 16.997c-.297.833-1.474 1.517-2.403 1.716-.638.136-1.47.245-4.276-.918-3.587-1.486-5.897-5.115-6.077-5.352-.178-.237-1.454-1.936-1.454-3.693 0-1.757.914-2.62 1.238-2.978.324-.357.706-.446.941-.446.235 0 .47.002.674.012.216.01.507-.082.792.605.297.712.99 2.469 1.078 2.649.089.18.148.39.03.627-.119.238-.178.386-.353.594-.178.209-.373.466-.533.626-.178.178-.363.372-.156.73.207.357.92 1.518 1.976 2.459 1.358 1.211 2.503 1.586 2.86 1.764.357.178.564.148.772-.089.207-.238.892-1.039 1.13-1.396.238-.357.475-.297.792-.178.317.119 2.014.951 2.36 1.124.346.172.577.257.663.401.089.148.089.85-.208 1.673z"/></svg>
-  <span>Contatta subito per avere il link personale con i tuoi prezzi</span>
+  <span data-i18n="whatsapp_float">Contatta subito per avere il link personale con i tuoi prezzi</span>
 </a>
 
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
+  I18N.initLangSwitch('langSwitch');
 
   (function buildStrip(){
     const shades = ['#F0D5CE','#E8BCB0','#DFA294','#D98C82','#D4736F','#CD5C63',
@@ -427,4 +439,3 @@
 </script>
 </body>
 </html>
-INDEXEOF

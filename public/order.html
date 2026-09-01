@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="it">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -12,6 +12,7 @@
 <title>BELLA ITALIA · 订货</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="/js/i18n.js"></script>
 <style>
   :root {
     --blush: #f7dde3;
@@ -297,6 +298,15 @@
   .cart-foot .sum { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
   .cart-foot .sum .l { font-size: 12px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.08em; }
   .cart-foot .sum .v { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; color: var(--rose-deep); }
+
+  .lang-switch { display: flex; gap: 4px; }
+  .lang-switch button {
+    background: rgba(255,255,255,0.5); border: 1px solid rgba(168,80,104,0.25);
+    color: var(--rose-deep); font-size: 10px; letter-spacing: 0.03em;
+    padding: 4px 7px; border-radius: 999px; cursor: pointer;
+    font-family: 'Jost', sans-serif; font-weight: 500;
+  }
+  .lang-switch button.active { background: var(--rose-deep); color: #fff; border-color: var(--rose-deep); }
 </style>
 <script>
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -321,11 +331,11 @@ function showInstallPrompt() {
   overlay.innerHTML = `
     <div style="background:#fff8f4;border-radius:20px;padding:30px 24px;width:82%;max-width:320px;text-align:center;box-shadow:0 12px 40px rgba(60,43,48,0.25)">
       <div style="font-size:28px;margin-bottom:12px">📱</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#a85068;margin-bottom:8px">Aggiungi al telefono</div>
-      <div style="font-size:13px;color:#666;margin-bottom:20px;line-height:1.5">Aggiungi questa app alla schermata principale per un accesso rapido ai tuoi ordini</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#a85068;margin-bottom:8px">${I18N.t('o_pwa_title')}</div>
+      <div style="font-size:13px;color:#666;margin-bottom:20px;line-height:1.5">${I18N.t('o_pwa_desc')}</div>
       <div style="display:flex;gap:10px;justify-content:center">
-        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--blush);border:none;border-radius:999px;color:var(--rose-deep);font-weight:500;cursor:pointer">Non adesso</button>
-        <button onclick="installApp()" style="flex:1;padding:10px;background:linear-gradient(135deg,#cf7e93,#a85068);border:none;border-radius:999px;color:#fff;font-weight:500;cursor:pointer">Installa</button>
+        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--blush);border:none;border-radius:999px;color:var(--rose-deep);font-weight:500;cursor:pointer">${I18N.t('o_pwa_not_now')}</button>
+        <button onclick="installApp()" style="flex:1;padding:10px;background:linear-gradient(135deg,#cf7e93,#a85068);border:none;border-radius:999px;color:#fff;font-weight:500;cursor:pointer">${I18N.t('o_pwa_install')}</button>
       </div>
     </div>
   `;
@@ -339,34 +349,34 @@ function showiOSInstallGuide() {
   overlay.innerHTML = `
     <div style="background:#fff8f4;border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(60,43,48,0.2)">
       <div style="width:36px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 20px"></div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:#a85068;margin-bottom:6px;text-align:center">Aggiungi alla schermata Home</div>
-      <div style="font-size:13px;color:#888;text-align:center;margin-bottom:22px">Accedi ai tuoi ordini in un tocco, come un'app</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:#a85068;margin-bottom:6px;text-align:center">${I18N.t('o_ios_title')}</div>
+      <div style="font-size:13px;color:#888;text-align:center;margin-bottom:22px">${I18N.t('o_ios_desc')}</div>
 
       <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;background:#fff;border-radius:14px;padding:14px">
         <div style="background:linear-gradient(135deg,#cf7e93,#a85068);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">①</div>
         <div>
-          <div style="font-weight:600;font-size:14px;margin-bottom:3px">Tocca il pulsante Condividi</div>
-          <div style="font-size:12px;color:#999">In basso al centro di Safari, il simbolo <strong style="font-size:15px">⎙</strong> (quadrato con freccia su)</div>
+          <div style="font-weight:600;font-size:14px;margin-bottom:3px">${I18N.t('o_ios_s1_t')}</div>
+          <div style="font-size:12px;color:#999">${I18N.t('o_ios_s1_d')}</div>
         </div>
       </div>
 
       <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;background:#fff;border-radius:14px;padding:14px">
         <div style="background:linear-gradient(135deg,#cf7e93,#a85068);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">②</div>
         <div>
-          <div style="font-weight:600;font-size:14px;margin-bottom:3px">Scorri e tocca</div>
-          <div style="font-size:12px;color:#999">"<strong>Aggiungi alla schermata Home</strong>" nel menu che si apre</div>
+          <div style="font-weight:600;font-size:14px;margin-bottom:3px">${I18N.t('o_ios_s2_t')}</div>
+          <div style="font-size:12px;color:#999">${I18N.t('o_ios_s2_d')}</div>
         </div>
       </div>
 
       <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;background:#fff;border-radius:14px;padding:14px">
         <div style="background:linear-gradient(135deg,#cf7e93,#a85068);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">③</div>
         <div>
-          <div style="font-weight:600;font-size:14px;margin-bottom:3px">Tocca "Aggiungi"</div>
-          <div style="font-size:12px;color:#999">L'icona di Bella Italia apparirà sulla tua schermata Home</div>
+          <div style="font-weight:600;font-size:14px;margin-bottom:3px">${I18N.t('o_ios_s3_t')}</div>
+          <div style="font-size:12px;color:#999">${I18N.t('o_ios_s3_d')}</div>
         </div>
       </div>
 
-      <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:14px;background:linear-gradient(135deg,#cf7e93,#a85068);border:none;border-radius:999px;color:#fff;font-size:15px;font-weight:500;cursor:pointer">Ho capito ✓</button>
+      <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:14px;background:linear-gradient(135deg,#cf7e93,#a85068);border:none;border-radius:999px;color:#fff;font-size:15px;font-weight:500;cursor:pointer">${I18N.t('o_ios_gotit')}</button>
     </div>
   `;
   document.body.appendChild(overlay);
@@ -377,7 +387,7 @@ async function installApp() {
   deferredPrompt.prompt();
   const { outcome } = await deferredPrompt.userChoice;
   if (outcome === 'accepted') {
-    toast('App aggiunta alla schermata principale!');
+    toast(I18N.t('o_pwa_installed'));
   }
   deferredPrompt = null;
   document.querySelector('[style*="background:rgba"]')?.remove();
@@ -391,43 +401,43 @@ window.addEventListener('appinstalled', () => {
 <body>
 <div id="profileOverlay" style="display:none;position:fixed;inset:0;background:#fff8f4;z-index:80;overflow-y:auto;padding:24px 18px 40px">
   <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:#a85068;font-size:24px;margin:0 0 4px">Bella Italia</p>
-  <p style="font-size:12px;color:#888;margin-bottom:20px">Prima di ordinare, compila i dati per la fatturazione</p>
-  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">Ragione Sociale *</label><input id="pf_ragione_sociale" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
-  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">P.IVA *</label><input id="pf_piva" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
-  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">Codice Fiscale</label><input id="pf_codice_fiscale" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
-  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">Indirizzo *</label><input id="pf_indirizzo" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
-  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">CAP *</label><input id="pf_cap" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
-  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">Citta *</label><input id="pf_citta" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
-  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">SDI *</label><input id="pf_sdi" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
-  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">PEC *</label><input id="pf_pec" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
-  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">Telefono *</label><input id="pf_telefono" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
-  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px">Email *</label><input id="pf_email" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
-  <button id="profileSubmit" onclick="submitProfile()" style="width:100%;padding:14px;background:linear-gradient(135deg,#cf7e93,#a85068);color:#fff;border:none;border-radius:999px;font-size:15px;font-weight:500;margin-top:8px">Salva e continua</button>
+  <p style="font-size:12px;color:#888;margin-bottom:20px" data-i18n="o_profile_sub">Prima di ordinare, compila i dati per la fatturazione</p>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_ragione">Ragione Sociale *</label><input id="pf_ragione_sociale" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_piva">P.IVA *</label><input id="pf_piva" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_cf">Codice Fiscale</label><input id="pf_codice_fiscale" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_indirizzo">Indirizzo *</label><input id="pf_indirizzo" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_cap">CAP *</label><input id="pf_cap" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_citta">Citta *</label><input id="pf_citta" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_sdi">SDI *</label><input id="pf_sdi" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_pec">PEC *</label><input id="pf_pec" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_tel">Telefono *</label><input id="pf_telefono" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_email">Email *</label><input id="pf_email" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <button id="profileSubmit" onclick="submitProfile()" style="width:100%;padding:14px;background:linear-gradient(135deg,#cf7e93,#a85068);color:#fff;border:none;border-radius:999px;font-size:15px;font-weight:500;margin-top:8px" data-i18n="o_pf_save">Salva e continua</button>
 </div>
 
 <header class="brand">
   <p class="brand-name">Bella Italia</p>
-  <div class="brand-tagline">Cosmetics Wholesale · Ingrosso Cosmetici</div>
+  <div class="brand-tagline" data-i18n="o_tagline">Cosmetics Wholesale · Ingrosso Cosmetici</div>
   <div class="brand-meta">
-    <span id="customerName">加载中…</span>
-    
+    <span id="customerName" data-i18n="o_loading">加载中…</span>
+    <div class="lang-switch" id="langSwitch"></div>
   </div>
 </header>
 
 <div class="info-banner">
-  <div class="min">ORDINE MINIMO €300</div>
-  <div class="line">🚚 SPEDIZIONE €15 fino a 25kg in tutto Italia 🇮🇹</div>
-  <div class="line">🌍 SPEDIZIONE IN TUTTO EUROPA!</div>
+  <div class="min" data-i18n="o_banner_min">ORDINE MINIMO €300</div>
+  <div class="line" data-i18n="o_banner_ship_it">🚚 SPEDIZIONE €15 fino a 25kg in tutto Italia 🇮🇹</div>
+  <div class="line" data-i18n="o_banner_ship_eu">🌍 SPEDIZIONE IN TUTTO EUROPA!</div>
 </div>
-<div class="iva-note">Prezzo non compreso IVA</div>
+<div class="iva-note" data-i18n="o_iva_note">Prezzo non compreso IVA</div>
 
 <main id="mainView">
   <!-- 商品列表由 JS 渲染 -->
 </main>
 
 <div class="note-block">
-  <label>Note / Istruzioni di consegna</label>
-  <textarea id="note" placeholder="Es: consegnare entro venerdì, corriere espresso..."></textarea>
+  <label data-i18n="o_note_label">Note / Istruzioni di consegna</label>
+  <textarea id="note" data-i18n-placeholder="o_note_placeholder" placeholder="Es: consegnare entro venerdì, corriere espresso..."></textarea>
 </div>
 
 <div id="minWarning" class="min-warning" style="display:none"></div>
@@ -436,10 +446,10 @@ window.addEventListener('appinstalled', () => {
     🛒<span class="cart-badge" id="cartBadge" style="display:none">0</span>
   </button>
   <div class="total-block">
-    <div class="label">Totale (IVA escl.)</div>
+    <div class="label" data-i18n="o_total_label">Totale (IVA escl.)</div>
     <div class="value">€ <span id="totalValue">0.00</span></div>
   </div>
-  <button id="submitBtn" onclick="submitOrder()" disabled>Invia Ordine</button>
+  <button id="submitBtn" onclick="submitOrder()" disabled data-i18n="o_submit_btn">Invia Ordine</button>
 </div>
 
 <script>
@@ -466,7 +476,7 @@ function renderCats() {
   currentView = 'cats';
   const main = document.getElementById('mainView');
   if (CATEGORIES.length === 0) {
-    main.innerHTML = PRODUCTS.map(productCard).join('') || '<p style="text-align:center;color:#aaa;padding:30px;font-size:13px">Nessun prodotto</p>';
+    main.innerHTML = PRODUCTS.map(productCard).join('') || `<p style="text-align:center;color:#aaa;padding:30px;font-size:13px">${I18N.t('o_no_products')}</p>`;
     return;
   }
   main.innerHTML = CATEGORIES.map(c => {
@@ -481,7 +491,7 @@ function renderCats() {
       ${imgHTML}
       <div style="flex:1">
         <div style="font-weight:600;font-size:15px">${c.name}</div>
-        <div style="font-size:12px;color:#aaa;margin-top:2px">${inCat.length} articoli</div>
+        <div style="font-size:12px;color:#aaa;margin-top:2px">${inCat.length} ${I18N.t('o_articles')}</div>
       </div>
       <div style="color:#cf7e93;font-size:18px">›</div>
     </div>`;
@@ -495,10 +505,10 @@ function openCat(id, name) {
   const filtered = PRODUCTS.filter(p => String(p.category_id) === String(id));
   main.innerHTML = `
     <div onclick="renderCats()" style="display:flex;align-items:center;gap:8px;padding:10px 4px 14px;cursor:pointer;color:#a85068;font-size:14px;font-weight:500">
-      ‹ <span>Tutti</span>
+      ‹ <span>${I18N.t('o_all')}</span>
     </div>
     <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#a85068;margin-bottom:12px">${name}</div>
-    ${filtered.map(productCard).join('') || '<p style="text-align:center;color:#aaa;padding:30px;font-size:13px">Nessun prodotto in questa categoria</p>'}
+    ${filtered.map(productCard).join('') || `<p style="text-align:center;color:#aaa;padding:30px;font-size:13px">${I18N.t('o_no_products_cat')}</p>`}
   `;
 }
 
@@ -512,9 +522,9 @@ function productCard(p) {
       <div class="product-info">
         <div class="product-name">${p.name}</div>
         <div class="product-unit">${p.unit}</div>
-        <div class="stock-tag ${out ? 'out' : 'ok'}">${out ? 'Esaurito (scorta inferiore a una confezione)' : availablePacks + ' confezioni disponibili · ' + pack + ' pz/confezione'}</div>
+        <div class="stock-tag ${out ? 'out' : 'ok'}">${out ? I18N.t('o_out_of_stock') : availablePacks + ' ' + I18N.t('o_available_packs') + ' · ' + pack + ' ' + I18N.t('o_pcs_per_pack')}</div>
         <div class="product-bottom">
-          <div class="product-price"><span class="cur">€</span>${money(p.price)}<span style="font-size:11px;color:var(--ink-soft);font-weight:400"> /pz</span></div>
+          <div class="product-price"><span class="cur">€</span>${money(p.price)}<span style="font-size:11px;color:var(--ink-soft);font-weight:400"> ${I18N.t('o_per_pc')}</span></div>
           <div class="stepper">
             <button onclick="changeQty('${p.id}', -${pack})" ${out ? 'disabled' : ''}>−</button>
             <input type="number" min="0" step="${pack}" max="${p.stock}" value="${cart[p.id] || 0}" data-pid="${p.id}"
@@ -574,7 +584,7 @@ function updateTotals() {
   const missing = MIN_ORDER - total;
   if (warn) {
     if (total > 0 && missing > 0) {
-      warn.textContent = `Mancano €${money(missing)} per raggiungere l'ordine minimo di €${MIN_ORDER}`;
+      warn.textContent = I18N.t('o_min_missing', { a: money(missing), b: MIN_ORDER });
       warn.style.display = 'block';
     } else {
       warn.style.display = 'none';
@@ -598,16 +608,16 @@ function openCart() {
     <div class="cart-panel">
       <div class="handle"></div>
       <div class="head">
-        <h3>Il tuo ordine</h3>
+        <h3>${I18N.t('o_cart_title')}</h3>
         <button onclick="closeCart()">&times;</button>
       </div>
       <div class="cart-list" id="cartList"></div>
       <div class="cart-foot">
         <div class="sum">
-          <span class="l">Totale (IVA escl.)</span>
+          <span class="l">${I18N.t('o_total_label')}</span>
           <span class="v">€ <span id="cartFootTotal">0.00</span></span>
         </div>
-        <button id="cartSubmitBtn" onclick="closeCart();submitOrder()" style="width:100%;padding:13px;border:none;border-radius:999px;background:linear-gradient(135deg,#cf7e93,#a85068);color:#fff;font-size:15px;font-weight:500">Invia Ordine</button>
+        <button id="cartSubmitBtn" onclick="closeCart();submitOrder()" style="width:100%;padding:13px;border:none;border-radius:999px;background:linear-gradient(135deg,#cf7e93,#a85068);color:#fff;font-size:15px;font-weight:500">${I18N.t('o_submit_btn')}</button>
       </div>
     </div>`;
   document.body.appendChild(ov);
@@ -624,7 +634,7 @@ function renderCartList() {
   if (!list) return;
   const lines = cartLines();
   if (lines.length === 0) {
-    list.innerHTML = '<div class="cart-empty">Il carrello è vuoto</div>';
+    list.innerHTML = `<div class="cart-empty">${I18N.t('o_cart_empty')}</div>`;
     return;
   }
   list.innerHTML = lines.map(({ id, qty, p }) => {
@@ -634,7 +644,7 @@ function renderCartList() {
       <img src="${p.image || 'https://placehold.co/160x160'}" alt="">
       <div class="ci">
         <div class="n">${p.name}</div>
-        <div class="s">${p.unit || ''} · €${money(p.price)}/pz</div>
+        <div class="s">${p.unit || ''} · €${money(p.price)}${I18N.t('o_per_pc')}</div>
         <div class="p">€${money(p.price * qty)}</div>
       </div>
       <div class="ops">
@@ -643,7 +653,7 @@ function renderCartList() {
           <input type="number" min="0" step="${pack}" value="${qty}" onchange="setQty('${id}', this.value)">
           <button onclick="changeQty('${id}', ${pack})">+</button>
         </div>
-        <button class="del" onclick="removeFromCart('${id}')">Rimuovi</button>
+        <button class="del" onclick="removeFromCart('${id}')">${I18N.t('o_cart_remove')}</button>
       </div>
     </div>`;
   }).join('');
@@ -702,14 +712,14 @@ async function submitOrder() {
   const items = Object.keys(cart).filter(id => cart[id] > 0).map(id => ({ id, qty: cart[id] }));
   if (items.length === 0) return;
   if (cartTotal() < MIN_ORDER) {
-    toast(`Ordine minimo €${MIN_ORDER}`);
+    toast(I18N.t('o_min_toast', { a: MIN_ORDER }));
     return;
   }
   const note = document.getElementById('note').value.trim();
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   const originalText = btn.textContent;
-  btn.textContent = 'Invio…';
+  btn.textContent = I18N.t('o_sending');
   try {
     const res = await fetch('/api/order/' + token, {
       method: 'POST',
@@ -718,13 +728,13 @@ async function submitOrder() {
     });
     const data = await res.json();
     if (!res.ok) {
-      toast(data.error || "Errore nell'invio");
+      toast(data.error || I18N.t('o_error_generic'));
       btn.disabled = false; btn.textContent = originalText;
       return;
     }
     showSuccess(data);
   } catch (e) {
-    toast('Errore di rete, riprova');
+    toast(I18N.t('o_error_network'));
     btn.disabled = false; btn.textContent = originalText;
   }
 }
@@ -735,10 +745,10 @@ function showSuccess(data) {
   overlay.innerHTML = `
     <div class="seal-card">
       <div class="seal">✓</div>
-      <div class="big">Ordine inviato!</div>
-      <div class="oid">N. Ordine: ${String(data.orderId).slice(0,8)}<br>Totale: €${money(data.total)}</div>
-      <div style="font-size:14px;color:#a85068;font-weight:700;margin-top:14px;line-height:1.6;padding:8px 12px;background:#fdf0f3;border-radius:10px;letter-spacing:0.03em;font-family:'Jost',sans-serif;">LA CONTATTEREMO A BREVE PER LE MODALITÀ DI PAGAMENTO E SPEDIZIONE.</div>
-      <button onclick="location.reload()">Chiudi</button>
+      <div class="big">${I18N.t('o_order_sent')}</div>
+      <div class="oid">${I18N.t('o_order_num')} ${String(data.orderId).slice(0,8)}<br>${I18N.t('o_total_word')} €${money(data.total)}</div>
+      <div style="font-size:14px;color:#a85068;font-weight:700;margin-top:14px;line-height:1.6;padding:8px 12px;background:#fdf0f3;border-radius:10px;letter-spacing:0.03em;font-family:'Jost',sans-serif;">${I18N.t('o_contact_soon')}</div>
+      <button onclick="location.reload()">${I18N.t('o_close')}</button>
     </div>`;
   document.body.appendChild(overlay);
 }
@@ -748,7 +758,7 @@ async function load() {
     const res = await fetch('/api/customer/' + token);
     const data = await res.json();
     if (!res.ok) {
-      document.getElementById('customerName').textContent = data.error || 'Errore di caricamento';
+      document.getElementById('customerName').textContent = data.error || I18N.t('o_loading_error');
       return;
     }
     if (data.needProfile) {
@@ -760,7 +770,7 @@ async function load() {
     CATEGORIES = data.categories || [];
     renderCats();
   } catch (e) {
-    document.getElementById('customerName').textContent = 'Errore di caricamento';
+    document.getElementById('customerName').textContent = I18N.t('o_loading_error');
   }
 }
 
@@ -779,7 +789,7 @@ async function submitProfile() {
     email: val('pf_email'),
   };
   const btn = document.getElementById('profileSubmit');
-  btn.disabled = true; btn.textContent = 'Salvataggio…';
+  btn.disabled = true; btn.textContent = I18N.t('o_pf_saving');
   try {
     const res = await fetch('/api/customer/' + token + '/profile', {
       method: 'POST',
@@ -787,15 +797,26 @@ async function submitProfile() {
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-    if (!res.ok) { toast(data.error || 'Errore nel salvataggio'); btn.disabled = false; btn.textContent = 'Salva e continua'; return; }
+    if (!res.ok) { toast(data.error || I18N.t('o_pf_save_error')); btn.disabled = false; btn.textContent = I18N.t('o_pf_save'); return; }
     document.getElementById('profileOverlay').style.display = 'none';
     load();
   } catch (e) {
-    toast('Errore di rete, riprova'); btn.disabled = false; btn.textContent = 'Salva e continua';
+    toast(I18N.t('o_error_network')); btn.disabled = false; btn.textContent = I18N.t('o_pf_save');
   }
 }
 
 function render() { renderCats(); }
+
+I18N.initLangSwitch('langSwitch');
+window.addEventListener('i18nchange', () => {
+  if (currentView === 'products' && currentCat != null) {
+    const cat = CATEGORIES.find(c => String(c.id) === String(currentCat));
+    if (cat) openCat(cat.id, cat.name); else renderCats();
+  } else {
+    renderCats();
+  }
+  if (document.getElementById('cartOverlay')) { closeCart(); openCart(); }
+});
 
 load();
 

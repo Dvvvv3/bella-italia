@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="/js/i18n.js"></script>
 <style>
   :root{
     --plum:#2B1B26;--plum-soft:#3D2836;--ivory:#F7EFEE;
@@ -89,6 +90,14 @@
 
   a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 
+  .lang-switch{display:flex;gap:4px;margin-left:10px}
+  .lang-switch button{
+    background:none;border:1px solid rgba(247,239,238,.3);color:rgba(247,239,238,.6);
+    font-size:10.5px;letter-spacing:.04em;padding:5px 8px;border-radius:2px;
+    cursor:pointer;font-family:'Jost',sans-serif;transition:all .2s;
+  }
+  .lang-switch button.active,.lang-switch button:hover{border-color:var(--gold);color:var(--gold)}
+
   @media (max-width:820px){
     .grid{grid-template-columns:1fr}
     .cta{grid-template-columns:1fr;padding:34px}
@@ -111,17 +120,18 @@
   <a href="/" class="nav-mark">Bella Italia</a>
   <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">☰</button>
   <div class="nav-links" id="navLinks">
-    <a href="/#categorie">Categorie</a>
-    <a href="/#come-funziona">Come funziona</a>
-    <a href="/contact.html">Contatti</a>
+    <a href="/#categorie" data-i18n="nav_categorie">Categorie</a>
+    <a href="/#come-funziona" data-i18n="nav_come_funziona">Come funziona</a>
+    <a href="/contact.html" data-i18n="nav_contatti">Contatti</a>
+    <div class="lang-switch" id="langSwitch"></div>
   </div>
 </nav>
 
 <header class="page-head">
   <div class="wrap">
-    <span class="eyebrow">Contatti</span>
-    <h1>Vieni a <em>trovarci</em></h1>
-    <p>
+    <span class="eyebrow" data-i18n="c_eyebrow">Contatti</span>
+    <h1><span data-i18n="c_h1_1">Vieni a </span><em data-i18n="c_h1_em">trovarci</em></h1>
+    <p data-i18n="c_lede">
       Il magazzino è aperto agli operatori del settore. Passa in sede per vedere i prodotti dal vivo,
       oppure scrivici e ti mandiamo il listino.
     </p>
@@ -132,43 +142,43 @@
   <div class="wrap grid">
 
     <div class="panel">
-      <span class="eyebrow">Sede</span>
-      <h2>Dove siamo</h2>
+      <span class="eyebrow" data-i18n="c_sede_eyebrow">Sede</span>
+      <h2 data-i18n="c_sede_h2">Dove siamo</h2>
       <div class="row">
-        <span class="k">Indirizzo</span>
+        <span class="k" data-i18n="c_indirizzo_k">Indirizzo</span>
         <span class="v">
           TNC GOLD A8<br>
           <a href="https://maps.app.goo.gl/ZqHhxGBQMCTcr6Uc7?g_st=ic" target="_blank" rel="noopener">Via Galileo Ferraris, 136, 80146 Napoli NA</a>
         </span>
       </div>
       <div class="row">
-        <span class="k">Orari</span>
-        <span class="v">
+        <span class="k" data-i18n="c_orari_k">Orari</span>
+        <span class="v" data-i18n-html data-i18n="c_orari_v">
           Lun – Sab &nbsp; 8:00 – 18:00<br>
           Domenica &nbsp; 8:00 – 15:00
         </span>
       </div>
       <div class="row">
-        <span class="k">Accesso</span>
+        <span class="k" data-i18n="c_accesso_k">Accesso</span>
         <span class="v">
-          Ingrosso riservato a operatori del settore
-          <small>Portare partita IVA o documento dell'attività</small>
+          <span data-i18n="c_accesso_v">Ingrosso riservato a operatori del settore</span>
+          <small data-i18n="c_accesso_small">Portare partita IVA o documento dell'attività</small>
         </span>
       </div>
     </div>
 
     <div class="panel">
-      <span class="eyebrow">Scrivici</span>
-      <h2>Contatti diretti</h2>
+      <span class="eyebrow" data-i18n="c_scrivici_eyebrow">Scrivici</span>
+      <h2 data-i18n="c_scrivici_h2">Contatti diretti</h2>
       <div class="row">
-        <span class="k">WhatsApp</span>
+        <span class="k" data-i18n="c_whatsapp_k">WhatsApp</span>
         <span class="v">
           <a href="https://wa.me/393485180143">+39 348 518 0143</a>
-          <small>Il canale più veloce per ordini e disponibilità</small>
+          <small data-i18n="c_whatsapp_small">Il canale più veloce per ordini e disponibilità</small>
         </span>
       </div>
       <div class="row">
-        <span class="k">Telefono</span>
+        <span class="k" data-i18n="c_telefono_k">Telefono</span>
         <span class="v"><a href="tel:+393485180143">+39 348 518 0143</a></span>
       </div>
     </div>
@@ -181,18 +191,18 @@
 
     <div class="cta">
       <div>
-        <span class="eyebrow">Nuovi clienti</span>
-        <h2>Richiedi il tuo<br>link d'ordine</h2>
-        <p>
+        <span class="eyebrow" data-i18n="c_cta_eyebrow">Nuovi clienti</span>
+        <h2 data-i18n-html data-i18n="c_cta_h2">Richiedi il tuo<br>link d'ordine</h2>
+        <p data-i18n="c_cta_p">
           Ti creiamo un link personale con i tuoi prezzi e la disponibilità aggiornata.
           Si apre dal telefono, senza app e senza registrazione.
         </p>
       </div>
       <div>
-        <a class="btn btn-solid btn-block" href="https://wa.me/393485180143?text=Salve%2C%20vorrei%20richiedere%20il%20link%20per%20ordinare.%20La%20mia%20attivit%C3%A0%20%C3%A8%3A%20">
+        <a class="btn btn-solid btn-block" data-i18n="c_cta_btn" href="https://wa.me/393485180143?text=Salve%2C%20vorrei%20richiedere%20il%20link%20per%20ordinare.%20La%20mia%20attivit%C3%A0%20%C3%A8%3A%20">
           Scrivici su WhatsApp
         </a>
-        <p class="cta-note">Rispondiamo in giornata negli orari di apertura.</p>
+        <p class="cta-note" data-i18n="c_cta_note">Rispondiamo in giornata negli orari di apertura.</p>
       </div>
     </div>
 
@@ -202,12 +212,13 @@
 <footer>
   <div class="wrap foot-bar">
     <span>© <span id="yr"></span> Bella Italia — P.IVA 00000000000</span>
-    <span><a href="/">Torna alla home</a></span>
+    <span><a href="/" data-i18n="c_foot_back">Torna alla home</a></span>
   </div>
 </footer>
 
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
+  I18N.initLangSwitch('langSwitch');
   const tog = document.getElementById('navToggle'), links = document.getElementById('navLinks');
   tog.addEventListener('click', () => {
     const open = links.classList.toggle('open');
