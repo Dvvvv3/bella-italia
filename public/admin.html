@@ -101,6 +101,10 @@
       </div>
       <button class="btn btn-primary" style="margin-top:10px" onclick="addProduct()">添加商品</button>
     </div>
+    <div class="row" style="margin-bottom:10px;gap:8px">
+      <button class="btn btn-primary" id="ptab_active" onclick="setProductTab('active')">在售</button>
+      <button class="btn btn-ghost" id="ptab_inactive" onclick="setProductTab('inactive')">已下架</button>
+    </div>
     <div id="productList"></div>
   </section>
   <section id="categories">
@@ -199,10 +203,23 @@ async function loadCategoryCache() {
   ['p_category','e_category'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=opts; });
 }
 let ALL_PRODUCTS = [];
+let currentProductTab = 'active';
+function setProductTab(tab) {
+  currentProductTab = tab;
+  ['active','inactive'].forEach(t => {
+    const btn = document.getElementById('ptab_'+t);
+    if (btn) btn.className = 'btn ' + (t===tab ? 'btn-primary' : 'btn-ghost');
+  });
+  renderProductList();
+}
 async function loadProducts() {
   const products = await api('/api/admin/products');
   ALL_PRODUCTS = products;
-  document.getElementById('productList').innerHTML = products.map(p=>`
+  renderProductList();
+}
+function renderProductList() {
+  const filtered = ALL_PRODUCTS.filter(p => currentProductTab==='inactive' ? p.active===0 : p.active!==0);
+  document.getElementById('productList').innerHTML = filtered.map(p=>`
     <div class="card">
       <div class="row" style="align-items:flex-start">
         <img class="thumb" style="width:56px;height:56px" src="${p.image||'https://placehold.co/80x80'}" alt="">
@@ -225,7 +242,7 @@ async function loadProducts() {
         <button class="btn ${p.active===0?'btn-primary':'btn-danger'}" onclick="toggleActive('${p.id}')">${p.active===0?'重新上架':'缺货/下架'}</button>
         <button class="btn btn-danger" onclick="deleteProduct('${p.id}')">删除</button>
       </div>
-    </div>`).join('') || '<p style="color:#888;font-size:13px">还没有商品</p>';
+    </div>`).join('') || `<p style="color:#888;font-size:13px">${currentProductTab==='inactive'?'没有已下架的商品':'还没有商品'}</p>`;
 }
 async function uploadImage(inputEl,urlFieldId,previewId) {
   const file=inputEl.files[0]; if(!file) return;
