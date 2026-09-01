@@ -115,6 +115,13 @@
     <div id="categoryList"></div>
   </section>
   <section id="customers">
+    <div class="add-form" style="border-color:var(--accent);background:var(--accent-soft)">
+      <h3 style="display:flex;justify-content:space-between;align-items:center">
+        👀 访客记录
+        <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px" onclick="loadVisitorLog()">刷新</button>
+      </h3>
+      <div id="visitorLog" style="max-height:260px;overflow-y:auto;margin-top:6px"></div>
+    </div>
     <div class="add-form">
       <h3>新增客户(自动生成免密下单链接)</h3>
       <div class="row">
@@ -418,6 +425,28 @@ async function deleteCategory(id) {
   await api(`/api/admin/categories/${id}`,{method:'DELETE'});
   await loadCategoryCache(); loadCategories(); loadProducts();
 }
+async function loadVisitorLog() {
+  const el = document.getElementById('visitorLog');
+  if (!el) return;
+  el.innerHTML = '<p style="color:#aaa;font-size:12px">加载中…</p>';
+  try {
+    const logs = await api('/api/admin/access-logs');
+    if (!logs.length) { el.innerHTML = '<p style="color:#aaa;font-size:12px">还没有访客</p>'; return; }
+    el.innerHTML = logs.map(l => `
+      <div class="row" style="justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f0e6ea;cursor:pointer" onclick="viewCustomer('${l.customer_token}')">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">${l.customer_name}</div>
+          <div style="font-size:11px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${(l.user_agent||'').slice(0,50)}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:10px">
+          <div style="font-size:11px;color:#888">${new Date(l.created_at).toLocaleString('zh-CN')}</div>
+          <div style="font-size:10px;color:#bbb">${l.ip||'—'}</div>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    el.innerHTML = '<p style="color:#c0392b;font-size:12px">加载失败</p>';
+  }
+}
 async function loadCustomers() {
   const customers=await api('/api/admin/customers');
   document.getElementById('customerList').innerHTML=customers.map(c=>`
@@ -582,7 +611,7 @@ if (scanInputEl) {
   });
 }
 
-async function loadAll(){await loadCategoryCache();loadProducts();loadCategories();loadCustomers();loadOrders();document.getElementById('scanInput')?.focus();}
+async function loadAll(){await loadCategoryCache();loadProducts();loadCategories();loadCustomers();loadOrders();loadVisitorLog();document.getElementById('scanInput')?.focus();}
 if(ADMIN_KEY) loadAll();
 </script>
 </body>

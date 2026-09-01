@@ -297,6 +297,18 @@ app.post('/api/admin/customers', requireAdmin, (req, res) => {
 });
 
 // 单个客户详情+历史订单
+// 全部客户的访客记录(类似"谁看过我"的动态流),按时间倒序
+app.get('/api/admin/access-logs', requireAdmin, (req, res) => {
+  const rows = db.prepare(`
+    SELECT al.*, c.name AS customer_name, c.token AS customer_token
+    FROM access_logs al
+    JOIN customers c ON c.id = al.customer_id
+    ORDER BY al.created_at DESC
+    LIMIT 100
+  `).all();
+  res.json(rows);
+});
+
 app.get('/api/admin/customers/:token', requireAdmin, (req, res) => {
   const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
   if (!customer) return res.status(404).json({ error: '客户不存在' });
