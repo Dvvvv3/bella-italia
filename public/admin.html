@@ -101,12 +101,10 @@
       </div>
       <button class="btn btn-primary" style="margin-top:10px" onclick="addProduct()">添加商品</button>
     </div>
-    <div class="row" style="margin-bottom:10px;gap:8px;flex-wrap:wrap">
+    <div style="font-size:12px;color:#aaa;margin:16px 0 8px;text-transform:uppercase;letter-spacing:0.05em">未分类商品(分类内商品请去"分类"页管理)</div>
+    <div class="row" style="margin-bottom:10px;gap:8px">
       <button class="btn btn-primary" id="ptab_active" onclick="setProductTab('active')">在售</button>
       <button class="btn btn-ghost" id="ptab_inactive" onclick="setProductTab('inactive')">已下架</button>
-      <select id="productCatFilter" onchange="renderProductList()" style="margin-left:auto">
-        <option value="">全部分类</option>
-      </select>
     </div>
     <div id="productList"></div>
   </section>
@@ -207,8 +205,6 @@ async function loadCategoryCache() {
   CATEGORIES = await api('/api/admin/categories');
   const opts = '<option value="">— 未分类 —</option>' + CATEGORIES.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
   ['p_category','e_category'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=opts; });
-  const filterEl = document.getElementById('productCatFilter');
-  if (filterEl) filterEl.innerHTML = '<option value="">全部分类</option>' + CATEGORIES.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
 }
 let ALL_PRODUCTS = [];
 let currentProductTab = 'active';
@@ -224,12 +220,12 @@ async function loadProducts() {
   const products = await api('/api/admin/products');
   ALL_PRODUCTS = products;
   renderProductList();
+  if (typeof renderCategoryList === 'function' && CATEGORIES) renderCategoryList();
 }
 function renderProductList() {
-  const catFilter = document.getElementById('productCatFilter')?.value || '';
   const filtered = ALL_PRODUCTS.filter(p => {
     const statusOk = currentProductTab==='inactive' ? p.active===0 : p.active!==0;
-    const catOk = !catFilter || String(p.category_id) === String(catFilter);
+    const catOk = !p.category_id;
     return statusOk && catOk;
   });
   document.getElementById('productList').innerHTML = filtered.map(p=>`
@@ -349,19 +345,62 @@ async function deleteProduct(id) {
   await api(`/api/admin/products/${id}`,{method:'DELETE'});
   loadProducts();
 }
+let expandedCat = {};
+let catProductTab = {};
 async function loadCategories() {
-  const cats=await api('/api/admin/categories');
-  document.getElementById('categoryList').innerHTML=cats.map(c=>`
+  CATEGORIES = await api('/api/admin/categories');
+  renderCategoryList();
+}
+function toggleCatProducts(id) {
+  expandedCat[id] = !expandedCat[id];
+  renderCategoryList();
+}
+function setCatProductTab(id, tab) {
+  catProductTab[id] = tab;
+  renderCategoryList();
+}
+function renderCategoryList() {
+  const cats = CATEGORIES || [];
+  document.getElementById('categoryList').innerHTML = cats.map(c=>{
+    const isOpen = !!expandedCat[c.id];
+    const tab = catProductTab[c.id] || 'active';
+    const prods = (ALL_PRODUCTS||[]).filter(p => String(p.category_id)===String(c.id) && (tab==='inactive' ? p.active===0 : p.active!==0));
+    const productsHtml = !isOpen ? '' : `
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid #f0e6ea">
+        <div class="row" style="gap:6px;margin-bottom:8px">
+          <button class="btn ${tab==='active'?'btn-primary':'btn-ghost'}" onclick="event.stopPropagation();setCatProductTab(${c.id},'active')">在售</button>
+          <button class="btn ${tab==='inactive'?'btn-primary':'btn-ghost'}" onclick="event.stopPropagation();setCatProductTab(${c.id},'inactive')">已下架</button>
+        </div>
+        ${prods.map(p=>`
+          <div class="card" style="margin-bottom:8px" onclick="event.stopPropagation()">
+            <div class="row" style="align-items:flex-start">
+              <img class="thumb" style="width:44px;height:44px" src="${p.image||'https://placehold.co/80x80'}" alt="">
+              <div style="flex:1">
+                <div class="item-title" style="font-size:13px">${p.name} ${p.active===0?'<span class="badge" style="background:#fbe6e2;color:#c0392b">已下架</span>':''}</div>
+                ${p.name_cn?`<div style="font-size:11px;color:var(--accent)">🈶 ${p.name_cn}</div>`:''}
+                <div class="item-sub" style="font-size:11px">${p.unit||''} · €${p.price} · <span class="mono">${p.id}</span></div>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="btn btn-ghost" onclick="editProduct('${p.id}')">编辑</button>
+              <button class="btn ${p.active===0?'btn-primary':'btn-danger'}" onclick="toggleActive('${p.id}')">${p.active===0?'重新上架':'缺货/下架'}</button>
+              <button class="btn btn-danger" onclick="deleteProduct('${p.id}')">删除</button>
+            </div>
+          </div>`).join('') || '<p style="color:#aaa;font-size:12px">没有商品</p>'}
+      </div>`;
+    return `
     <div class="card">
-      <div class="row" style="justify-content:space-between">
+      <div class="row" style="justify-content:space-between;cursor:pointer" onclick="toggleCatProducts(${c.id})">
         <div class="item-title">${c.name}</div>
-        <span class="item-sub">排序 ${c.sort_order}</span>
+        <span class="item-sub">排序 ${c.sort_order} ${isOpen?'▾':'▸'}</span>
       </div>
-      <div class="actions">
+      <div class="actions" onclick="event.stopPropagation()">
         <button class="btn btn-ghost" onclick="editCategory(${c.id},'${c.name.replace(/'/g,'')}',${c.sort_order})">编辑</button>
         <button class="btn btn-danger" onclick="deleteCategory(${c.id})">删除</button>
       </div>
-    </div>`).join('')||'<p style="color:#888;font-size:13px">还没有分类</p>';
+      ${productsHtml}
+    </div>`;
+  }).join('')||'<p style="color:#888;font-size:13px">还没有分类</p>';
 }
 async function addCategory() {
   const name=document.getElementById('cat_name').value.trim();
