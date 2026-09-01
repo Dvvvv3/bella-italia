@@ -62,6 +62,28 @@ function requireAdminViaQuery(req, res, next) {
 // 客户端 API
 // ---------------------------------------------------------------------------
 
+// 给每个客户生成专属的 manifest,添加到主屏幕后打开的是他自己的下单页,不是首页
+app.get('/api/customer/:token/manifest.json', (req, res) => {
+  const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
+  if (!customer) return res.status(404).json({ error: '链接无效' });
+  const manifest = {
+    name: 'INGROSSO',
+    short_name: 'INGROSSO',
+    description: 'Bella Italia Cosmetics Wholesale',
+    start_url: `/o/${req.params.token}`,
+    scope: '/',
+    display: 'standalone',
+    background_color: '#fff8f4',
+    theme_color: '#cf7e93',
+    icons: [
+      { src: '/img/logo.jpg', sizes: '192x192', type: 'image/jpeg', purpose: 'any' },
+      { src: '/img/logo.jpg', sizes: '512x512', type: 'image/jpeg', purpose: 'any maskable' }
+    ]
+  };
+  res.setHeader('Content-Type', 'application/manifest+json');
+  res.json(manifest);
+});
+
 app.get('/api/customer/:token', (req, res) => {
   const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
   if (!customer) return res.status(404).json({ error: '链接无效或已过期' });
