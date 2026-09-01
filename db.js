@@ -70,6 +70,9 @@ if (!productCols.includes('name_cn')) {
 if (!productCols.includes('barcode')) {
   db.exec(`ALTER TABLE products ADD COLUMN barcode TEXT`);
 }
+if (!productCols.includes('active')) {
+  db.exec(`ALTER TABLE products ADD COLUMN active INTEGER DEFAULT 1`);
+}
 
 // 首次启动,表是空的就塞一点示例数据,方便你直接测试
 const productCount = db.prepare('SELECT COUNT(*) AS n FROM products').get().n;

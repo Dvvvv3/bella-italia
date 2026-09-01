@@ -207,7 +207,7 @@ async function loadProducts() {
       <div class="row" style="align-items:flex-start">
         <img class="thumb" style="width:56px;height:56px" src="${p.image||'https://placehold.co/80x80'}" alt="">
         <div style="flex:1">
-          <div class="item-title">${p.name}</div>
+          <div class="item-title">${p.name} ${p.active===0?'<span class="badge" style="background:#fbe6e2;color:#c0392b">已下架</span>':''}</div>
           ${p.name_cn?`<div style="font-size:12px;color:var(--accent);margin-top:1px">🈶 ${p.name_cn}</div>`:''}
           <div class="item-sub" style="margin-top:3px">
             ${p.category_name?`<span class="badge confirmed">${p.category_name}</span>`:'<span class="badge pending">未分类</span>'}
@@ -222,6 +222,7 @@ async function loadProducts() {
       </div>
       <div class="actions">
         <button class="btn btn-ghost" onclick="editProduct('${p.id}')">编辑</button>
+        <button class="btn ${p.active===0?'btn-primary':'btn-danger'}" onclick="toggleActive('${p.id}')">${p.active===0?'重新上架':'缺货/下架'}</button>
         <button class="btn btn-danger" onclick="deleteProduct('${p.id}')">删除</button>
       </div>
     </div>`).join('') || '<p style="color:#888;font-size:13px">还没有商品</p>';
@@ -286,6 +287,10 @@ async function saveEdit() {
     })});
     closeEdit(); flash('已更新'); loadProducts();
   } catch(e){alert(e.message);}
+}
+async function toggleActive(id) {
+  await api(`/api/admin/products/${id}/toggle-active`,{method:'PUT'});
+  loadProducts();
 }
 async function deleteProduct(id) {
   if(!confirm('确定删除?')) return;

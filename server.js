@@ -63,6 +63,15 @@ function requireAdminViaQuery(req, res, next) {
 // ---------------------------------------------------------------------------
 
 // 给每个客户生成专属的 manifest,添加到主屏幕后打开的是他自己的下单页,不是首页
+// 上架/下架商品(下架后客户下单页看不到这个商品)
+app.put('/api/admin/products/:id/toggle-active', requireAdmin, (req, res) => {
+  const p = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
+  if (!p) return res.status(404).json({ error: '商品不存在' });
+  const next = p.active ? 0 : 1;
+  db.prepare('UPDATE products SET active = ? WHERE id = ?').run(next, req.params.id);
+  res.json({ ok: true, active: next });
+});
+
 app.get('/api/customer/:token/manifest.json', (req, res) => {
   const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
   if (!customer) return res.status(404).json({ error: '链接无效' });
@@ -91,7 +100,7 @@ app.get('/api/customer/:token', (req, res) => {
     return res.json({ needProfile: true, customer: { name: customer.name } });
   }
   const cats = db.prepare('SELECT * FROM categories ORDER BY sort_order, id').all();
-  const products = db.prepare('SELECT * FROM products').all().map(p => ({
+  const products = db.prepare('SELECT * FROM products WHERE active = 1 OR active IS NULL').all().map(p => ({
     id: p.id, name: p.name, unit: p.unit, image: p.image, stock: p.stock,
     price: p.price, category_id: p.category_id,
   }));
