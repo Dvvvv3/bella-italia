@@ -7,7 +7,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="INGROSSO">
-<link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/img/logo.jpg">
 <title>BELLA ITALIA · 订货</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -311,6 +310,16 @@
 <script>
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 const isAndroid = /Android/.test(navigator.userAgent);
+
+// manifest 只有安卓装PWA用得到,用JS动态插入,iOS的HTML源码里从一开始就没有这个标签
+// (iOS Safari在页面加载时就会读取manifest准备"添加到主屏幕",JS事后删除来不及)
+if (isAndroid) {
+  const _token = location.pathname.split('/o/')[1] || location.pathname.split('/').pop();
+  const m = document.createElement('link');
+  m.rel = 'manifest';
+  m.href = `/api/customer/${_token}/manifest.json`;
+  document.head.appendChild(m);
+}
 let deferredPrompt;
 
 if (isAndroid) {
@@ -454,10 +463,6 @@ window.addEventListener('appinstalled', () => {
 
 <script>
 const token = location.pathname.split('/o/')[1] || location.pathname.split('/').pop();
-
-// 让"添加到主屏幕"记住的是这个客户自己的下单页,不是首页
-const manifestLink = document.querySelector('link[rel="manifest"]');
-if (manifestLink) manifestLink.setAttribute('href', `/api/customer/${token}/manifest.json`);
 
 function money(n) { return n.toFixed(2); }
 
