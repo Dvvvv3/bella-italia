@@ -939,6 +939,15 @@ async function submitOrder() {
   }
 }
 
+function formatOrderNum(id) {
+  let hash = 0;
+  const s = String(id);
+  for (let i = 0; i < s.length; i++) {
+    hash = (hash * 31 + s.charCodeAt(i)) % 10000;
+  }
+  return 'BELLA-' + String(hash).padStart(4, '0');
+}
+
 function showSuccess(data) {
   const overlay = document.createElement('div');
   overlay.className = 'seal-overlay';
@@ -946,7 +955,7 @@ function showSuccess(data) {
     <div class="seal-card">
       <div class="seal">✓</div>
       <div class="big">${I18N.t('o_order_sent')}</div>
-      <div class="oid">${I18N.t('o_order_num')} ${String(data.orderId).slice(0,8)}<br>${I18N.t('o_total_word')} €${money(data.total)}</div>
+      <div class="oid">${I18N.t('o_order_num')} ${formatOrderNum(data.orderId)}<br>${I18N.t('o_total_word')} €${money(data.total)}</div>
       <div style="font-size:14px;color:#a85068;font-weight:700;margin-top:14px;line-height:1.6;padding:8px 12px;background:#fdf0f3;border-radius:10px;letter-spacing:0.03em;font-family:'Jost',sans-serif;">${I18N.t('o_contact_soon')}</div>
       <button onclick="location.reload()">${I18N.t('o_close')}</button>
     </div>`;
