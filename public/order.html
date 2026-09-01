@@ -301,6 +301,34 @@
   .cart-row .stepper { margin: 0; }
   .cart-row .del { background: none; border: none; color: #c98; font-size: 11px; padding: 0; }
   .cart-empty { text-align: center; color: var(--ink-soft); font-size: 13px; padding: 40px 0; }
+
+  .search-overlay { align-items: flex-start; }
+  .search-card {
+    width: 100%; max-width: 480px; margin: 0 auto;
+    margin-top: max(14px, env(safe-area-inset-top));
+    background: var(--cream);
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(60,43,48,0.3);
+    display: flex; flex-direction: column;
+    max-height: 75vh; max-height: 75dvh;
+    overflow: hidden;
+  }
+  .search-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px; flex-shrink: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .search-head input {
+    flex: 1; padding: 12px 16px; border: 1px solid var(--line); border-radius: 999px;
+    font-size: 16px; font-family: 'Jost', sans-serif; box-sizing: border-box;
+    background: #fff; color: var(--ink);
+  }
+  .search-head input:focus { outline: 2px solid var(--rose); border-color: transparent; }
+  .search-head button {
+    background: var(--blush); border: none; color: var(--rose-deep);
+    width: 40px; height: 40px; border-radius: 50%; font-size: 20px;
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  }
   .cart-foot { padding: 12px 18px 22px; border-top: 1px solid var(--line); }
   .cart-foot .sum { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
   .cart-foot .sum .l { font-size: 12px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.08em; }
@@ -739,21 +767,15 @@ function closeCart() {
 function openSearch() {
   if (document.getElementById('searchOverlay')) return;
   const ov = document.createElement('div');
-  ov.className = 'cart-overlay';
+  ov.className = 'cart-overlay search-overlay';
   ov.id = 'searchOverlay';
-  ov.style.alignItems = 'flex-start';
   ov.onclick = (e) => { if (e.target === ov) closeSearch(); };
   ov.innerHTML = `
-    <div class="cart-panel" style="border-radius:0 0 22px 22px;margin-top:max(10px, env(safe-area-inset-top));max-height:70vh;max-height:70dvh">
-      <div class="handle"></div>
-      <div class="head">
-        <h3>🔍</h3>
-        <button onclick="closeSearch()">&times;</button>
-      </div>
-      <div style="padding:0 18px 10px;flex-shrink:0">
-        <input id="searchInput" type="text" inputmode="search" placeholder="Cerca per codice prodotto (es. sku001)"
-          style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font-size:16px;box-sizing:border-box;font-family:'Jost',sans-serif"
+    <div class="search-card">
+      <div class="search-head">
+        <input id="searchInput" type="text" inputmode="search" placeholder="Cerca per codice o nome prodotto"
           oninput="renderSearchResults(this.value)">
+        <button onclick="closeSearch()" aria-label="Chiudi">&times;</button>
       </div>
       <div class="cart-list" id="searchResults"></div>
     </div>`;
