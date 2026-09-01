@@ -741,9 +741,10 @@ function openSearch() {
   const ov = document.createElement('div');
   ov.className = 'cart-overlay';
   ov.id = 'searchOverlay';
+  ov.style.alignItems = 'flex-start';
   ov.onclick = (e) => { if (e.target === ov) closeSearch(); };
   ov.innerHTML = `
-    <div class="cart-panel">
+    <div class="cart-panel" style="border-radius:0 0 22px 22px;margin-top:max(10px, env(safe-area-inset-top));max-height:70vh;max-height:70dvh">
       <div class="handle"></div>
       <div class="head">
         <h3>🔍</h3>
