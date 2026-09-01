@@ -74,6 +74,17 @@ if (!productCols.includes('active')) {
   db.exec(`ALTER TABLE products ADD COLUMN active INTEGER DEFAULT 1`);
 }
 
+// 客户链接访问日志: 每次客户打开自己的下单链接就记一笔,方便追查链接是否被转发泄露
+db.exec(`
+  CREATE TABLE IF NOT EXISTS access_logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id INTEGER NOT NULL,
+    ip TEXT,
+    user_agent TEXT,
+    created_at TEXT DEFAULT (datetime('now'))
+  );
+`);
+
 // 首次启动,表是空的就塞一点示例数据,方便你直接测试
 const productCount = db.prepare('SELECT COUNT(*) AS n FROM products').get().n;
 if (productCount === 0) {

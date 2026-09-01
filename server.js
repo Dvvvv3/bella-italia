@@ -112,6 +112,12 @@ app.get('/api/customer/:token/manifest.json', (req, res) => {
 app.get('/api/customer/:token', (req, res) => {
   const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
   if (!customer) return res.status(404).json({ error: '链接无效或已过期' });
+
+  // 记录这次访问(时间由数据库默认值自动填,不用手动传)
+  const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().split(',')[0].trim();
+  const ua = req.headers['user-agent'] || '';
+  db.prepare('INSERT INTO access_logs (customer_id, ip, user_agent) VALUES (?, ?, ?)').run(customer.id, ip, ua);
+
   if (!customer.profile_done) {
     return res.json({ needProfile: true, customer: { name: customer.name } });
   }
@@ -296,7 +302,14 @@ app.get('/api/admin/customers/:token', requireAdmin, (req, res) => {
   if (!customer) return res.status(404).json({ error: '客户不存在' });
   const orders = db.prepare('SELECT * FROM orders WHERE customer_id = ? ORDER BY created_at DESC').all(customer.id);
   const itemsStmt = db.prepare('SELECT * FROM order_items WHERE order_id = ?');
-  res.json({ customer, orders: orders.map(o => ({ ...o, items: itemsStmt.all(o.id) })) });
+
+  const accessLogs = db.prepare('SELECT * FROM access_logs WHERE customer_id = ? ORDER BY created_at DESC LIMIT 50').all(customer.id);
+  const recentRows = db.prepare(
+    "SELECT DISTINCT ip, user_agent FROM access_logs WHERE customer_id = ? AND created_at >= datetime('now','-1 day')"
+  ).all(customer.id);
+  const anomaly = recentRows.length >= 3;
+
+  res.json({ customer, orders: orders.map(o => ({ ...o, items: itemsStmt.all(o.id) })), accessLogs, anomaly });
 });
 
 // 删除客户
