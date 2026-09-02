@@ -15,6 +15,34 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 极简 cookie 解析(不额外装 cookie-parser 包),用于"链接首次打开绑定设备"功能
+function parseCookies(req) {
+  const header = req.headers.cookie;
+  const out = {};
+  if (!header) return out;
+  header.split(';').forEach(pair => {
+    const idx = pair.indexOf('=');
+    if (idx === -1) return;
+    out[decodeURIComponent(pair.slice(0, idx).trim())] = decodeURIComponent(pair.slice(idx + 1).trim());
+  });
+  return out;
+}
+const DEVICE_COOKIE_MAXAGE = 10 * 365 * 24 * 3600; // 10年,基本相当于永久
+
+// 校验"该链接是否已绑定到别的设备"。用在客户 API 上,防止链接激活后被直接用 API 绕过页面
+function requireBoundDevice(req, res, next) {
+  const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
+  if (!customer) return res.status(404).json({ error: '链接无效或已过期' });
+  if (customer.activated_at) {
+    const cookies = parseCookies(req);
+    const deviceId = cookies['bi_device_' + customer.id];
+    if (!deviceId || deviceId !== customer.device_id) {
+      return res.status(403).json({ error: 'link_locked', message: '该链接已在别的设备上使用过,已失效' });
+    }
+  }
+  next();
+}
+
 // ---------------------------------------------------------------------------
 // 图片上传:存到 DATA_DIR/uploads(和数据库同一个持久化目录),
 // 用单独的 /uploads 静态路由提供访问,和 public/ 里的前端代码分开
@@ -109,7 +137,7 @@ app.get('/api/customer/:token/manifest.json', (req, res) => {
   res.json(manifest);
 });
 
-app.get('/api/customer/:token', (req, res) => {
+app.get('/api/customer/:token', requireBoundDevice, (req, res) => {
   const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
   if (!customer) return res.status(404).json({ error: '链接无效或已过期' });
 
@@ -130,7 +158,7 @@ app.get('/api/customer/:token', (req, res) => {
     categories: cats.map(c => ({ id: c.id, code: c.code, name: c.name, image: c.image||'' })), products });
 });
 
-app.post('/api/customer/:token/profile', (req, res) => {
+app.post('/api/customer/:token/profile', requireBoundDevice, (req, res) => {
   const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
   if (!customer) return res.status(404).json({ error: '链接无效或已过期' });
   const f = req.body || {};
@@ -156,7 +184,7 @@ function packSizeFromUnit(unit) {
   return m ? parseInt(m[1], 10) : 1;
 }
 
-app.post('/api/order/:token', async (req, res) => {
+app.post('/api/order/:token', requireBoundDevice, async (req, res) => {
   const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
   if (!customer) return res.status(404).json({ error: '链接无效或已过期' });
 
@@ -210,7 +238,32 @@ app.post('/api/order/:token', async (req, res) => {
 });
 
 app.get('/o/:token', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'order.html'));
+  const token = req.params.token;
+  const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(token);
+  if (!customer) {
+    return res.status(404).sendFile(path.join(__dirname, 'public', 'link-expired.html'));
+  }
+
+  const cookies = parseCookies(req);
+  const cookieName = 'bi_device_' + customer.id;
+  const deviceIdFromCookie = cookies[cookieName];
+
+  if (!customer.activated_at) {
+    // 首次打开:把这台设备的 cookie 写进数据库,链接从此"锁定"到这台设备
+    const deviceId = deviceIdFromCookie || randomUUID();
+    db.prepare('UPDATE customers SET device_id = ?, activated_at = ? WHERE token = ?')
+      .run(deviceId, new Date().toISOString(), token);
+    res.setHeader('Set-Cookie', `${cookieName}=${deviceId}; Max-Age=${DEVICE_COOKIE_MAXAGE}; Path=/; SameSite=Lax`);
+    return res.sendFile(path.join(__dirname, 'public', 'order.html'));
+  }
+
+  if (deviceIdFromCookie && deviceIdFromCookie === customer.device_id) {
+    // 同一台设备(比如从主屏幕图标打开),放行
+    return res.sendFile(path.join(__dirname, 'public', 'order.html'));
+  }
+
+  // 已经被别的设备激活过,当前设备的 cookie 对不上 => 拒绝
+  return res.status(403).sendFile(path.join(__dirname, 'public', 'link-expired.html'));
 });
 
 // ---------------------------------------------------------------------------
@@ -294,6 +347,26 @@ app.post('/api/admin/customers', requireAdmin, (req, res) => {
   const id = 'c_' + randomUUID().slice(0, 6);
   db.prepare('INSERT INTO customers (token, id, name, tier) VALUES (?, ?, ?, ?)').run(token, id, name, tier === 'B' ? 'B' : 'A');
   res.json({ ok: true, token, orderUrl: '/o/' + token });
+});
+
+// 解绑设备:链接本身不变,客户换手机/清了浏览器数据打不开时用这个,
+// 下次谁打开这个链接就会重新绑定到那台设备(如果链接没被泄露,应该还是客户自己先打开)
+app.post('/api/admin/customers/:token/reset-device', requireAdmin, (req, res) => {
+  const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
+  if (!customer) return res.status(404).json({ error: '客户不存在' });
+  db.prepare('UPDATE customers SET device_id = NULL, activated_at = NULL WHERE token = ?').run(req.params.token);
+  res.json({ ok: true });
+});
+
+// 生成全新链接:旧链接(不管谁手上拿着)立刻失效,客户需要重新添加到主屏幕。
+// 用在怀疑链接已经被转发/泄露给不相关的人时
+app.post('/api/admin/customers/:token/regenerate-link', requireAdmin, (req, res) => {
+  const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
+  if (!customer) return res.status(404).json({ error: '客户不存在' });
+  const newToken = randomUUID().slice(0, 8);
+  db.prepare('UPDATE customers SET token = ?, device_id = NULL, activated_at = NULL WHERE token = ?')
+    .run(newToken, req.params.token);
+  res.json({ ok: true, token: newToken, orderUrl: '/o/' + newToken });
 });
 
 // 单个客户详情+历史订单

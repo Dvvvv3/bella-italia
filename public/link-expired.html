@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#cf7e93">
+<title>Link non valido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --rose:#cf7e93; --rose-deep:#a85068; --cream:#fff8f4; --ink:#3c2b30; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body {
+    font-family:'Jost', sans-serif;
+    background: linear-gradient(160deg,#fff8f4,#f7dde3 120%);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    padding-top: max(24px, env(safe-area-inset-top));
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    max-width: 380px;
+    width: 100%;
+    padding: 32px 24px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(207,126,147,0.15);
+  }
+  .icon { font-size: 40px; margin-bottom: 14px; }
+  h1 {
+    font-family:'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 24px;
+    color: var(--rose-deep);
+    margin: 0 0 12px;
+  }
+  p { font-size: 14px; line-height: 1.6; color: rgba(60,43,48,0.75); margin: 0 0 10px; }
+  a.wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    background: var(--rose);
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">🔒</div>
+    <h1>Questo link non è più valido</h1>
+    <p>Il link è già stato aperto su un altro dispositivo, oppure non esiste più.</p>
+    <p>Se il link è tuo e lo avevi già usato prima, riaprilo dall'icona salvata nella schermata home del tuo telefono.</p>
+    <p>Altrimenti contattaci per ricevere un nuovo link.</p>
+    <a class="wa" href="https://wa.me/393485180143" target="_blank" rel="noopener">💬 Contattaci su WhatsApp</a>
+  </div>
+</body>
+</html>

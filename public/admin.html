@@ -576,14 +576,31 @@ async function loadCustomers() {
           <div class="item-title">${c.name} <span class="badge pending">${c.tier} 级</span></div>
           <div class="item-sub mono">/o/${c.token}</div>
         </div>
-        <span class="badge ${c.profile_done?'confirmed':'shipped'}">${c.profile_done?'已填资料':'未填资料'}</span>
+        <div style="text-align:right">
+          <span class="badge ${c.profile_done?'confirmed':'shipped'}">${c.profile_done?'已填资料':'未填资料'}</span><br>
+          <span class="badge" style="margin-top:4px;background:${c.activated_at?'#e5f3e8':'#fff3d6'};color:${c.activated_at?'#2e7d4f':'#a87a00'}">${c.activated_at?'🔒 已绑定设备':'⏳ 待激活'}</span>
+        </div>
       </div>
       <div class="actions">
         <button class="btn btn-ghost" onclick="copyLink('${c.token}')">复制链接</button>
         <button class="btn btn-ghost" onclick="viewCustomer('${c.token}')">查看资料/订单</button>
+        ${c.activated_at ? `<button class="btn btn-ghost" onclick="resetDevice('${c.token}','${c.name.replace(/'/g,'')}')">解绑设备</button>` : ''}
+        <button class="btn btn-ghost" onclick="regenerateLink('${c.token}','${c.name.replace(/'/g,'')}')">换新链接</button>
         <button class="btn btn-danger" onclick="deleteCustomer('${c.token}','${c.name.replace(/'/g,'')}')">删除</button>
       </div>
     </div>`).join('')||'<p style="color:#888;font-size:13px">还没有客户</p>';
+}
+async function resetDevice(token, name) {
+  if (!confirm(`解绑「${name}」当前绑定的设备?\n链接本身不变,下一个打开这个链接的人会重新绑定。\n(适用于:客户换了新手机/清了浏览器数据打不开)`)) return;
+  await api(`/api/admin/customers/${token}/reset-device`, { method: 'POST' });
+  flash('已解绑设备'); loadCustomers();
+}
+async function regenerateLink(token, name) {
+  if (!confirm(`给「${name}」生成一个全新链接?\n旧链接会立刻失效(不管在谁手上),客户需要重新添加到主屏幕。\n(适用于:怀疑链接被转发给了不相关的人)`)) return;
+  const data = await api(`/api/admin/customers/${token}/regenerate-link`, { method: 'POST' });
+  copyText(location.origin + data.orderUrl);
+  flash('已生成新链接并复制到剪贴板: ' + data.orderUrl);
+  loadCustomers();
 }
 async function addCustomer() {
   const name=document.getElementById('c_name').value.trim();
@@ -591,7 +608,7 @@ async function addCustomer() {
   if(!name) return;
   const data=await api('/api/admin/customers',{method:'POST',body:JSON.stringify({name,tier})});
   document.getElementById('c_name').value='';
-  flash('已生成: '+data.orderUrl); loadCustomers();
+  flash('已生成: '+data.orderUrl+' — 记得提醒客户第一次打开后就添加到主屏幕'); loadCustomers();
 }
 function copyLink(token) {
   const url=location.origin+'/o/'+token;

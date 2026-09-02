@@ -80,6 +80,16 @@ if (!catCols.includes('image')) {
   db.exec('ALTER TABLE categories ADD COLUMN image TEXT');
 }
 
+const custCols = db.prepare("PRAGMA table_info(customers)").all().map(c => c.name);
+// 客户链接"首次打开绑定设备"字段迁移: 链接第一次被打开时锁定到那台设备,
+// 之后别的设备再打开同一个链接就会被拒绝,防止链接转发/泄露后被无限使用
+if (!custCols.includes('device_id')) {
+  db.exec('ALTER TABLE customers ADD COLUMN device_id TEXT');
+}
+if (!custCols.includes('activated_at')) {
+  db.exec('ALTER TABLE customers ADD COLUMN activated_at TEXT');
+}
+
 // 客户链接访问日志: 每次客户打开自己的下单链接就记一笔,方便追查链接是否被转发泄露
 db.exec(`
   CREATE TABLE IF NOT EXISTS access_logs (
