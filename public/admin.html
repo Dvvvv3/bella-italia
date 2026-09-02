@@ -34,6 +34,9 @@
   button.btn { border: none; border-radius: 6px; padding: 7px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; }
   .btn-primary { background: var(--accent); color: #fff; }
   .btn-ghost { background: var(--accent-soft); color: var(--accent); }
+  .drag-handle { cursor: grab; touch-action: none; padding: 6px 8px; color: #ccc; font-size: 16px; user-select: none; flex-shrink: 0; }
+  .cat-card.dragging { opacity: .55; box-shadow: 0 8px 20px rgba(0,0,0,.15); }
+  .cat-card.drop-target { border: 2px dashed var(--accent); }
   .btn-danger { background: #fbe6e2; color: var(--danger); }
   .add-form { border: 1px dashed var(--line); border-radius: 12px; padding: 12px; margin-bottom: 14px; }
   .add-form h3 { margin: 0 0 10px; font-size: 13px; }
@@ -353,6 +356,7 @@ let expandedCat = {};
 let catProductTab = {};
 async function loadCategories() {
   CATEGORIES = await api('/api/admin/categories');
+  CATEGORIES.sort((a,b)=>a.sort_order-b.sort_order);
   renderCategoryList();
 }
 function toggleCatProducts(id) {
@@ -393,10 +397,13 @@ function renderCategoryList() {
           </div>`).join('') || '<p style="color:#aaa;font-size:12px">没有商品</p>'}
       </div>`;
     return `
-    <div class="card">
-      <div class="row" style="justify-content:space-between;cursor:pointer" onclick="toggleCatProducts(${c.id})">
-        <div class="item-title">${c.name}</div>
-        <span class="item-sub">排序 ${c.sort_order} ${isOpen?'▾':'▸'}</span>
+    <div class="card cat-card" data-id="${c.id}" style="position:relative">
+      <div class="row" style="align-items:center;gap:6px">
+        <span class="drag-handle" onpointerdown="catPointerDown(event,${c.id})">⠿</span>
+        <div class="row" style="flex:1;justify-content:space-between;cursor:pointer" onclick="toggleCatProducts(${c.id})">
+          <div class="item-title">${c.name}</div>
+          <span class="item-sub">${isOpen?'▾':'▸'}</span>
+        </div>
       </div>
       <div class="actions" onclick="event.stopPropagation()">
         <button class="btn btn-ghost" onclick="editCategory(${c.id},'${c.name.replace(/'/g,'')}',${c.sort_order})">编辑</button>
@@ -405,6 +412,63 @@ function renderCategoryList() {
       ${productsHtml}
     </div>`;
   }).join('')||'<p style="color:#888;font-size:13px">还没有分类</p>';
+}
+
+let dragState = null;
+function catPointerDown(e, id) {
+  e.preventDefault();
+  e.stopPropagation();
+  const card = document.querySelector(`.cat-card[data-id="${id}"]`);
+  if (!card) return;
+  dragState = { id, startY: e.clientY, card, hoverId: null };
+  card.classList.add('dragging');
+  card.style.zIndex = 50;
+  card.style.position = 'relative';
+  document.addEventListener('pointermove', catPointerMove);
+  document.addEventListener('pointerup', catPointerUp);
+}
+function catPointerMove(e) {
+  if (!dragState) return;
+  const dy = e.clientY - dragState.startY;
+  dragState.card.style.transform = `translateY(${dy}px)`;
+  const cards = [...document.querySelectorAll('.cat-card')];
+  let hoverCard = null;
+  for (const c of cards) {
+    if (c === dragState.card) continue;
+    const r = c.getBoundingClientRect();
+    if (e.clientY > r.top && e.clientY < r.bottom) { hoverCard = c; break; }
+  }
+  cards.forEach(c => c.classList.remove('drop-target'));
+  if (hoverCard) hoverCard.classList.add('drop-target');
+  dragState.hoverId = hoverCard ? hoverCard.dataset.id : null;
+}
+async function catPointerUp() {
+  document.removeEventListener('pointermove', catPointerMove);
+  document.removeEventListener('pointerup', catPointerUp);
+  if (!dragState) return;
+  const { id, card, hoverId } = dragState;
+  card.style.transform = '';
+  card.style.zIndex = '';
+  card.classList.remove('dragging');
+  document.querySelectorAll('.drop-target').forEach(c => c.classList.remove('drop-target'));
+
+  if (hoverId && String(hoverId) !== String(id)) {
+    const fromIdx = CATEGORIES.findIndex(c => String(c.id) === String(id));
+    const toIdx = CATEGORIES.findIndex(c => String(c.id) === String(hoverId));
+    if (fromIdx !== -1 && toIdx !== -1) {
+      const [moved] = CATEGORIES.splice(fromIdx, 1);
+      CATEGORIES.splice(toIdx, 0, moved);
+      renderCategoryList();
+      for (let i = 0; i < CATEGORIES.length; i++) {
+        CATEGORIES[i].sort_order = i;
+        await api(`/api/admin/categories/${CATEGORIES[i].id}`, { method: 'PUT', body: JSON.stringify({ name: CATEGORIES[i].name, sort_order: i }) });
+      }
+      flash('顺序已更新');
+    }
+  } else {
+    renderCategoryList();
+  }
+  dragState = null;
 }
 async function addCategory() {
   const name=document.getElementById('cat_name').value.trim();
