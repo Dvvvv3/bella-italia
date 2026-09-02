@@ -400,9 +400,9 @@ function renderCategoryList() {
     <div class="card cat-card" data-id="${c.id}" style="position:relative">
       <div class="row" style="align-items:center;gap:6px">
         <span class="drag-handle" onpointerdown="catPointerDown(event,${c.id})">⠿</span>
-        <div class="row" style="flex:1;justify-content:space-between;cursor:pointer" onclick="toggleCatProducts(${c.id})">
+        <div class="row" style="flex:1;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleCatProducts(${c.id})">
           <div class="item-title">${c.name}</div>
-          <span class="item-sub">${isOpen?'▾':'▸'}</span>
+          <span style="font-size:20px;color:var(--accent);padding:0 4px">${isOpen?'▾':'▸'}</span>
         </div>
       </div>
       <div class="actions" onclick="event.stopPropagation()">
@@ -420,54 +420,67 @@ function catPointerDown(e, id) {
   e.stopPropagation();
   const card = document.querySelector(`.cat-card[data-id="${id}"]`);
   if (!card) return;
-  dragState = { id, startY: e.clientY, card, hoverId: null };
+  const rect = card.getBoundingClientRect();
+  dragState = { id, pointerOffset: e.clientY - rect.top, card, moved: false };
   card.classList.add('dragging');
   card.style.zIndex = 50;
   card.style.position = 'relative';
   document.addEventListener('pointermove', catPointerMove);
   document.addEventListener('pointerup', catPointerUp);
 }
+function catTargetIndex(pointerY, draggedId) {
+  const cards = [...document.querySelectorAll('.cat-card')].filter(c => c.dataset.id !== String(draggedId));
+  for (const c of cards) {
+    const r = c.getBoundingClientRect();
+    const mid = r.top + r.height / 2;
+    if (pointerY < mid) {
+      return CATEGORIES.findIndex(cat => String(cat.id) === c.dataset.id);
+    }
+  }
+  return CATEGORIES.length - 1;
+}
 function catPointerMove(e) {
   if (!dragState) return;
-  const dy = e.clientY - dragState.startY;
-  dragState.card.style.transform = `translateY(${dy}px)`;
-  const cards = [...document.querySelectorAll('.cat-card')];
-  let hoverCard = null;
-  for (const c of cards) {
-    if (c === dragState.card) continue;
-    const r = c.getBoundingClientRect();
-    if (e.clientY > r.top && e.clientY < r.bottom) { hoverCard = c; break; }
+  const { id, pointerOffset } = dragState;
+  let card = dragState.card;
+
+  const currentIdx = CATEGORIES.findIndex(c => String(c.id) === String(id));
+  const targetIdx = catTargetIndex(e.clientY, id);
+  if (targetIdx !== currentIdx && targetIdx !== -1) {
+    const [moved] = CATEGORIES.splice(currentIdx, 1);
+    CATEGORIES.splice(targetIdx, 0, moved);
+    renderCategoryList();
+    card = document.querySelector(`.cat-card[data-id="${id}"]`);
+    card.classList.add('dragging');
+    card.style.zIndex = 50;
+    card.style.position = 'relative';
+    dragState.card = card;
+    dragState.moved = true;
   }
-  cards.forEach(c => c.classList.remove('drop-target'));
-  if (hoverCard) hoverCard.classList.add('drop-target');
-  dragState.hoverId = hoverCard ? hoverCard.dataset.id : null;
+
+  card.style.transform = '';
+  const rect = card.getBoundingClientRect();
+  const desiredTop = e.clientY - pointerOffset;
+  const dy = desiredTop - rect.top;
+  card.style.transform = `translateY(${dy}px)`;
 }
 async function catPointerUp() {
   document.removeEventListener('pointermove', catPointerMove);
   document.removeEventListener('pointerup', catPointerUp);
   if (!dragState) return;
-  const { id, card, hoverId } = dragState;
+  const { card, moved } = dragState;
   card.style.transform = '';
   card.style.zIndex = '';
   card.classList.remove('dragging');
-  document.querySelectorAll('.drop-target').forEach(c => c.classList.remove('drop-target'));
 
-  if (hoverId && String(hoverId) !== String(id)) {
-    const fromIdx = CATEGORIES.findIndex(c => String(c.id) === String(id));
-    const toIdx = CATEGORIES.findIndex(c => String(c.id) === String(hoverId));
-    if (fromIdx !== -1 && toIdx !== -1) {
-      const [moved] = CATEGORIES.splice(fromIdx, 1);
-      CATEGORIES.splice(toIdx, 0, moved);
-      renderCategoryList();
-      for (let i = 0; i < CATEGORIES.length; i++) {
-        CATEGORIES[i].sort_order = i;
-        await api(`/api/admin/categories/${CATEGORIES[i].id}`, { method: 'PUT', body: JSON.stringify({ name: CATEGORIES[i].name, sort_order: i }) });
-      }
-      flash('顺序已更新');
+  if (moved) {
+    for (let i = 0; i < CATEGORIES.length; i++) {
+      CATEGORIES[i].sort_order = i;
+      await api(`/api/admin/categories/${CATEGORIES[i].id}`, { method: 'PUT', body: JSON.stringify({ name: CATEGORIES[i].name, sort_order: i }) });
     }
-  } else {
-    renderCategoryList();
+    flash('顺序已更新');
   }
+  renderCategoryList();
   dragState = null;
 }
 async function addCategory() {
