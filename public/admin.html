@@ -428,41 +428,36 @@ function catPointerDown(e, id) {
   document.addEventListener('pointermove', catPointerMove);
   document.addEventListener('pointerup', catPointerUp);
 }
-function catTargetIndex(pointerY, draggedId) {
-  const cards = [...document.querySelectorAll('.cat-card')].filter(c => c.dataset.id !== String(draggedId));
-  for (const c of cards) {
-    const r = c.getBoundingClientRect();
-    const mid = r.top + r.height / 2;
-    if (pointerY < mid) {
-      return CATEGORIES.findIndex(cat => String(cat.id) === c.dataset.id);
-    }
-  }
-  return CATEGORIES.length - 1;
-}
 function catPointerMove(e) {
   if (!dragState) return;
-  const { id, pointerOffset } = dragState;
-  let card = dragState.card;
-
-  const currentIdx = CATEGORIES.findIndex(c => String(c.id) === String(id));
-  const targetIdx = catTargetIndex(e.clientY, id);
-  if (targetIdx !== currentIdx && targetIdx !== -1) {
-    const [moved] = CATEGORIES.splice(currentIdx, 1);
-    CATEGORIES.splice(targetIdx, 0, moved);
-    renderCategoryList();
-    card = document.querySelector(`.cat-card[data-id="${id}"]`);
-    card.classList.add('dragging');
-    card.style.zIndex = 50;
-    card.style.position = 'relative';
-    dragState.card = card;
-    dragState.moved = true;
-  }
+  const { card, pointerOffset } = dragState;
 
   card.style.transform = '';
   const rect = card.getBoundingClientRect();
   const desiredTop = e.clientY - pointerOffset;
   const dy = desiredTop - rect.top;
   card.style.transform = `translateY(${dy}px)`;
+
+  const list = document.getElementById('categoryList');
+  const siblings = [...list.querySelectorAll('.cat-card')].filter(el => el !== card);
+  const cardRect = card.getBoundingClientRect();
+  const cardCenter = cardRect.top + cardRect.height / 2;
+
+  let target = null;
+  for (const sib of siblings) {
+    const r = sib.getBoundingClientRect();
+    const sibCenter = r.top + r.height / 2;
+    if (cardCenter < sibCenter) { target = sib; break; }
+  }
+  if (target) {
+    if (target.previousElementSibling !== card) {
+      list.insertBefore(card, target);
+      dragState.moved = true;
+    }
+  } else if (list.lastElementChild !== card) {
+    list.appendChild(card);
+    dragState.moved = true;
+  }
 }
 async function catPointerUp() {
   document.removeEventListener('pointermove', catPointerMove);
@@ -474,6 +469,9 @@ async function catPointerUp() {
   card.classList.remove('dragging');
 
   if (moved) {
+    const list = document.getElementById('categoryList');
+    const orderedIds = [...list.querySelectorAll('.cat-card')].map(el => el.dataset.id);
+    CATEGORIES.sort((a, b) => orderedIds.indexOf(String(a.id)) - orderedIds.indexOf(String(b.id)));
     for (let i = 0; i < CATEGORIES.length; i++) {
       CATEGORIES[i].sort_order = i;
       await api(`/api/admin/categories/${CATEGORIES[i].id}`, { method: 'PUT', body: JSON.stringify({ name: CATEGORIES[i].name, sort_order: i }) });
