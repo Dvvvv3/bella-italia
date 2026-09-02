@@ -617,9 +617,7 @@ function renderCats() {
   main.innerHTML = CATEGORIES.map(c => {
     const inCat = PRODUCTS.filter(p => String(p.category_id) === String(c.id));
     if (inCat.length === 0) return '';
-    const imgSrc = c.image && !c.image.includes('placehold')
-      ? c.image
-      : (inCat.find(p => p.image && !p.image.includes('placehold'))?.image || '');
+    const imgSrc = c.image && !c.image.includes('placehold') ? c.image : '';
     const imgHTML = imgSrc
       ? `<img src="${imgSrc}" style="width:88px;height:88px;object-fit:cover;border-radius:14px;flex-shrink:0">`
       : `<div style="width:88px;height:88px;border-radius:14px;background:linear-gradient(135deg,#f7dde3,#eec3cf);flex-shrink:0"></div>`;
