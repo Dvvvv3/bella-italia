@@ -432,16 +432,10 @@ function catPointerMove(e) {
   if (!dragState) return;
   const { card, pointerOffset } = dragState;
 
-  card.style.transform = '';
-  const rect = card.getBoundingClientRect();
-  const desiredTop = e.clientY - pointerOffset;
-  const dy = desiredTop - rect.top;
-  card.style.transform = `translateY(${dy}px)`;
-
+  const cardRectBefore = card.getBoundingClientRect();
+  const cardCenter = cardRectBefore.top + cardRectBefore.height / 2;
   const list = document.getElementById('categoryList');
   const siblings = [...list.querySelectorAll('.cat-card')].filter(el => el !== card);
-  const cardRect = card.getBoundingClientRect();
-  const cardCenter = cardRect.top + cardRect.height / 2;
 
   let target = null;
   for (const sib of siblings) {
@@ -458,6 +452,12 @@ function catPointerMove(e) {
     list.appendChild(card);
     dragState.moved = true;
   }
+
+  card.style.transform = '';
+  const rect = card.getBoundingClientRect();
+  const desiredTop = e.clientY - pointerOffset;
+  const dy = desiredTop - rect.top;
+  card.style.transform = `translateY(${dy}px)`;
 }
 async function catPointerUp() {
   document.removeEventListener('pointermove', catPointerMove);
