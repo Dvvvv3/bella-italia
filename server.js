@@ -127,7 +127,7 @@ app.get('/api/customer/:token', (req, res) => {
     price: p.price, category_id: p.category_id,
   }));
   res.json({ needProfile: false, customer: { name: customer.name, tier: customer.tier, ragione_sociale: customer.ragione_sociale, piva: customer.piva },
-    categories: cats.map(c => ({ id: c.id, code: c.code, name: c.name })), products });
+    categories: cats.map(c => ({ id: c.id, code: c.code, name: c.name, image: c.image||'' })), products });
 });
 
 app.post('/api/customer/:token/profile', (req, res) => {
@@ -233,14 +233,14 @@ app.get('/api/admin/categories', requireAdmin, (req, res) => {
   res.json(db.prepare('SELECT * FROM categories ORDER BY sort_order, id').all());
 });
 app.post('/api/admin/categories', requireAdmin, (req, res) => {
-  const { code, name, sort_order } = req.body;
+  const { code, name, sort_order, image } = req.body;
   if (!name) return res.status(400).json({ error: '缺少分类名称' });
-  db.prepare('INSERT INTO categories (code, name, sort_order) VALUES (?, ?, ?)').run((code||'').trim(), name.trim(), Number(sort_order)||0);
+  db.prepare('INSERT INTO categories (code, name, sort_order, image) VALUES (?, ?, ?, ?)').run((code||'').trim(), name.trim(), Number(sort_order)||0, (image||'').trim());
   res.json({ ok: true });
 });
 app.put('/api/admin/categories/:id', requireAdmin, (req, res) => {
-  const { code, name, sort_order } = req.body;
-  db.prepare('UPDATE categories SET code=?, name=?, sort_order=? WHERE id=?').run((code||'').trim(), name.trim(), Number(sort_order)||0, req.params.id);
+  const { code, name, sort_order, image } = req.body;
+  db.prepare('UPDATE categories SET code=?, name=?, sort_order=?, image=? WHERE id=?').run((code||'').trim(), name.trim(), Number(sort_order)||0, (image||'').trim(), req.params.id);
   res.json({ ok: true });
 });
 app.delete('/api/admin/categories/:id', requireAdmin, (req, res) => {

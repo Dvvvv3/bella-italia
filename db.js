@@ -74,6 +74,12 @@ if (!productCols.includes('active')) {
   db.exec(`ALTER TABLE products ADD COLUMN active INTEGER DEFAULT 1`);
 }
 
+// 分类封面图片字段迁移
+const catCols = db.prepare("PRAGMA table_info(categories)").all().map(c => c.name);
+if (!catCols.includes('image')) {
+  db.exec('ALTER TABLE categories ADD COLUMN image TEXT');
+}
+
 // 客户链接访问日志: 每次客户打开自己的下单链接就记一笔,方便追查链接是否被转发泄露
 db.exec(`
   CREATE TABLE IF NOT EXISTS access_logs (

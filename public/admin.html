@@ -113,6 +113,12 @@
 <div><label>分类名称</label><input id="cat_name" placeholder="ROSSETTO"></div>
         <div style="max-width:80px"><label>排序</label><input id="cat_sort" type="number" value="0"></div>
       </div>
+      <div style="margin-top:8px">
+        <label>分类图片(可选)</label>
+        <input type="file" id="cat_image_file" accept="image/*" onchange="uploadImage(this,'cat_image_url','cat_image_preview')" style="margin-top:4px">
+        <img id="cat_image_preview" class="thumb" style="margin-top:6px;display:none">
+        <input type="hidden" id="cat_image_url">
+      </div>
       <button class="btn btn-primary" style="margin-top:10px" onclick="addCategory()">添加分类</button>
     </div>
     <div id="categoryList"></div>
@@ -166,6 +172,24 @@
       <button class="btn btn-ghost" onclick="closeEdit()">取消</button>
       <button class="btn" id="e_toggle_btn" onclick="toggleActiveFromEdit()">缺货/下架</button>
       <button class="btn btn-primary" onclick="saveEdit()">保存</button>
+    </div>
+  </div>
+</div>
+<div class="gate" id="catEditModal" style="display:none">
+  <div class="gate-card" style="max-width:380px">
+    <h2 style="margin-bottom:12px">编辑分类</h2>
+    <input type="hidden" id="ec_id">
+    <label>分类名称</label><input id="ec_name" style="margin-bottom:8px">
+    <label>排序</label><input id="ec_sort" type="number" style="margin-bottom:8px">
+    <label>分类封面图片</label>
+    <div style="font-size:11px;color:#aaa;margin-bottom:6px">设置后客户下单页的文件夹封面使用此图，不设则自动取该分类第一个有图的商品</div>
+    <input type="file" id="ec_image_file" accept="image/*" onchange="uploadImage(this,'ec_image_url','ec_image_preview')" style="margin-bottom:6px">
+    <img id="ec_image_preview" class="thumb" style="margin-bottom:8px">
+    <input type="hidden" id="ec_image_url">
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="document.getElementById('catEditModal').style.display='none'">取消</button>
+      <button class="btn btn-danger" onclick="clearCatImage()">清除图片</button>
+      <button class="btn btn-primary" onclick="saveCatEdit()">保存</button>
     </div>
   </div>
 </div>
@@ -406,7 +430,7 @@ function renderCategoryList() {
         </div>
       </div>
       <div class="actions" onclick="event.stopPropagation()">
-        <button class="btn btn-ghost" onclick="editCategory(${c.id},'${c.name.replace(/'/g,'')}',${c.sort_order})">编辑</button>
+        <button class="btn btn-ghost" onclick="editCategory(${c.id})">编辑</button>
         <button class="btn btn-danger" onclick="deleteCategory(${c.id})">删除</button>
       </div>
       ${productsHtml}
@@ -484,15 +508,36 @@ async function catPointerUp() {
 async function addCategory() {
   const name=document.getElementById('cat_name').value.trim();
   const sort_order=document.getElementById('cat_sort').value;
+  const image=document.getElementById('cat_image_url').value.trim();
   if(!name) return alert('请填分类名称');
-  await api('/api/admin/categories',{method:'POST',body:JSON.stringify({name,sort_order})});
+  await api('/api/admin/categories',{method:'POST',body:JSON.stringify({name,sort_order,image})});
   document.getElementById('cat_name').value='';
+  document.getElementById('cat_image_url').value='';
+  document.getElementById('cat_image_preview').style.display='none';
   flash('分类已添加'); await loadCategoryCache(); loadCategories();
 }
-async function editCategory(id,name,sort) {
-  const newName=prompt('分类名称',name); if(newName===null) return;
-  const newSort=prompt('排序',sort); if(newSort===null) return;
-  await api(`/api/admin/categories/${id}`,{method:'PUT',body:JSON.stringify({name:newName,sort_order:newSort})});
+function editCategory(id) {
+  const cat = (CATEGORIES||[]).find(x => String(x.id) === String(id));
+  if (!cat) return;
+  document.getElementById('ec_id').value = cat.id;
+  document.getElementById('ec_name').value = cat.name;
+  document.getElementById('ec_sort').value = cat.sort_order;
+  document.getElementById('ec_image_url').value = cat.image||'';
+  const prev = document.getElementById('ec_image_preview');
+  if (cat.image) { prev.src=cat.image; prev.style.display='block'; } else { prev.style.display='none'; }
+  document.getElementById('catEditModal').style.display='flex';
+}
+function clearCatImage() {
+  document.getElementById('ec_image_url').value='';
+  document.getElementById('ec_image_preview').style.display='none';
+}
+async function saveCatEdit() {
+  const id=document.getElementById('ec_id').value;
+  const name=document.getElementById('ec_name').value.trim();
+  const sort_order=document.getElementById('ec_sort').value;
+  const image=document.getElementById('ec_image_url').value.trim();
+  await api(`/api/admin/categories/${id}`,{method:'PUT',body:JSON.stringify({name,sort_order,image})});
+  document.getElementById('catEditModal').style.display='none';
   flash('已更新'); await loadCategoryCache(); loadCategories(); loadProducts();
 }
 async function deleteCategory(id) {
