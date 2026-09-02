@@ -500,7 +500,7 @@ window.addEventListener('appinstalled', () => {
   </p>
 </div>
 
-<header class="brand">
+<header class="brand" id="pageHeader">
   <p class="brand-name">Bella Italia</p>
   <div class="brand-tagline" data-i18n="o_tagline">Cosmetics Wholesale · Ingrosso Cosmetici</div>
   <div class="brand-meta">
@@ -509,12 +509,12 @@ window.addEventListener('appinstalled', () => {
   </div>
 </header>
 
-<div class="info-banner">
+<div class="info-banner" id="infoBanner">
   <div class="min" data-i18n="o_banner_min">ORDINE MINIMO €300</div>
   <div class="line" data-i18n="o_banner_ship_it">🚚 SPEDIZIONE €15 fino a 25kg in tutto Italia 🇮🇹</div>
   <div class="line" data-i18n="o_banner_ship_eu">🌍 SPEDIZIONE IN TUTTO EUROPA!</div>
 </div>
-<div class="iva-note" data-i18n="o_iva_note">Prezzo non compreso IVA</div>
+<div class="iva-note" id="ivaNote" data-i18n="o_iva_note">Prezzo non compreso IVA</div>
 
 <main id="mainView">
   <!-- 商品列表由 JS 渲染 -->
@@ -610,6 +610,9 @@ let catsScrollY = 0; // 记住浏览分类列表时滚动到的位置,退出分�
 
 function renderCats() {
   currentView = 'cats';
+  document.getElementById('pageHeader').style.display = '';
+  document.getElementById('infoBanner').style.display = '';
+  document.getElementById('ivaNote').style.display = '';
   const main = document.getElementById('mainView');
   if (CATEGORIES.length === 0) {
     main.innerHTML = PRODUCTS.map(productCard).join('') || `<p style="text-align:center;color:#aaa;padding:30px;font-size:13px">${I18N.t('o_no_products')}</p>`;
@@ -639,6 +642,9 @@ function openCat(id, name) {
   catsScrollY = window.scrollY || document.documentElement.scrollTop || 0;
   currentView = 'products';
   currentCat = id;
+  document.getElementById('pageHeader').style.display = 'none';
+  document.getElementById('infoBanner').style.display = 'none';
+  document.getElementById('ivaNote').style.display = 'none';
   const main = document.getElementById('mainView');
   const filtered = PRODUCTS.filter(p => String(p.category_id) === String(id));
   main.innerHTML = `
