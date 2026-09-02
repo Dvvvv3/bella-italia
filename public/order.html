@@ -606,12 +606,14 @@ function chooseDelivery(mode) {
 
 let currentView = 'cats'; // 'cats' | 'products'
 let currentCat = null;
+let catsScrollY = 0; // 记住浏览分类列表时滚动到的位置,退出分类详情后恢复到这里
 
 function renderCats() {
   currentView = 'cats';
   const main = document.getElementById('mainView');
   if (CATEGORIES.length === 0) {
     main.innerHTML = PRODUCTS.map(productCard).join('') || `<p style="text-align:center;color:#aaa;padding:30px;font-size:13px">${I18N.t('o_no_products')}</p>`;
+    requestAnimationFrame(() => window.scrollTo(0, catsScrollY));
     return;
   }
   main.innerHTML = CATEGORIES.map(c => {
@@ -630,9 +632,11 @@ function renderCats() {
       <div style="color:#cf7e93;font-size:18px">›</div>
     </div>`;
   }).join('');
+  requestAnimationFrame(() => window.scrollTo(0, catsScrollY));
 }
 
 function openCat(id, name) {
+  catsScrollY = window.scrollY || document.documentElement.scrollTop || 0;
   currentView = 'products';
   currentCat = id;
   const main = document.getElementById('mainView');
@@ -644,6 +648,7 @@ function openCat(id, name) {
     <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#a85068;margin-bottom:12px">${name}</div>
     ${filtered.map(productCard).join('') || `<p style="text-align:center;color:#aaa;padding:30px;font-size:13px">${I18N.t('o_no_products_cat')}</p>`}
   `;
+  window.scrollTo(0, 0);
 }
 
 function productCard(p) {
