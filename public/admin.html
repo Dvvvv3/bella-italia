@@ -209,8 +209,7 @@
       <div style="background:#fff;border-radius:18px;padding:16px;display:inline-block;box-shadow:0 10px 26px rgba(168,80,104,0.3)">
         <div id="qrCardCode"></div>
       </div>
-      <div id="qrCardCustomerName" style="margin-top:18px;font-size:15px;font-weight:700;color:#fff"></div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.95);margin-top:8px;line-height:1.6;padding:0 6px">
+      <div style="font-size:12px;color:rgba(255,255,255,0.95);margin-top:20px;line-height:1.6;padding:0 6px">
         ⚠️ Link personale ed esclusivo.<br>Si attiva sul <b>primo</b> telefono che lo apre e non funzionerà più su altri dispositivi.
       </div>
       <div style="margin-top:16px;background:rgba(255,255,255,0.2);border-radius:14px;padding:14px;text-align:left;font-size:12px;color:#fff;line-height:1.75">
@@ -626,7 +625,6 @@ async function loadCustomers() {
 }
 function showQrCard(token, name) {
   const url = location.origin + '/o/' + token;
-  document.getElementById('qrCardCustomerName').textContent = name;
   document.getElementById('qrCardLinkText').textContent = url;
   const qrEl = document.getElementById('qrCardCode');
   qrEl.innerHTML = '';
