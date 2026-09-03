@@ -685,10 +685,34 @@ async function downloadQrCard() {
   try {
     const target = document.getElementById('qrCardArea');
     const canvas = await html2canvas(target, { scale: 3, backgroundColor: null, useCORS: true });
-    const link = document.createElement('a');
-    link.download = 'bella-italia-invito.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    if (!blob) throw new Error('生成图片失败');
+    const file = new File([blob], 'bella-italia-invito.png', { type: 'image/png' });
+
+    // 已添加到主屏幕的独立窗口模式下,<a download> 不会触发保存(会一闪而过),
+    // 优先用系统分享面板(里面有"存储图片"),这个在主屏幕独立窗口里也能正常用
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: 'Bella Italia' });
+        return;
+      } catch (shareErr) {
+        if (shareErr.name === 'AbortError') return; // 用户自己取消分享,不算失败
+        // 分享失败就往下走,用兜底方案
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (isStandalone) {
+      // 独立窗口模式下没有下载栏,打开新标签页让用户长按图片自己保存
+      window.open(url, '_blank');
+    } else {
+      const link = document.createElement('a');
+      link.download = 'bella-italia-invito.png';
+      link.href = url;
+      link.click();
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
   } catch (e) {
     alert('生成图片失败: ' + e.message);
   } finally {
