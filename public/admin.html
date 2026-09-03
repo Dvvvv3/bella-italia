@@ -241,6 +241,13 @@
     </div>
   </div>
 </div>
+<div id="qrCardImageOverlay" style="display:none;position:fixed;inset:0;background:rgba(20,10,14,0.92);z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:16px">
+  <img id="qrCardImageOverlayImg" style="max-width:92vw;max-height:65vh;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,0.5)">
+  <div style="color:#fff;font-size:14px;text-align:center;line-height:1.6">
+    👆 长按上面的图片,选择「存储图像」保存到相册
+  </div>
+  <button class="btn btn-ghost" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3)" onclick="closeQrImageOverlay()">关闭</button>
+</div>
 <div class="gate" id="custModal" style="display:none">
   <div class="modal-card">
     <h2 id="cust_title" style="margin:0 0 12px;font-size:16px"></h2>
@@ -723,15 +730,21 @@ function fallbackSave(blob) {
   const url = URL.createObjectURL(blob);
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
   if (isStandalone) {
-    // 独立窗口模式下没有下载栏,打开新标签页让用户长按图片自己保存
-    window.open(url, '_blank');
+    // 独立主屏幕窗口模式下没有下载栏、<a download> 也大概率不生效,
+    // 直接在当前弹窗里把图片显示出来,长按保存,不跳转页面
+    const overlay = document.getElementById('qrCardImageOverlay');
+    document.getElementById('qrCardImageOverlayImg').src = url;
+    overlay.style.display = 'flex';
   } else {
     const link = document.createElement('a');
     link.download = 'bella-italia-invito.png';
     link.href = url;
     link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
   }
-  setTimeout(() => URL.revokeObjectURL(url), 30000);
+}
+function closeQrImageOverlay() {
+  document.getElementById('qrCardImageOverlay').style.display = 'none';
 }
 async function resetDevice(token, name) {
   if (!confirm(`解绑「${name}」当前绑定的设备?\n链接本身不变,下一个打开这个链接的人会重新绑定。\n(适用于:客户换了新手机/清了浏览器数据打不开)`)) return;
