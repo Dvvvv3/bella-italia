@@ -667,7 +667,7 @@ async function loadCustomers() {
       </div>
     </div>`).join('')||'<p style="color:#888;font-size:13px">还没有客户</p>';
 }
-let qrCardBlobPromise = null;
+let qrCardBlob = null; // 缓存已经渲染好的图片(不是 Promise,是真正拿到手的 Blob)
 function showQrCard(token, name) {
   const url = location.origin + '/o/' + token;
   document.getElementById('qrCardLinkText').textContent = url;
@@ -679,54 +679,59 @@ function showQrCard(token, name) {
   qrEl.innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2 });
   document.getElementById('qrCardModal').style.display = 'flex';
   // 弹窗一打开就在后台先把图片渲染好、缓存起来,等用户真正点"保存图片"时
-  // 就能立刻调用系统分享,不会因为中间隔了渲染时间导致分享面板弹不出来
-  qrCardBlobPromise = renderQrCardBlob();
+  // 就能拿着现成的 Blob 同步调用系统分享 —— iOS Safari 要求分享必须是
+  // 点击事件里"同步"触发的,哪怕只隔一个 await 都可能导致分享面板弹不出来
+  qrCardBlob = null;
+  renderQrCardBlob().then(b => { qrCardBlob = b; });
 }
 function renderQrCardBlob() {
   const target = document.getElementById('qrCardArea');
   return html2canvas(target, { scale: 3, backgroundColor: null, useCORS: true })
     .then(canvas => new Promise(resolve => canvas.toBlob(resolve, 'image/png')));
 }
-async function downloadQrCard() {
+function downloadQrCard() {
   const btn = document.getElementById('qrCardDownloadBtn');
-  const originalText = btn.textContent;
-  btn.disabled = true;
-  try {
-    // 图片一般已经在弹窗打开时就渲染好了,这里通常是立即拿到,没有等待
-    let blob = qrCardBlobPromise ? await qrCardBlobPromise : null;
-    if (!blob) { btn.textContent = '生成中...'; blob = await renderQrCardBlob(); }
-    if (!blob) throw new Error('生成图片失败');
-    const file = new File([blob], 'bella-italia-invito.png', { type: 'image/png' });
-
-    // 已添加到主屏幕的独立窗口模式下,<a download> 不会触发保存(会一闪而过),
-    // 优先用系统分享面板(里面有"存储图片"),这个在主屏幕独立窗口里也能正常用
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try {
-        await navigator.share({ files: [file], title: 'Bella Italia' });
-        return;
-      } catch (shareErr) {
-        if (shareErr.name === 'AbortError') return; // 用户自己取消分享,不算失败
-        // 分享失败就往下走,用兜底方案
-      }
-    }
-
-    const url = URL.createObjectURL(blob);
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    if (isStandalone) {
-      // 独立窗口模式下没有下载栏,打开新标签页让用户长按图片自己保存
-      window.open(url, '_blank');
-    } else {
-      const link = document.createElement('a');
-      link.download = 'bella-italia-invito.png';
-      link.href = url;
-      link.click();
-    }
-    setTimeout(() => URL.revokeObjectURL(url), 30000);
-  } catch (e) {
-    alert('生成图片失败: ' + e.message);
-  } finally {
-    btn.textContent = originalText; btn.disabled = false;
+  if (qrCardBlob) {
+    // 图片已经提前渲染好了,这里全程同步执行,直接触发分享/下载
+    shareOrFallback(qrCardBlob, btn);
+    return;
   }
+  // 极少数情况:用户点太快,图片还没渲染完 —— 只能先等,
+  // 这种情况下 iOS 的分享面板可能弹不出来,会走长按保存的兜底方案
+  const originalText = btn.textContent;
+  btn.textContent = '生成中...'; btn.disabled = true;
+  renderQrCardBlob().then(blob => {
+    btn.textContent = originalText; btn.disabled = false;
+    if (!blob) { alert('生成图片失败'); return; }
+    shareOrFallback(blob, btn);
+  }).catch(e => { btn.textContent = originalText; btn.disabled = false; alert('生成图片失败: ' + e.message); });
+}
+function shareOrFallback(blob, btn) {
+  const file = new File([blob], 'bella-italia-invito.png', { type: 'image/png' });
+  // 已添加到主屏幕的独立窗口模式下,<a download> 不会触发保存(会一闪而过),
+  // 优先用系统分享面板(里面就有"存储图像"),一步到位不用长按
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    navigator.share({ files: [file], title: 'Bella Italia' }).catch(err => {
+      if (err && err.name === 'AbortError') return; // 用户自己取消,不算失败
+      fallbackSave(blob);
+    });
+    return;
+  }
+  fallbackSave(blob);
+}
+function fallbackSave(blob) {
+  const url = URL.createObjectURL(blob);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if (isStandalone) {
+    // 独立窗口模式下没有下载栏,打开新标签页让用户长按图片自己保存
+    window.open(url, '_blank');
+  } else {
+    const link = document.createElement('a');
+    link.download = 'bella-italia-invito.png';
+    link.href = url;
+    link.click();
+  }
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
 async function resetDevice(token, name) {
   if (!confirm(`解绑「${name}」当前绑定的设备?\n链接本身不变,下一个打开这个链接的人会重新绑定。\n(适用于:客户换了新手机/清了浏览器数据打不开)`)) return;
