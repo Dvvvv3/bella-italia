@@ -667,6 +667,7 @@ async function loadCustomers() {
       </div>
     </div>`).join('')||'<p style="color:#888;font-size:13px">还没有客户</p>';
 }
+let qrCardBlobPromise = null;
 function showQrCard(token, name) {
   const url = location.origin + '/o/' + token;
   document.getElementById('qrCardLinkText').textContent = url;
@@ -677,15 +678,23 @@ function showQrCard(token, name) {
   qr.make();
   qrEl.innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2 });
   document.getElementById('qrCardModal').style.display = 'flex';
+  // 弹窗一打开就在后台先把图片渲染好、缓存起来,等用户真正点"保存图片"时
+  // 就能立刻调用系统分享,不会因为中间隔了渲染时间导致分享面板弹不出来
+  qrCardBlobPromise = renderQrCardBlob();
+}
+function renderQrCardBlob() {
+  const target = document.getElementById('qrCardArea');
+  return html2canvas(target, { scale: 3, backgroundColor: null, useCORS: true })
+    .then(canvas => new Promise(resolve => canvas.toBlob(resolve, 'image/png')));
 }
 async function downloadQrCard() {
   const btn = document.getElementById('qrCardDownloadBtn');
   const originalText = btn.textContent;
-  btn.textContent = '生成中...'; btn.disabled = true;
+  btn.disabled = true;
   try {
-    const target = document.getElementById('qrCardArea');
-    const canvas = await html2canvas(target, { scale: 3, backgroundColor: null, useCORS: true });
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    // 图片一般已经在弹窗打开时就渲染好了,这里通常是立即拿到,没有等待
+    let blob = qrCardBlobPromise ? await qrCardBlobPromise : null;
+    if (!blob) { btn.textContent = '生成中...'; blob = await renderQrCardBlob(); }
     if (!blob) throw new Error('生成图片失败');
     const file = new File([blob], 'bella-italia-invito.png', { type: 'image/png' });
 
