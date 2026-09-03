@@ -2,15 +2,16 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>后台管理 · BELLA ITALIA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
 <script src="/js/qrcode.min.js"></script>
+<script src="/js/html2canvas.min.js"></script>
 <style>
   :root { --ink: #2a2a2a; --line: #e2ddd4; --bg: #faf8f4; --card: #fff; --accent: #a85068; --accent-soft: #f7dde3; --ok: #3f6b4f; --danger: #b23a2e; }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; touch-action: manipulation; }
   header { padding: 16px 18px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
   header h1 { font-size: 17px; margin: 0; }
   header .status { font-size: 12px; color: #888; }
@@ -54,11 +55,6 @@
   .modal-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px; width: 90%; max-width: 440px; max-height: 85vh; overflow-y: auto; }
   .profile-row { font-size: 13px; line-height: 1.8; }
   .profile-row b { color: #555; font-weight: 500; }
-  @media print {
-    body * { visibility: hidden; }
-    #qrCardPrintArea, #qrCardPrintArea * { visibility: visible; }
-    #qrCardPrintArea { position: fixed; top: 0; left: 0; width: 100%; margin: 0; border-radius: 0; }
-  }
 </style>
 </head>
 <body>
@@ -223,7 +219,7 @@
 </div>
 <div class="gate" id="qrCardModal" style="display:none">
   <div class="gate-card" style="max-width:380px;padding:0;background:transparent;border:none;box-shadow:none">
-    <div id="qrCardPrintArea" style="background:linear-gradient(160deg,#f7dde3,#eec3cf 55%,#cf7e93);border-radius:24px;padding:32px 26px;text-align:center;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif">
+    <div id="qrCardArea" style="background:linear-gradient(160deg,#f7dde3,#eec3cf 55%,#cf7e93);border-radius:24px;padding:32px 26px;text-align:center;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif">
       <div style="font-family:'Cormorant Garamond',serif;font-weight:700;font-size:32px;color:#fff;letter-spacing:1.5px;line-height:1.1;text-shadow:0 2px 8px rgba(168,80,104,0.25)">BELLA ITALIA</div>
       <div style="font-size:11px;color:rgba(255,255,255,0.9);letter-spacing:3px;margin-top:4px;margin-bottom:22px">WHOLESALE COSMETICS</div>
       <div style="background:#fff;border-radius:18px;padding:16px;display:inline-block;box-shadow:0 10px 26px rgba(168,80,104,0.3)">
@@ -241,7 +237,7 @@
     </div>
     <div class="actions" style="justify-content:center;margin-top:14px">
       <button class="btn btn-ghost" onclick="document.getElementById('qrCardModal').style.display='none'">关闭</button>
-      <button class="btn btn-primary" onclick="window.print()">🖨️ 打印/保存图片</button>
+      <button class="btn btn-primary" id="qrCardDownloadBtn" onclick="downloadQrCard()">💾 保存图片</button>
     </div>
   </div>
 </div>
@@ -681,6 +677,23 @@ function showQrCard(token, name) {
   qr.make();
   qrEl.innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2 });
   document.getElementById('qrCardModal').style.display = 'flex';
+}
+async function downloadQrCard() {
+  const btn = document.getElementById('qrCardDownloadBtn');
+  const originalText = btn.textContent;
+  btn.textContent = '生成中...'; btn.disabled = true;
+  try {
+    const target = document.getElementById('qrCardArea');
+    const canvas = await html2canvas(target, { scale: 3, backgroundColor: null, useCORS: true });
+    const link = document.createElement('a');
+    link.download = 'bella-italia-invito.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch (e) {
+    alert('生成图片失败: ' + e.message);
+  } finally {
+    btn.textContent = originalText; btn.disabled = false;
+  }
 }
 async function resetDevice(token, name) {
   if (!confirm(`解绑「${name}」当前绑定的设备?\n链接本身不变,下一个打开这个链接的人会重新绑定。\n(适用于:客户换了新手机/清了浏览器数据打不开)`)) return;
