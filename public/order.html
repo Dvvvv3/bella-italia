@@ -112,6 +112,22 @@
     z-index: 2;
     white-space: nowrap;
   }
+
+  /* 分类进入/返回的侧滑转场(仅在支持 View Transitions API 的浏览器生效,
+     不支持的旧机型会自动优雅降级成直接切换,不会报错) */
+  @keyframes va-slide-in-right { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  @keyframes va-slide-out-right { from { transform: translateX(0); } to { transform: translateX(100%); } }
+  ::view-transition-group(root) { animation-duration: 0.32s; }
+  html.nav-forward::view-transition-old(root) { animation: none; }
+  html.nav-forward::view-transition-new(root) {
+    animation: va-slide-in-right 0.32s cubic-bezier(.4,0,.2,1) both;
+    z-index: 2;
+  }
+  html.nav-back::view-transition-old(root) {
+    animation: va-slide-out-right 0.32s cubic-bezier(.4,0,.2,1) both;
+    z-index: 2;
+  }
+  html.nav-back::view-transition-new(root) { animation: none; }
   .product img {
     width: 100px; height: 100px;
     object-fit: cover;
@@ -623,6 +639,18 @@ let currentView = 'cats'; // 'cats' | 'products'
 let currentCat = null;
 let catsScrollY = 0; // 记住浏览分类列表时滚动到的位置,退出分类详情后恢复到这里
 
+// 用户主动点击"进入分类"/"返回"时才走这个带侧滑动画的包装,
+// 语言切换、首次加载等程序内部刷新继续直接调 openCat()/renderCats(),不带动画
+function withNavTransition(direction, fn) {
+  if (!document.startViewTransition) { fn(); return; }
+  document.documentElement.classList.remove('nav-forward', 'nav-back');
+  document.documentElement.classList.add(direction);
+  const t = document.startViewTransition(fn);
+  t.finished.finally(() => document.documentElement.classList.remove('nav-forward', 'nav-back'));
+}
+function navOpenCat(id, name) { withNavTransition('nav-forward', () => openCat(id, name)); }
+function navBackToCats() { withNavTransition('nav-back', () => renderCats()); }
+
 // 取某个分类下要展示的商品: 如果这个分类被标记为 "New Arrivals 虚拟文件夹",
 // 就按商品自己的 is_new_arrival 标记来找(商品还留在自己原来的分类里);
 // 普通分类照旧按 category_id 匹配
@@ -657,7 +685,7 @@ function renderCats() {
     const cardStyle = isNewArrivals
       ? "display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#fff8ee,#fdeee3);border:1.5px solid var(--gold);border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 3px 12px rgba(198,161,91,0.25);cursor:pointer;position:relative"
       : "display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #f0e6ea;border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 2px 8px rgba(207,126,147,0.08);cursor:pointer";
-    return `<div onclick="openCat(${c.id}, '${c.name.replace(/'/g,"")}')" style="${cardStyle}">
+    return `<div onclick="navOpenCat(${c.id}, '${c.name.replace(/'/g,"")}')" style="${cardStyle}">
       ${isNewArrivals ? `<div class="new-badge" style="top:-6px;left:8px">✨ NEW</div>` : ''}
       ${imgHTML}
       <div style="flex:1">
@@ -681,7 +709,7 @@ function openCat(id, name) {
   const cat = CATEGORIES.find(c => String(c.id) === String(id));
   const filtered = cat ? productsForCategory(cat) : PRODUCTS.filter(p => String(p.category_id) === String(id));
   main.innerHTML = `
-    <div onclick="renderCats()" style="position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:8px;padding-top:max(12px, env(safe-area-inset-top));padding-bottom:12px;padding-left:4px;padding-right:4px;cursor:pointer;color:#a85068;font-size:14px;font-weight:500;background:var(--cream);backdrop-filter:blur(6px)">
+    <div onclick="navBackToCats()" style="position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:8px;padding-top:max(12px, env(safe-area-inset-top));padding-bottom:12px;padding-left:4px;padding-right:4px;cursor:pointer;color:#a85068;font-size:14px;font-weight:500;background:var(--cream);backdrop-filter:blur(6px)">
       ‹ <span>${I18N.t('o_all')}</span>
     </div>
     <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#a85068;margin-bottom:12px">${name}</div>
