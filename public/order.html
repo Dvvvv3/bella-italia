@@ -96,6 +96,21 @@
     padding: 13px;
     margin-bottom: 12px;
     box-shadow: 0 2px 10px rgba(207,126,147,0.08);
+    position: relative;
+  }
+  .product-img-wrap { position: relative; flex-shrink: 0; }
+  .new-badge {
+    position: absolute; top: -6px; left: -6px;
+    background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+    color: #fff;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 3px 7px;
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(168,80,104,0.35);
+    z-index: 2;
+    white-space: nowrap;
   }
   .product img {
     width: 100px; height: 100px;
@@ -638,10 +653,15 @@ function renderCats() {
     const imgHTML = imgSrc
       ? `<img src="${imgSrc}" style="width:88px;height:88px;object-fit:cover;border-radius:14px;flex-shrink:0">`
       : `<div style="width:88px;height:88px;border-radius:14px;background:linear-gradient(135deg,#f7dde3,#eec3cf);flex-shrink:0"></div>`;
-    return `<div onclick="openCat(${c.id}, '${c.name.replace(/'/g,"")}')" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #f0e6ea;border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 2px 8px rgba(207,126,147,0.08);cursor:pointer">
+    const isNewArrivals = !!c.show_new_arrivals;
+    const cardStyle = isNewArrivals
+      ? "display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#fff8ee,#fdeee3);border:1.5px solid var(--gold);border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 3px 12px rgba(198,161,91,0.25);cursor:pointer;position:relative"
+      : "display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #f0e6ea;border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 2px 8px rgba(207,126,147,0.08);cursor:pointer";
+    return `<div onclick="openCat(${c.id}, '${c.name.replace(/'/g,"")}')" style="${cardStyle}">
+      ${isNewArrivals ? `<div class="new-badge" style="top:-6px;left:8px">✨ NEW</div>` : ''}
       ${imgHTML}
       <div style="flex:1">
-        <div style="font-weight:600;font-size:15px">${c.name}</div>
+        <div style="font-weight:600;font-size:15px">${isNewArrivals ? '✨ ' : ''}${c.name}</div>
         <div style="font-size:12px;color:#aaa;margin-top:2px">${inCat.length} ${I18N.t('o_articles')}</div>
       </div>
       <div style="color:#cf7e93;font-size:18px">›</div>
@@ -672,9 +692,13 @@ function openCat(id, name) {
 
 function productCard(p) {
   const pack = packSize(p.unit);
+  const newBadge = p.is_new_arrival ? `<div class="new-badge">✨ NEW</div>` : '';
   return `
     <div class="product">
-      <img src="${p.image || 'https://placehold.co/160x160'}" alt="" onclick="event.stopPropagation();zoomImage('${(p.image || 'https://placehold.co/800x800').replace(/'/g, '')}', '${p.name.replace(/'/g, '')}')">
+      <div class="product-img-wrap">
+        ${newBadge}
+        <img src="${p.image || 'https://placehold.co/160x160'}" alt="" onclick="event.stopPropagation();zoomImage('${(p.image || 'https://placehold.co/800x800').replace(/'/g, '')}', '${p.name.replace(/'/g, '')}')">
+      </div>
       <div class="product-info">
         <div class="product-name">${p.name}</div>
         <div class="product-unit">${pack} pz/confezione</div>
