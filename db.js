@@ -73,11 +73,21 @@ if (!productCols.includes('barcode')) {
 if (!productCols.includes('active')) {
   db.exec(`ALTER TABLE products ADD COLUMN active INTEGER DEFAULT 1`);
 }
+// New Arrivals 标记: 独立于分类归属,一个商品可以正常挂在自己的分类下,
+// 同时也被打上"加入 New Arrivals"的标记,在 New Arrivals 文件夹里额外展示
+if (!productCols.includes('is_new_arrival')) {
+  db.exec(`ALTER TABLE products ADD COLUMN is_new_arrival INTEGER DEFAULT 0`);
+}
 
 // 分类封面图片字段迁移
 const catCols = db.prepare("PRAGMA table_info(categories)").all().map(c => c.name);
 if (!catCols.includes('image')) {
   db.exec('ALTER TABLE categories ADD COLUMN image TEXT');
+}
+// 标记"这个分类是 New Arrivals 虚拟文件夹":打开它时不按 category_id 找商品,
+// 而是显示所有被标记 is_new_arrival 的商品(商品还留在自己原来的分类里)
+if (!catCols.includes('show_new_arrivals')) {
+  db.exec('ALTER TABLE categories ADD COLUMN show_new_arrivals INTEGER DEFAULT 0');
 }
 
 const custCols = db.prepare("PRAGMA table_info(customers)").all().map(c => c.name);

@@ -608,6 +608,16 @@ let currentView = 'cats'; // 'cats' | 'products'
 let currentCat = null;
 let catsScrollY = 0; // 记住浏览分类列表时滚动到的位置,退出分类详情后恢复到这里
 
+// 取某个分类下要展示的商品: 如果这个分类被标记为 "New Arrivals 虚拟文件夹",
+// 就按商品自己的 is_new_arrival 标记来找(商品还留在自己原来的分类里);
+// 普通分类照旧按 category_id 匹配
+function productsForCategory(c) {
+  if (c.show_new_arrivals) {
+    return PRODUCTS.filter(p => Number(p.is_new_arrival) === 1);
+  }
+  return PRODUCTS.filter(p => String(p.category_id) === String(c.id));
+}
+
 function renderCats() {
   currentView = 'cats';
   document.getElementById('pageHeader').style.display = '';
@@ -620,7 +630,7 @@ function renderCats() {
     return;
   }
   main.innerHTML = CATEGORIES.map(c => {
-    const inCat = PRODUCTS.filter(p => String(p.category_id) === String(c.id));
+    const inCat = productsForCategory(c);
     if (inCat.length === 0) return '';
     const imgSrc = c.image && !c.image.includes('placehold') ? c.image : '';
     const imgHTML = imgSrc
@@ -646,7 +656,8 @@ function openCat(id, name) {
   document.getElementById('infoBanner').style.display = 'none';
   document.getElementById('ivaNote').style.display = 'none';
   const main = document.getElementById('mainView');
-  const filtered = PRODUCTS.filter(p => String(p.category_id) === String(id));
+  const cat = CATEGORIES.find(c => String(c.id) === String(id));
+  const filtered = cat ? productsForCategory(cat) : PRODUCTS.filter(p => String(p.category_id) === String(id));
   main.innerHTML = `
     <div onclick="renderCats()" style="position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:8px;padding-top:max(12px, env(safe-area-inset-top));padding-bottom:12px;padding-left:4px;padding-right:4px;cursor:pointer;color:#a85068;font-size:14px;font-weight:500;background:var(--cream);backdrop-filter:blur(6px)">
       ‹ <span>${I18N.t('o_all')}</span>

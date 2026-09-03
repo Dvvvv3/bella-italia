@@ -100,6 +100,16 @@ app.put('/api/admin/products/:id/toggle-active', requireAdmin, (req, res) => {
   res.json({ ok: true, active: next });
 });
 
+// 加入/移出 New Arrivals —— 跟商品原本的分类归属完全独立,
+// 一个商品可以照常挂在自己的分类下,同时也在 New Arrivals 文件夹里额外展示
+app.put('/api/admin/products/:id/toggle-new-arrival', requireAdmin, (req, res) => {
+  const p = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
+  if (!p) return res.status(404).json({ error: '商品不存在' });
+  const next = p.is_new_arrival ? 0 : 1;
+  db.prepare('UPDATE products SET is_new_arrival = ? WHERE id = ?').run(next, req.params.id);
+  res.json({ ok: true, is_new_arrival: next });
+});
+
 // 修改商品编号(相当于给这条记录换主键),同时把历史订单里的关联记录也一并改掉,
 // 不然老订单打印/查询时会因为找不到旧编号对应的商品而丢失图片/条码等信息
 app.put('/api/admin/products/:id/rename', requireAdmin, (req, res) => {
@@ -152,10 +162,10 @@ app.get('/api/customer/:token', requireBoundDevice, (req, res) => {
   const cats = db.prepare('SELECT * FROM categories ORDER BY sort_order, id').all();
   const products = db.prepare('SELECT * FROM products WHERE active = 1 OR active IS NULL').all().map(p => ({
     id: p.id, name: p.name, unit: p.unit, image: p.image, stock: p.stock,
-    price: p.price, category_id: p.category_id,
+    price: p.price, category_id: p.category_id, is_new_arrival: p.is_new_arrival,
   }));
   res.json({ needProfile: false, customer: { name: customer.name, tier: customer.tier, ragione_sociale: customer.ragione_sociale, piva: customer.piva },
-    categories: cats.map(c => ({ id: c.id, code: c.code, name: c.name, image: c.image||'' })), products });
+    categories: cats.map(c => ({ id: c.id, code: c.code, name: c.name, image: c.image||'', show_new_arrivals: c.show_new_arrivals })), products });
 });
 
 app.post('/api/customer/:token/profile', requireBoundDevice, (req, res) => {
@@ -286,14 +296,18 @@ app.get('/api/admin/categories', requireAdmin, (req, res) => {
   res.json(db.prepare('SELECT * FROM categories ORDER BY sort_order, id').all());
 });
 app.post('/api/admin/categories', requireAdmin, (req, res) => {
-  const { code, name, sort_order, image } = req.body;
+  const { code, name, sort_order, image, show_new_arrivals } = req.body;
   if (!name) return res.status(400).json({ error: '缺少分类名称' });
-  db.prepare('INSERT INTO categories (code, name, sort_order, image) VALUES (?, ?, ?, ?)').run((code||'').trim(), name.trim(), Number(sort_order)||0, (image||'').trim());
+  if (show_new_arrivals) db.prepare('UPDATE categories SET show_new_arrivals = 0').run();
+  db.prepare('INSERT INTO categories (code, name, sort_order, image, show_new_arrivals) VALUES (?, ?, ?, ?, ?)')
+    .run((code||'').trim(), name.trim(), Number(sort_order)||0, (image||'').trim(), show_new_arrivals ? 1 : 0);
   res.json({ ok: true });
 });
 app.put('/api/admin/categories/:id', requireAdmin, (req, res) => {
-  const { code, name, sort_order, image } = req.body;
-  db.prepare('UPDATE categories SET code=?, name=?, sort_order=?, image=? WHERE id=?').run((code||'').trim(), name.trim(), Number(sort_order)||0, (image||'').trim(), req.params.id);
+  const { code, name, sort_order, image, show_new_arrivals } = req.body;
+  if (show_new_arrivals) db.prepare('UPDATE categories SET show_new_arrivals = 0 WHERE id != ?').run(req.params.id);
+  db.prepare('UPDATE categories SET code=?, name=?, sort_order=?, image=?, show_new_arrivals=? WHERE id=?')
+    .run((code||'').trim(), name.trim(), Number(sort_order)||0, (image||'').trim(), show_new_arrivals ? 1 : 0, req.params.id);
   res.json({ ok: true });
 });
 app.delete('/api/admin/categories/:id', requireAdmin, (req, res) => {
@@ -307,21 +321,21 @@ app.get('/api/admin/products', requireAdmin, (req, res) => {
 });
 
 app.post('/api/admin/products', requireAdmin, (req, res) => {
-  const { id, name, name_cn, barcode, unit, image, stock, price, category_id } = req.body;
+  const { id, name, name_cn, barcode, unit, image, stock, price, category_id, is_new_arrival } = req.body;
   if (!id || !name) return res.status(400).json({ error: '缺少商品编号或名称' });
   db.prepare(
-    `INSERT INTO products (id, name, name_cn, barcode, unit, image, stock, price, category_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  ).run(id, name, (name_cn||'').trim(), (barcode||'').trim(), unit || '', image || '', Number(stock) || 0, Number(price) || 0, category_id || null);
+    `INSERT INTO products (id, name, name_cn, barcode, unit, image, stock, price, category_id, is_new_arrival) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).run(id, name, (name_cn||'').trim(), (barcode||'').trim(), unit || '', image || '', Number(stock) || 0, Number(price) || 0, category_id || null, is_new_arrival ? 1 : 0);
   res.json({ ok: true });
 });
 
 app.put('/api/admin/products/:id', requireAdmin, (req, res) => {
-  const { name, name_cn, barcode, unit, image, stock, price, category_id } = req.body;
+  const { name, name_cn, barcode, unit, image, stock, price, category_id, is_new_arrival } = req.body;
   const exists = db.prepare('SELECT id FROM products WHERE id = ?').get(req.params.id);
   if (!exists) return res.status(404).json({ error: '商品不存在' });
   db.prepare(
-    `UPDATE products SET name=?, name_cn=?, barcode=?, unit=?, image=?, stock=?, price=?, category_id=? WHERE id=?`
-  ).run(name, (name_cn||'').trim(), (barcode||'').trim(), unit, image, Number(stock) || 0, Number(price) || 0, category_id || null, req.params.id);
+    `UPDATE products SET name=?, name_cn=?, barcode=?, unit=?, image=?, stock=?, price=?, category_id=?, is_new_arrival=? WHERE id=?`
+  ).run(name, (name_cn||'').trim(), (barcode||'').trim(), unit, image, Number(stock) || 0, Number(price) || 0, category_id || null, is_new_arrival ? 1 : 0, req.params.id);
   res.json({ ok: true });
 });
 
