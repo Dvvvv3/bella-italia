@@ -219,34 +219,12 @@
 </div>
 <div class="gate" id="qrCardModal" style="display:none">
   <div class="gate-card" style="max-width:380px;padding:0;background:transparent;border:none;box-shadow:none">
-    <div id="qrCardArea" style="background:linear-gradient(160deg,#f7dde3,#eec3cf 55%,#cf7e93);border-radius:24px;padding:32px 26px;text-align:center;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif">
-      <div style="font-family:'Cormorant Garamond',serif;font-weight:700;font-size:32px;color:#fff;letter-spacing:1.5px;line-height:1.1;text-shadow:0 2px 8px rgba(168,80,104,0.25)">BELLA ITALIA</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.9);letter-spacing:3px;margin-top:4px;margin-bottom:22px">WHOLESALE COSMETICS</div>
-      <div style="background:#fff;border-radius:18px;padding:16px;display:inline-block;box-shadow:0 10px 26px rgba(168,80,104,0.3)">
-        <div id="qrCardCode"></div>
-      </div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.95);margin-top:20px;line-height:1.6;padding:0 6px">
-        ⚠️ Link personale ed esclusivo.<br>Si attiva sul <b>primo</b> telefono che lo apre e non funzionerà più su altri dispositivi.
-      </div>
-      <div style="margin-top:16px;background:rgba(255,255,255,0.2);border-radius:14px;padding:14px;text-align:left;font-size:12px;color:#fff;line-height:1.75">
-        <b>📲 Dopo aver aperto il link, aggiungilo alla Home:</b><br>
-        <b>iPhone</b> → tocca <b>Condividi</b> (icona □↑) → <b>Aggiungi a Home</b><br>
-        <b>Android</b> → tocca <b>⋮</b> in alto a destra → <b>Aggiungi a schermata Home</b>
-      </div>
-      <div id="qrCardLinkText" class="mono" style="margin-top:14px;font-size:10.5px;color:rgba(255,255,255,0.85);word-break:break-all"></div>
-    </div>
+    <div id="qrCardWrap"></div>
+    <div id="qrCardHint" style="text-align:center;font-size:12.5px;color:#a87a00;margin-top:10px;display:none">👆 长按上面的图片,选择「存储图像」保存到相册</div>
     <div class="actions" style="justify-content:center;margin-top:14px">
       <button class="btn btn-ghost" onclick="document.getElementById('qrCardModal').style.display='none'">关闭</button>
-      <button class="btn btn-primary" id="qrCardDownloadBtn" onclick="downloadQrCard()">💾 保存图片</button>
     </div>
   </div>
-</div>
-<div id="qrCardImageOverlay" style="display:none;position:fixed;inset:0;background:rgba(20,10,14,0.92);z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:16px">
-  <img id="qrCardImageOverlayImg" style="max-width:92vw;max-height:65vh;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,0.5)">
-  <div style="color:#fff;font-size:14px;text-align:center;line-height:1.6">
-    👆 长按上面的图片,选择「存储图像」保存到相册
-  </div>
-  <button class="btn btn-ghost" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3)" onclick="closeQrImageOverlay()">关闭</button>
 </div>
 <div class="gate" id="custModal" style="display:none">
   <div class="modal-card">
@@ -675,7 +653,25 @@ async function loadCustomers() {
     </div>`).join('')||'<p style="color:#888;font-size:13px">还没有客户</p>';
 }
 let qrCardBlob = null; // 缓存已经渲染好的图片(不是 Promise,是真正拿到手的 Blob)
+const QR_CARD_TEMPLATE = `
+    <div id="qrCardArea" style="background:linear-gradient(160deg,#f7dde3,#eec3cf 55%,#cf7e93);border-radius:24px;padding:32px 26px;text-align:center;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif">
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:700;font-size:32px;color:#fff;letter-spacing:1.5px;line-height:1.1;text-shadow:0 2px 8px rgba(168,80,104,0.25)">BELLA ITALIA</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.9);letter-spacing:3px;margin-top:4px;margin-bottom:22px">WHOLESALE COSMETICS</div>
+      <div style="background:#fff;border-radius:18px;padding:16px;display:inline-block;box-shadow:0 10px 26px rgba(168,80,104,0.3)">
+        <div id="qrCardCode"></div>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.95);margin-top:20px;line-height:1.6;padding:0 6px">
+        ⚠️ Link personale ed esclusivo.<br>Si attiva sul <b>primo</b> telefono che lo apre e non funzionerà più su altri dispositivi.
+      </div>
+      <div style="margin-top:16px;background:rgba(255,255,255,0.2);border-radius:14px;padding:14px;text-align:left;font-size:12px;color:#fff;line-height:1.75">
+        <b>📲 Dopo aver aperto il link, aggiungilo alla Home:</b><br>
+        <b>iPhone</b> → tocca <b>Condividi</b> (icona □↑) → <b>Aggiungi a Home</b><br>
+        <b>Android</b> → tocca <b>⋮</b> in alto a destra → <b>Aggiungi a schermata Home</b>
+      </div>
+      <div id="qrCardLinkText" class="mono" style="margin-top:14px;font-size:10.5px;color:rgba(255,255,255,0.85);word-break:break-all"></div>
+    </div>`;
 function showQrCard(token, name) {
+  document.getElementById('qrCardWrap').innerHTML = QR_CARD_TEMPLATE;
   const url = location.origin + '/o/' + token;
   document.getElementById('qrCardLinkText').textContent = url;
   const qrEl = document.getElementById('qrCardCode');
@@ -685,66 +681,21 @@ function showQrCard(token, name) {
   qr.make();
   qrEl.innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2 });
   document.getElementById('qrCardModal').style.display = 'flex';
-  // 弹窗一打开就在后台先把图片渲染好、缓存起来,等用户真正点"保存图片"时
-  // 就能拿着现成的 Blob 同步调用系统分享 —— iOS Safari 要求分享必须是
-  // 点击事件里"同步"触发的,哪怕只隔一个 await 都可能导致分享面板弹不出来
-  qrCardBlob = null;
-  renderQrCardBlob().then(b => { qrCardBlob = b; });
+  document.getElementById('qrCardHint').style.display = 'none';
+  // 弹窗一打开就自动把卡片渲染成一张真正的图片替换掉原来的 HTML,
+  // 不用再多点一次"保存图片",直接长按这张图就能存到相册/相片
+  renderQrCardToImage();
 }
-function renderQrCardBlob() {
-  const target = document.getElementById('qrCardArea');
-  return html2canvas(target, { scale: 3, backgroundColor: null, useCORS: true })
-    .then(canvas => new Promise(resolve => canvas.toBlob(resolve, 'image/png')));
-}
-function downloadQrCard() {
-  const btn = document.getElementById('qrCardDownloadBtn');
-  if (qrCardBlob) {
-    // 图片已经提前渲染好了,这里全程同步执行,直接触发分享/下载
-    shareOrFallback(qrCardBlob, btn);
-    return;
-  }
-  // 极少数情况:用户点太快,图片还没渲染完 —— 只能先等,
-  // 这种情况下 iOS 的分享面板可能弹不出来,会走长按保存的兜底方案
-  const originalText = btn.textContent;
-  btn.textContent = '生成中...'; btn.disabled = true;
-  renderQrCardBlob().then(blob => {
-    btn.textContent = originalText; btn.disabled = false;
-    if (!blob) { alert('生成图片失败'); return; }
-    shareOrFallback(blob, btn);
-  }).catch(e => { btn.textContent = originalText; btn.disabled = false; alert('生成图片失败: ' + e.message); });
-}
-function shareOrFallback(blob, btn) {
-  const file = new File([blob], 'bella-italia-invito.png', { type: 'image/png' });
-  // 已添加到主屏幕的独立窗口模式下,<a download> 不会触发保存(会一闪而过),
-  // 优先用系统分享面板(里面就有"存储图像"),一步到位不用长按
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    navigator.share({ files: [file], title: 'Bella Italia' }).catch(err => {
-      if (err && err.name === 'AbortError') return; // 用户自己取消,不算失败
-      fallbackSave(blob);
-    });
-    return;
-  }
-  fallbackSave(blob);
-}
-function fallbackSave(blob) {
-  const url = URL.createObjectURL(blob);
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-  if (isStandalone) {
-    // 独立主屏幕窗口模式下没有下载栏、<a download> 也大概率不生效,
-    // 直接在当前弹窗里把图片显示出来,长按保存,不跳转页面
-    const overlay = document.getElementById('qrCardImageOverlay');
-    document.getElementById('qrCardImageOverlayImg').src = url;
-    overlay.style.display = 'flex';
-  } else {
-    const link = document.createElement('a');
-    link.download = 'bella-italia-invito.png';
-    link.href = url;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 30000);
-  }
-}
-function closeQrImageOverlay() {
-  document.getElementById('qrCardImageOverlay').style.display = 'none';
+function renderQrCardToImage() {
+  const area = document.getElementById('qrCardArea');
+  html2canvas(area, { scale: 3, backgroundColor: null, useCORS: true }).then(canvas => {
+    canvas.toBlob(blob => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      area.outerHTML = `<img id="qrCardArea" src="${url}" style="width:100%;display:block;border-radius:24px;box-shadow:0 10px 26px rgba(168,80,104,0.25)">`;
+      document.getElementById('qrCardHint').style.display = 'block';
+    }, 'image/png');
+  }).catch(e => console.error('渲染邀请卡失败', e));
 }
 async function resetDevice(token, name) {
   if (!confirm(`解绑「${name}」当前绑定的设备?\n链接本身不变,下一个打开这个链接的人会重新绑定。\n(适用于:客户换了新手机/清了浏览器数据打不开)`)) return;
