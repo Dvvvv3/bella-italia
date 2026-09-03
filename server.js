@@ -525,7 +525,7 @@ app.get('/api/admin/orders/:id/print', requireAdminViaQuery, (req, res) => {
     <div class="doc-box">
       <div class="doc-label">Documento</div>
       <div class="doc-num">#${order.id.slice(0,8)}</div>
-      <div class="doc-date">${new Date(order.created_at).toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'})}</div>
+      <div class="doc-date">${new Date(order.created_at).toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric',timeZone:'Europe/Rome'})}</div>
     </div>
   </div>
 
