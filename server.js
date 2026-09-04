@@ -28,6 +28,12 @@ function parseCookies(req) {
   return out;
 }
 const DEVICE_COOKIE_MAXAGE = 10 * 365 * 24 * 3600; // 10年,基本相当于永久
+// 识别常见的链接预览抓取机器人(WhatsApp/FB/Telegram等),避免它们抢先"激活"客户链接
+function isLinkPreviewBot(userAgent) {
+  if (!userAgent) return false;
+  const bots = /WhatsApp|facebookexternalhit|Facebot|TelegramBot|Twitterbot|LinkedInBot|Slackbot|Discordbot|SkypeUriPreview|Iframely|redditbot|vkShare|Pinterest|W3C_Validator/i;
+  return bots.test(userAgent);
+}
 
 // 校验"该链接是否已绑定到别的设备"。用在客户 API 上,防止链接激活后被直接用 API 绕过页面
 function requireBoundDevice(req, res, next) {
@@ -252,6 +258,11 @@ app.get('/o/:token', (req, res) => {
   const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(token);
   if (!customer) {
     return res.status(404).sendFile(path.join(__dirname, 'public', 'link-expired.html'));
+  }
+
+  // 链接预览机器人(WhatsApp/FB/Telegram等):只给它看页面,不触碰设备绑定状态
+  if (isLinkPreviewBot(req.headers['user-agent'])) {
+    return res.sendFile(path.join(__dirname, 'public', 'order.html'));
   }
 
   const cookies = parseCookies(req);
