@@ -605,6 +605,32 @@ let CATEGORIES = [];
 const cart = {};
 let deliveryMode = null;
 
+// ---------------------------------------------------------------------------
+// 购物车持久化: 按客户 token 存到 localStorage,刷新页面/退出重进都能恢复
+// ---------------------------------------------------------------------------
+const CART_STORAGE_KEY = 'bi_cart_' + token;
+
+function saveCart() {
+  try {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  } catch (e) { /* 隐私模式等场景 localStorage 不可用时静默忽略,不影响下单 */ }
+}
+
+function loadCart() {
+  try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (saved && typeof saved === 'object') {
+      Object.keys(saved).forEach(id => { cart[id] = saved[id]; });
+    }
+  } catch (e) { /* 存储内容损坏就当没保存过 */ }
+}
+
+function clearSavedCart() {
+  try { localStorage.removeItem(CART_STORAGE_KEY); } catch (e) {}
+}
+
 function openDeliveryModal() {
   if (document.getElementById('deliveryOverlay')) return;
   const ov = document.createElement('div');
@@ -752,6 +778,7 @@ function updateCartUI(id) {
   const input = getQtyInput(id);
   if (input) input.value = cart[id] || 0;
   updateTotals();
+  saveCart();
   if (document.getElementById('cartOverlay')) renderCartList();
   if (document.getElementById('searchOverlay')) renderSearchResults(document.getElementById('searchInput').value);
 }
@@ -952,6 +979,7 @@ function removeFromCart(id) {
   const input = getQtyInput(id);
   if (input) input.value = 0;
   updateTotals();
+  saveCart();
   renderCartList();
 }
 
@@ -1024,6 +1052,8 @@ async function submitOrder() {
       btn.disabled = false; btn.textContent = originalText;
       return;
     }
+    Object.keys(cart).forEach(id => delete cart[id]);
+    clearSavedCart();
     showSuccess(data);
   } catch (e) {
     toast(I18N.t('o_error_network'));
@@ -1072,7 +1102,9 @@ async function load() {
     document.getElementById('customerName').textContent = displayLine;
     PRODUCTS = data.products;
     CATEGORIES = data.categories || [];
+    loadCart();
     renderCats();
+    updateTotals();
   } catch (e) {
     document.getElementById('customerName').textContent = I18N.t('o_loading_error');
   }
