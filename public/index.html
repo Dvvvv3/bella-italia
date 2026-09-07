@@ -11,14 +11,14 @@
 <script src="/js/i18n.js"></script>
 <style>
   :root{
-    --plum:#121212;
-    --plum-soft:#1E1E1E;
-    --ivory:#F4F2F5;
-    --rose:#7C6F82;
-    --gold:#A89AAF;
-    --blush:#C9BFCE;
-    --muted:rgba(244,242,245,.55);
-    --muted-dark:rgba(18,18,18,.72);
+    --plum:#1C1719;
+    --plum-soft:#2A2325;
+    --ivory:#F7F1F2;
+    --rose:#B96B80;
+    --gold:#E89AAF;
+    --blush:#F0C9D3;
+    --muted:rgba(247,241,242,.55);
+    --muted-dark:rgba(28,23,25,.72);
     --maxw:1240px;
   }
   *{box-sizing:border-box}
@@ -47,7 +47,7 @@
   }
   .btn:hover::before{left:130%}
   .btn-solid{background:var(--gold);color:var(--plum)}
-  .btn-solid:hover{background:var(--ivory);box-shadow:0 10px 34px -8px rgba(168,154,175,.55)}
+  .btn-solid:hover{background:var(--ivory);box-shadow:0 10px 34px -8px rgba(232,154,175,.55)}
   .btn-big{padding:20px 46px;font-size:14.5px}
   .btn:active{transform:translateY(1px)}
   @media (hover:none){.btn::before{display:none}}
@@ -56,9 +56,9 @@
   .nav{
     position:fixed;top:0;left:0;right:0;z-index:50;
     display:flex;align-items:center;justify-content:space-between;
-    padding:18px 28px;background:rgba(18,18,18,0);transition:background .4s,padding .4s;
+    padding:18px 28px;background:rgba(28,23,25,0);transition:background .4s,padding .4s;
   }
-  .nav.solid{background:rgba(18,18,18,.95);backdrop-filter:blur(10px);padding:13px 28px;box-shadow:0 2px 20px rgba(0,0,0,.15)}
+  .nav.solid{background:rgba(28,23,25,.95);backdrop-filter:blur(10px);padding:13px 28px;box-shadow:0 2px 20px rgba(0,0,0,.15)}
   .nav a{color:var(--ivory);text-decoration:none}
   .nav-mark{font-family:'Bodoni Moda',serif;font-style:italic;font-size:22px;letter-spacing:.01em;flex-shrink:0}
   .nav-center{display:flex;gap:30px;align-items:center;font-size:13px;letter-spacing:.06em}
@@ -75,11 +75,11 @@
 
   /* ---------- language pill ---------- */
   .lang-switch{
-    position:relative;display:flex;gap:0;background:rgba(244,242,245,.08);
-    border:1px solid rgba(244,242,245,.16);border-radius:20px;padding:3px;
+    position:relative;display:flex;gap:0;background:rgba(247,241,242,.08);
+    border:1px solid rgba(247,241,242,.16);border-radius:20px;padding:3px;
   }
   .lang-switch button{
-    position:relative;z-index:1;background:none;border:0;color:rgba(244,242,245,.6);
+    position:relative;z-index:1;background:none;border:0;color:rgba(247,241,242,.6);
     font-size:10.5px;letter-spacing:.04em;padding:5px 9px;border-radius:16px;
     cursor:pointer;font-family:'Jost',sans-serif;transition:color .3s;
   }
@@ -93,8 +93,8 @@
   /* ---------- hero (logo top-left, one big CTA) ---------- */
   .hero{
     background:
-      radial-gradient(60vw 60vw at 88% -10%, rgba(124,111,130,.24), transparent 65%),
-      radial-gradient(45vw 45vw at 8% 100%, rgba(168,154,175,.16), transparent 60%),
+      radial-gradient(60vw 60vw at 88% -10%, rgba(185,107,128,.24), transparent 65%),
+      radial-gradient(45vw 45vw at 8% 100%, rgba(232,154,175,.16), transparent 60%),
       var(--plum);
     color:var(--ivory);min-height:100svh;display:flex;flex-direction:column;
     justify-content:center;padding:130px 0 70px;position:relative;overflow:hidden;
@@ -112,7 +112,7 @@
   .hero-actions{margin-top:38px}
   .hero-stats{
     display:flex;flex-wrap:wrap;gap:36px;margin-top:56px;padding-top:30px;
-    border-top:1px solid rgba(244,242,245,.14);
+    border-top:1px solid rgba(247,241,242,.14);
   }
   .hero-stat b{font-family:'Bodoni Moda',serif;font-size:28px;font-weight:400;color:var(--gold);display:block}
   .hero-stat span{font-size:12px;letter-spacing:.05em;color:var(--muted);display:block;margin-top:4px}
@@ -128,7 +128,7 @@
   .na-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:38px}
   .na-nav{display:flex;gap:10px}
   .na-nav button{
-    width:42px;height:42px;border-radius:50%;border:1px solid rgba(18,18,18,.18);
+    width:42px;height:42px;border-radius:50%;border:1px solid rgba(28,23,25,.18);
     background:#fff;color:var(--plum);cursor:pointer;display:flex;align-items:center;justify-content:center;
     transition:border-color .25s,background .25s,color .25s;
   }
@@ -161,7 +161,7 @@
   .na-card:hover .na-thumb-icon{transform:scale(1.12) rotate(-3deg)}
   .na-thumb-icon{
     position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    color:rgba(18,18,18,.28);
+    color:rgba(28,23,25,.28);
   }
   .na-thumb-icon svg{width:38%;height:38%}
   .na-badge{
@@ -176,19 +176,19 @@
   .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;perspective:1000px}
   .card{
     position:relative;aspect-ratio:3/4;overflow:hidden;border-radius:3px;
-    background:linear-gradient(155deg,var(--plum-soft),#0A0A0A);
+    background:linear-gradient(155deg,var(--plum-soft),#100D0E);
     display:flex;align-items:flex-end;text-decoration:none;color:var(--ivory);
-    border:1px solid rgba(168,154,175,0);transform-style:preserve-3d;will-change:transform;
+    border:1px solid rgba(232,154,175,0);transform-style:preserve-3d;will-change:transform;
     transition:transform .18s ease-out,border-color .35s,box-shadow .35s;
   }
-  .card:hover{border-color:rgba(168,154,175,.4);box-shadow:0 22px 40px -18px rgba(0,0,0,.55)}
-  .card-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(168,154,175,.22)}
+  .card:hover{border-color:rgba(232,154,175,.4);box-shadow:0 22px 40px -18px rgba(0,0,0,.55)}
+  .card-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(232,154,175,.22)}
   .card-icon svg{width:34%;height:34%;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
   .card:hover .card-icon svg{transform:scale(1.12)}
   .card::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 14%,transparent 68%)}
   .card-glow{
     position:absolute;inset:0;z-index:1;opacity:0;pointer-events:none;
-    background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(168,154,175,.35),transparent 62%);
+    background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(232,154,175,.35),transparent 62%);
     transition:opacity .4s ease;
   }
   .card:hover .card-glow{opacity:1}
@@ -201,11 +201,11 @@
   .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
   .rev-card{
     background:#fff;border-radius:3px;padding:32px 28px;position:relative;
-    box-shadow:0 20px 44px -30px rgba(18,18,18,.4);
+    box-shadow:0 20px 44px -30px rgba(28,23,25,.4);
   }
   .rev-quote-mark{font-family:'Bodoni Moda',serif;font-size:52px;color:var(--gold);line-height:.5;display:block;margin-bottom:14px}
   .rev-card p{font-size:15px;line-height:1.75;color:var(--plum);font-weight:300;margin:0}
-  .rev-foot{display:flex;align-items:center;gap:12px;margin-top:22px;padding-top:18px;border-top:1px solid rgba(18,18,18,.08)}
+  .rev-foot{display:flex;align-items:center;gap:12px;margin-top:22px;padding-top:18px;border-top:1px solid rgba(28,23,25,.08)}
   .rev-avatar{
     width:38px;height:38px;border-radius:50%;background:linear-gradient(155deg,var(--gold),var(--rose));
     flex-shrink:0;display:flex;align-items:center;justify-content:center;
@@ -222,7 +222,7 @@
   .final-cta::before{
     content:"";position:absolute;top:-30%;left:50%;transform:translateX(-50%);
     width:70vw;height:70vw;border-radius:50%;
-    background:radial-gradient(circle,rgba(124,111,130,.2),transparent 65%);pointer-events:none;
+    background:radial-gradient(circle,rgba(185,107,128,.2),transparent 65%);pointer-events:none;
   }
   .final-cta-inner{position:relative;z-index:1;max-width:640px;margin:0 auto}
   .final-cta h2{font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(30px,5vw,50px);line-height:1.12;margin:12px 0 0}
@@ -238,16 +238,16 @@
   .foot-col h5{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:0 0 12px;font-weight:500}
   .foot-social{display:flex;gap:10px;margin-top:16px}
   .foot-social a{
-    width:38px;height:38px;border-radius:50%;border:1px solid rgba(244,242,245,.25);
+    width:38px;height:38px;border-radius:50%;border:1px solid rgba(247,241,242,.25);
     display:flex;align-items:center;justify-content:center;color:var(--ivory);
     transition:border-color .25s,background .25s,transform .25s;
   }
   .foot-social a:hover{border-color:var(--gold);background:var(--gold);color:var(--plum);transform:translateY(-2px)}
   .foot-social svg{width:17px;height:17px}
   .foot-bar{
-    margin-top:48px;padding-top:20px;border-top:1px solid rgba(244,242,245,.12);
+    margin-top:48px;padding-top:20px;border-top:1px solid rgba(247,241,242,.12);
     display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
-    font-size:12px;color:rgba(244,242,245,.4);
+    font-size:12px;color:rgba(247,241,242,.4);
   }
 
   /* ---------- reveal ---------- */
@@ -354,36 +354,36 @@
     </div>
 
     <div class="na-track rv" id="naTrack">
-      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#C9BFCE,#8C7F93)">
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#F7DEE4,#C97A90)">
         <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M9 3c0 3-2 3-2 6v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9c0-3-2-3-2-6"/><path d="M9 3h6"/></svg></span></div>
         <div class="na-name" data-i18n="na_item1_n">Rossetto Opaco N.12</div>
       </a>
-      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#D8D0DD,#A89AAF)">
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#EFC2CE,#E89AAF)">
         <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg></span></div>
         <div class="na-name" data-i18n="na_item2_n">Palette Ombretti Sunset</div>
       </a>
-      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#A89AAF,#4A4150)">
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#E89AAF,#6B4550)">
         <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 3c4 3 7 6.5 7 10.5A7 7 0 0 1 5 13.5C5 9.5 8 6 12 3Z"/></svg></span></div>
         <div class="na-name" data-i18n="na_item3_n">Gel Semipermanente Rosa Cipria</div>
       </a>
-      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#1E1E1E,#6B5F72)">
-        <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon" style="color:rgba(244,242,245,.35)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 4c2 3 1 5-1 6 3 0 5 2 5 5a5 5 0 0 1-10 0c0-4 3-6 6-11Z"/></svg></span></div>
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#2A2325,#C97A90)">
+        <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon" style="color:rgba(247,241,242,.35)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 4c2 3 1 5-1 6 3 0 5 2 5 5a5 5 0 0 1-10 0c0-4 3-6 6-11Z"/></svg></span></div>
         <div class="na-name" data-i18n="na_item4_n">Mascara Volume Extra</div>
       </a>
-      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#8C7F93,#2A252E)">
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#C97A90,#100D0E)">
         <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M9 3c0 3-2 3-2 6v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9c0-3-2-3-2-6"/><path d="M9 3h6"/></svg></span></div>
         <div class="na-name" data-i18n="na_item5_n">Matita Labbra Long-Wear</div>
       </a>
-      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#4A4150,#1E1E1E)">
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#E89AAF,#2A2325)">
         <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 22V10M12 10c-4 0-6-2-6-6 4 0 6 2 6 6Zm0 0c0-4 2-6 6-6 0 4-2 6-6 6Z"/></svg></span></div>
         <div class="na-name" data-i18n="na_item6_n">Set Pennelli Viso 6pz</div>
       </a>
-      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#C9BFCE,#6B5F72)">
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#EFC2CE,#A85C72)">
         <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 2v3M9 5h6l1 4a4 4 0 0 1-8 0l1-4Z"/><path d="M10 9v10a2 2 0 0 0 4 0V9"/></svg></span></div>
         <div class="na-name" data-i18n="na_item7_n">Profumo Ambra 50ml</div>
       </a>
-      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#6B5F72,#0A0A0A)">
-        <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon" style="color:rgba(244,242,245,.35)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span></div>
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#A85C72,#100D0E)">
+        <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon" style="color:rgba(247,241,242,.35)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span></div>
         <div class="na-name" data-i18n="na_item8_n">Trousse Weekend 4pz</div>
       </a>
     </div>
@@ -577,7 +577,7 @@
     const open = navCenter.classList.toggle('open');
     tog.setAttribute('aria-expanded', open);
     navCenter.style.cssText = open
-      ? 'display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:rgba(18,18,18,.98);padding:20px;gap:16px'
+      ? 'display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:rgba(28,23,25,.98);padding:20px;gap:16px'
       : '';
   });
   navCenter.addEventListener('click', e => { if(e.target.tagName==='A'){ navCenter.classList.remove('open'); navCenter.style.cssText=''; } });
