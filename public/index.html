@@ -4,22 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>BELLA ITALIA — Ingrosso Cosmetici</title>
-<meta name="description" content="Ingrosso cosmetici e accessori beauty. Oltre 60 categorie, pronta consegna dall'Italia. Rossetti, smalti, gel, pennelli, profumi.">
+<meta name="description" content="Ingrosso cosmetici e accessori beauty. Oltre 60 categorie, pronta consegna dall'Italia. Sistema di ordini con link personale, senza app.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="/js/i18n.js"></script>
 <style>
   :root{
-    --plum:#2B1B26;
-    --plum-soft:#3D2836;
-    --ivory:#F7EFEE;
-    --rose:#C9506B;
-    --gold:#C6A15B;
-    --blush:#EFD9DD;
-    --muted:rgba(247,239,238,.55);
-    --muted-dark:rgba(43,27,38,.72);
-    --maxw:1180px;
+    --plum:#121212;
+    --plum-soft:#1E1E1E;
+    --ivory:#F4F2F5;
+    --rose:#7C6F82;
+    --gold:#A89AAF;
+    --blush:#C9BFCE;
+    --muted:rgba(244,242,245,.55);
+    --muted-dark:rgba(18,18,18,.72);
+    --maxw:1240px;
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -30,177 +30,238 @@
   }
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
   .display{font-family:'Bodoni Moda',Georgia,serif}
-  .eyebrow{
-    font-size:11px;letter-spacing:.28em;text-transform:uppercase;
-    font-weight:500;color:var(--gold);
+  .eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;font-weight:500;color:var(--gold)}
+  img{max-width:100%;display:block}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    position:relative;overflow:hidden;isolation:isolate;display:inline-block;
+    padding:16px 34px;border-radius:2px;font-size:13.5px;letter-spacing:.09em;
+    text-transform:uppercase;font-weight:500;text-decoration:none;
+    transition:transform .2s,background .25s,color .25s,box-shadow .3s;
   }
+  .btn::before{
+    content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;z-index:-1;
+    background:linear-gradient(115deg,transparent,rgba(255,255,255,.55),transparent);
+    transform:skewX(-18deg);transition:left .7s cubic-bezier(.2,.8,.2,1);
+  }
+  .btn:hover::before{left:130%}
+  .btn-solid{background:var(--gold);color:var(--plum)}
+  .btn-solid:hover{background:var(--ivory);box-shadow:0 10px 34px -8px rgba(168,154,175,.55)}
+  .btn-big{padding:20px 46px;font-size:14.5px}
+  .btn:active{transform:translateY(1px)}
+  @media (hover:none){.btn::before{display:none}}
 
   /* ---------- nav ---------- */
   .nav{
     position:fixed;top:0;left:0;right:0;z-index:50;
     display:flex;align-items:center;justify-content:space-between;
-    padding:18px 28px;
-    background:rgba(43,27,38,0);transition:background .4s, padding .4s;
+    padding:18px 28px;background:rgba(18,18,18,0);transition:background .4s,padding .4s;
   }
-  .nav.solid{background:rgba(43,27,38,.94);backdrop-filter:blur(10px);padding:12px 28px}
+  .nav.solid{background:rgba(18,18,18,.95);backdrop-filter:blur(10px);padding:13px 28px;box-shadow:0 2px 20px rgba(0,0,0,.15)}
   .nav a{color:var(--ivory);text-decoration:none}
-  .nav-mark{font-family:'Bodoni Moda',serif;font-style:italic;font-size:21px;letter-spacing:.01em}
-  .nav-links{display:flex;gap:26px;align-items:center;font-size:13px;letter-spacing:.06em}
-  .nav-links a{opacity:.75;transition:opacity .2s}
-  .nav-links a:hover,.nav-links a:focus-visible{opacity:1}
+  .nav-mark{font-family:'Bodoni Moda',serif;font-style:italic;font-size:22px;letter-spacing:.01em;flex-shrink:0}
+  .nav-center{display:flex;gap:30px;align-items:center;font-size:13px;letter-spacing:.06em}
+  .nav-center a{opacity:.75;transition:opacity .2s;white-space:nowrap}
+  .nav-center a:hover,.nav-center a:focus-visible{opacity:1}
+  .nav-right{display:flex;align-items:center;gap:14px}
   .nav-cta{
-    border:1px solid var(--gold);color:var(--gold)!important;
-    padding:8px 16px;border-radius:2px;opacity:1!important;
-    transition:background .25s,color .25s;
+    border:1px solid var(--gold);color:var(--gold)!important;padding:9px 18px;
+    border-radius:2px;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;
+    transition:background .25s,color .25s;white-space:nowrap;
   }
   .nav-cta:hover{background:var(--gold);color:var(--plum)!important}
   .nav-toggle{display:none;background:none;border:0;color:var(--ivory);font-size:22px;cursor:pointer}
 
-  /* ---------- hero ---------- */
+  /* ---------- language pill ---------- */
+  .lang-switch{
+    position:relative;display:flex;gap:0;background:rgba(244,242,245,.08);
+    border:1px solid rgba(244,242,245,.16);border-radius:20px;padding:3px;
+  }
+  .lang-switch button{
+    position:relative;z-index:1;background:none;border:0;color:rgba(244,242,245,.6);
+    font-size:10.5px;letter-spacing:.04em;padding:5px 9px;border-radius:16px;
+    cursor:pointer;font-family:'Jost',sans-serif;transition:color .3s;
+  }
+  .lang-switch button.active{color:var(--plum)}
+  .lang-switch button:not(.active):hover{color:var(--gold)}
+  .lang-thumb{
+    position:absolute;top:3px;bottom:3px;left:3px;border-radius:16px;background:var(--gold);
+    z-index:0;pointer-events:none;transition:left .32s cubic-bezier(.4,0,.2,1),width .32s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ---------- hero (logo top-left, one big CTA) ---------- */
   .hero{
-    background:var(--plum);color:var(--ivory);
-    min-height:100svh;display:flex;flex-direction:column;justify-content:center;
-    padding:120px 0 0;position:relative;overflow:hidden;
+    background:
+      radial-gradient(60vw 60vw at 88% -10%, rgba(124,111,130,.24), transparent 65%),
+      radial-gradient(45vw 45vw at 8% 100%, rgba(168,154,175,.16), transparent 60%),
+      var(--plum);
+    color:var(--ivory);min-height:100svh;display:flex;flex-direction:column;
+    justify-content:center;padding:130px 0 70px;position:relative;overflow:hidden;
   }
-  .hero::before{
-    content:"";position:absolute;top:-25%;right:-10%;
-    width:60vw;height:60vw;border-radius:50%;
-    background:radial-gradient(circle,rgba(201,80,107,.22),transparent 65%);
-    pointer-events:none;
-  }
-  .hero-inner{position:relative;z-index:1}
+  .hero-inner{position:relative;z-index:1;max-width:760px}
   .hero h1{
     font-family:'Bodoni Moda',serif;font-weight:400;
-    font-size:clamp(56px,12vw,164px);line-height:.92;margin:14px 0 0;
-    letter-spacing:-.01em;
+    font-size:clamp(48px,9vw,112px);line-height:.98;margin:14px 0 0;letter-spacing:-.01em;
   }
   .hero h1 em{font-style:italic;color:var(--gold)}
   .hero-lede{
-    max-width:46ch;margin:26px 0 0;font-size:clamp(15px,1.7vw,18px);
-    line-height:1.65;color:var(--muted);font-weight:300;
+    max-width:52ch;margin:26px 0 0;font-size:clamp(15px,1.7vw,18px);
+    line-height:1.7;color:var(--muted);font-weight:300;
   }
-  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
-  .btn{
-    display:inline-block;padding:15px 30px;border-radius:2px;
-    font-size:13.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:500;
-    text-decoration:none;transition:transform .2s,background .25s,color .25s;
+  .hero-actions{margin-top:38px}
+  .hero-stats{
+    display:flex;flex-wrap:wrap;gap:36px;margin-top:56px;padding-top:30px;
+    border-top:1px solid rgba(244,242,245,.14);
   }
-  .btn-solid{background:var(--gold);color:var(--plum)}
-  .btn-solid:hover{background:var(--ivory)}
-  .btn-line{border:1px solid rgba(247,239,238,.35);color:var(--ivory)}
-  .btn-line:hover{border-color:var(--ivory);background:rgba(247,239,238,.07)}
-  .btn:active{transform:translateY(1px)}
-
-  /* ---------- SIGNATURE: shade strip ---------- */
-  .strip{display:flex;width:100%;margin-top:70px;height:82px}
-  .strip span{
-    flex:1;transform:scaleY(0);transform-origin:bottom;
-    animation:rise .7s cubic-bezier(.22,.9,.3,1) forwards;
-  }
-  @keyframes rise{to{transform:scaleY(1)}}
-  .strip-caption{
-    display:flex;justify-content:space-between;align-items:baseline;
-    padding:14px 0 30px;font-size:11px;letter-spacing:.2em;
-    text-transform:uppercase;color:var(--muted);
-  }
+  .hero-stat b{font-family:'Bodoni Moda',serif;font-size:28px;font-weight:400;color:var(--gold);display:block}
+  .hero-stat span{font-size:12px;letter-spacing:.05em;color:var(--muted);display:block;margin-top:4px}
 
   /* ---------- sections ---------- */
-  section{padding:110px 0}
-  .sec-head{max-width:62ch;margin-bottom:52px}
-  .sec-head h2{
-    font-family:'Bodoni Moda',serif;font-weight:400;
-    font-size:clamp(32px,5vw,54px);line-height:1.1;margin:12px 0 0;
-  }
-  .sec-head p{margin:18px 0 0;color:var(--muted-dark);line-height:1.7;font-weight:300;font-size:16px}
+  section{padding:100px 0}
+  .sec-head{max-width:60ch;margin-bottom:44px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+  .sec-head h2{font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(30px,4.6vw,48px);line-height:1.1;margin:12px 0 0}
+  .sec-head p{margin:16px 0 0;color:var(--muted-dark);line-height:1.7;font-weight:300;font-size:15.5px;max-width:52ch}
 
-  /* featured */
-  .featured{background:var(--plum);color:var(--ivory)}
-  .featured .sec-head p{color:var(--muted)}
-  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  /* ---------- new arrivals carousel ---------- */
+  .na{background:var(--ivory)}
+  .na-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:38px}
+  .na-nav{display:flex;gap:10px}
+  .na-nav button{
+    width:42px;height:42px;border-radius:50%;border:1px solid rgba(18,18,18,.18);
+    background:#fff;color:var(--plum);cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:border-color .25s,background .25s,color .25s;
+  }
+  .na-nav button:hover{border-color:var(--gold);background:var(--gold);color:var(--plum)}
+  .na-nav svg{width:16px;height:16px}
+  .na-track{
+    display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  .na-track::-webkit-scrollbar{display:none}
+  .na-card{
+    flex:0 0 220px;scroll-snap-align:start;text-decoration:none;color:var(--plum);
+  }
+  .na-thumb{
+    position:relative;aspect-ratio:1/1;border-radius:3px;overflow:hidden;
+    background:var(--g,linear-gradient(155deg,var(--blush),var(--gold)));
+  }
+  .na-thumb::before{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(155deg,rgba(255,255,255,.35),transparent 55%);
+    transition:opacity .4s;
+  }
+  .na-thumb::after{
+    content:"";position:absolute;inset:0;opacity:0;
+    background:radial-gradient(160px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.4),transparent 60%);
+    transition:opacity .4s;
+  }
+  .na-card:hover .na-thumb::after{opacity:1}
+  .na-card:hover .na-thumb img,.na-card .na-thumb-icon{transition:transform .55s cubic-bezier(.2,.8,.2,1)}
+  .na-card:hover .na-thumb-icon{transform:scale(1.12) rotate(-3deg)}
+  .na-thumb-icon{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:rgba(18,18,18,.28);
+  }
+  .na-thumb-icon svg{width:38%;height:38%}
+  .na-badge{
+    position:absolute;top:10px;left:10px;z-index:2;background:var(--plum);color:var(--gold);
+    font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:2px;
+  }
+  .na-name{margin-top:14px;font-size:14px;line-height:1.4;font-weight:500}
+
+  /* ---------- categories ---------- */
+  .cats{background:var(--plum);color:var(--ivory)}
+  .cats .sec-head p{color:var(--muted)}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;perspective:1000px}
   .card{
     position:relative;aspect-ratio:3/4;overflow:hidden;border-radius:3px;
-    background:linear-gradient(155deg,var(--plum-soft),#241621);
+    background:linear-gradient(155deg,var(--plum-soft),#0A0A0A);
     display:flex;align-items:flex-end;text-decoration:none;color:var(--ivory);
+    border:1px solid rgba(168,154,175,0);transform-style:preserve-3d;will-change:transform;
+    transition:transform .18s ease-out,border-color .35s,box-shadow .35s;
   }
-  .card img{
-    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-    transition:transform .6s cubic-bezier(.2,.8,.2,1);
+  .card:hover{border-color:rgba(168,154,175,.4);box-shadow:0 22px 40px -18px rgba(0,0,0,.55)}
+  .card-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(168,154,175,.22)}
+  .card-icon svg{width:34%;height:34%;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+  .card:hover .card-icon svg{transform:scale(1.12)}
+  .card::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 14%,transparent 68%)}
+  .card-glow{
+    position:absolute;inset:0;z-index:1;opacity:0;pointer-events:none;
+    background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(168,154,175,.35),transparent 62%);
+    transition:opacity .4s ease;
   }
-  .card:hover img{transform:scale(1.05)}
-  .card::after{
-    content:"";position:absolute;inset:0;
-    background:linear-gradient(to top,rgba(29,17,25,.85) 8%,transparent 62%);
-  }
-  .card-label{position:relative;z-index:2;padding:22px}
-  .card-label .n{font-family:'Bodoni Moda',serif;font-size:22px;display:block}
-  .card-label .s{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:4px;display:block}
+  .card:hover .card-glow{opacity:1}
+  .card-label{position:relative;z-index:2;padding:20px}
+  .card-label .n{font-family:'Bodoni Moda',serif;font-size:20px;display:block}
+  .card-label .s{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:4px;display:block}
 
-  /* come funziona — a real 3-step sequence */
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:44px;margin-top:16px}
-  .step{border-top:2px solid var(--gold);padding-top:20px}
-  .step-icon{
-    width:46px;height:46px;border-radius:50%;
-    border:1.4px solid var(--gold);color:var(--gold);
-    display:flex;align-items:center;justify-content:center;
-    margin-bottom:16px;
+  /* ---------- reviews ---------- */
+  .rev{background:var(--blush)}
+  .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .rev-card{
+    background:#fff;border-radius:3px;padding:32px 28px;position:relative;
+    box-shadow:0 20px 44px -30px rgba(18,18,18,.4);
   }
-  .step-icon svg{width:22px;height:22px}
-  .step .num{font-family:'Bodoni Moda',serif;font-size:13px;letter-spacing:.2em;color:var(--gold)}
-  .step h3{font-family:'Bodoni Moda',serif;font-weight:500;font-size:23px;margin:10px 0 10px}
-  .step p{margin:0;color:var(--muted-dark);line-height:1.7;font-size:15px;font-weight:300}
+  .rev-quote-mark{font-family:'Bodoni Moda',serif;font-size:52px;color:var(--gold);line-height:.5;display:block;margin-bottom:14px}
+  .rev-card p{font-size:15px;line-height:1.75;color:var(--plum);font-weight:300;margin:0}
+  .rev-foot{display:flex;align-items:center;gap:12px;margin-top:22px;padding-top:18px;border-top:1px solid rgba(18,18,18,.08)}
+  .rev-avatar{
+    width:38px;height:38px;border-radius:50%;background:linear-gradient(155deg,var(--gold),var(--rose));
+    flex-shrink:0;display:flex;align-items:center;justify-content:center;
+    font-family:'Bodoni Moda',serif;color:#fff;font-size:15px;
+  }
+  .rev-name{font-size:13.5px;font-weight:500}
+  .rev-role{font-size:12px;color:var(--muted-dark)}
 
-  /* ordina CTA */
-  .ordina{
-    background:var(--blush);
-    padding:96px 0;
+  /* ---------- final CTA ---------- */
+  .final-cta{
+    background:var(--plum);color:var(--ivory);text-align:center;
+    padding:120px 0;position:relative;overflow:hidden;
   }
-  .ordina-box{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
-  .ordina h2{font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(30px,4.4vw,46px);line-height:1.12;margin:12px 0 0}
-  .ordina p{color:var(--muted-dark);line-height:1.7;margin:18px 0 0;font-weight:300}
-  .ordina-panel{
-    background:var(--plum);color:var(--ivory);padding:34px;border-radius:3px;
+  .final-cta::before{
+    content:"";position:absolute;top:-30%;left:50%;transform:translateX(-50%);
+    width:70vw;height:70vw;border-radius:50%;
+    background:radial-gradient(circle,rgba(124,111,130,.2),transparent 65%);pointer-events:none;
   }
-  .ordina-panel h4{font-family:'Bodoni Moda',serif;font-weight:400;font-size:20px;margin:0 0 8px}
-  .ordina-panel p{color:var(--muted);font-size:14.5px;margin:0 0 20px}
-  .btn-block{display:block;text-align:center}
+  .final-cta-inner{position:relative;z-index:1;max-width:640px;margin:0 auto}
+  .final-cta h2{font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(30px,5vw,50px);line-height:1.12;margin:12px 0 0}
+  .final-cta p{color:var(--muted);line-height:1.7;margin:18px auto 0;font-weight:300;max-width:46ch}
+  .final-cta .btn{margin-top:34px}
 
-  /* footer */
+  /* ---------- footer ---------- */
   footer{background:var(--plum);color:var(--ivory);padding:70px 0 34px}
-  .foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:40px}
+  .foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px}
   .foot-mark{font-family:'Bodoni Moda',serif;font-style:italic;font-size:30px}
   .foot-grid p,.foot-grid a{color:var(--muted);font-size:14px;line-height:1.9;text-decoration:none}
   .foot-grid a:hover{color:var(--ivory)}
   .foot-col h5{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:0 0 12px;font-weight:500}
+  .foot-social{display:flex;gap:10px;margin-top:16px}
+  .foot-social a{
+    width:38px;height:38px;border-radius:50%;border:1px solid rgba(244,242,245,.25);
+    display:flex;align-items:center;justify-content:center;color:var(--ivory);
+    transition:border-color .25s,background .25s,transform .25s;
+  }
+  .foot-social a:hover{border-color:var(--gold);background:var(--gold);color:var(--plum);transform:translateY(-2px)}
+  .foot-social svg{width:17px;height:17px}
   .foot-bar{
-    margin-top:48px;padding-top:20px;border-top:1px solid rgba(247,239,238,.12);
+    margin-top:48px;padding-top:20px;border-top:1px solid rgba(244,242,245,.12);
     display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
-    font-size:12px;color:rgba(247,239,238,.4);
+    font-size:12px;color:rgba(244,242,245,.4);
   }
 
-  /* reveal */
+  /* ---------- reveal ---------- */
   .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
   .rv.in{opacity:1;transform:none}
 
-  /* language switch */
-  .lang-switch{display:flex;gap:4px;margin-left:10px}
-  .lang-switch button{
-    background:none;border:1px solid rgba(247,239,238,.3);color:rgba(247,239,238,.6);
-    font-size:10.5px;letter-spacing:.04em;padding:5px 8px;border-radius:2px;
-    cursor:pointer;font-family:'Jost',sans-serif;transition:all .2s;
-  }
-  .lang-switch button.active,.lang-switch button:hover{border-color:var(--gold);color:var(--gold)}
-
   a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 
-  /* whatsapp floating bubble */
+  /* ---------- whatsapp floating bubble ---------- */
   .whatsapp-float{
-    position:fixed;right:20px;bottom:20px;z-index:200;
-    display:flex;align-items:center;gap:10px;
-    background:#25D366;color:#fff;text-decoration:none;
-    padding:13px 18px;border-radius:50px;
-    box-shadow:0 6px 20px rgba(0,0,0,.28);
-    font-family:'Jost',system-ui,sans-serif;font-size:13px;font-weight:500;line-height:1.3;
-    max-width:270px;transition:transform .2s,box-shadow .2s;
+    position:fixed;right:20px;bottom:20px;z-index:200;display:flex;align-items:center;gap:10px;
+    background:#25D366;color:#fff;text-decoration:none;padding:13px 18px;border-radius:50px;
+    box-shadow:0 6px 20px rgba(0,0,0,.28);font-family:'Jost',system-ui,sans-serif;font-size:13px;
+    font-weight:500;line-height:1.3;max-width:270px;transition:transform .2s,box-shadow .2s;
     animation:wa-pulse 2.4s ease-in-out infinite;
   }
   .whatsapp-float:hover{transform:scale(1.04);box-shadow:0 8px 24px rgba(0,0,0,.34)}
@@ -214,30 +275,29 @@
     .whatsapp-float{padding:14px;border-radius:50%}
   }
 
-  @media (max-width:900px){
-    .cards{grid-template-columns:repeat(2,1fr)}
-    .steps{grid-template-columns:1fr;gap:30px}
-    .ordina-box{grid-template-columns:1fr;gap:32px}
+  @media (max-width:1000px){
+    .cards{grid-template-columns:repeat(3,1fr)}
+    .rev-grid{grid-template-columns:1fr}
     .foot-grid{grid-template-columns:1fr 1fr}
   }
+  @media (max-width:820px){
+    .nav-center{display:none}
+  }
   @media (max-width:640px){
-    section{padding:74px 0}
+    section{padding:70px 0}
     .wrap{padding:0 20px}
-    .nav-links{display:none}
-    .nav-links.open{
-      display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;
-      background:rgba(43,27,38,.98);padding:20px;gap:16px;
-    }
     .nav-toggle{display:block}
-    .cards{grid-template-columns:1fr}
-    .strip{height:56px}
+    .nav-right .lang-switch{display:none}
+    .cards{grid-template-columns:repeat(2,1fr)}
+    .hero{padding:110px 0 60px}
+    .hero-stats{gap:24px}
     .foot-grid{grid-template-columns:1fr}
   }
   @media (prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
     .rv{opacity:1;transform:none}
-    .strip span{transform:scaleY(1)}
     html{scroll-behavior:auto}
+    .card{transform:none!important}
   }
 </style>
 </head>
@@ -245,13 +305,16 @@
 
 <nav class="nav" id="nav">
   <a href="/" class="nav-mark">Bella Italia</a>
-  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">☰</button>
-  <div class="nav-links" id="navLinks">
+  <div class="nav-center">
+    <a href="#novita" data-i18n="nav_novita">Novità</a>
     <a href="#categorie" data-i18n="nav_categorie">Categorie</a>
-    <a href="#come-funziona" data-i18n="nav_come_funziona">Come funziona</a>
+    <a href="#recensioni" data-i18n="nav_recensioni">Recensioni</a>
     <a href="/contact.html" data-i18n="nav_contatti">Contatti</a>
-    <a href="/contact.html" class="nav-cta" data-i18n="nav_cta">Richiedi listino</a>
+  </div>
+  <div class="nav-right">
     <div class="lang-switch" id="langSwitch"></div>
+    <a href="/contact.html" class="nav-cta" data-i18n="nav_cta">Richiedi listino</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">☰</button>
   </div>
 </nav>
 
@@ -261,104 +324,177 @@
     <h1>Bella<br><em>Italia</em></h1>
     <p class="hero-lede" data-i18n="hero_lede">
       Oltre sessanta categorie di cosmetici e accessori beauty, a magazzino in Italia.
-      Riforniamo profumerie, centri estetici e nail salon con consegna rapida e listino dedicato.
+      Il nostro sistema di ordini online ti dà un link personale, senza app né registrazione.
     </p>
     <div class="hero-actions">
-      <a href="/contact.html" class="btn btn-solid" data-i18n="hero_btn_listino">Richiedi il listino</a>
-      <a href="#categorie" class="btn btn-line" data-i18n="hero_btn_categorie">Sfoglia le categorie</a>
+      <a href="/contact.html" class="btn btn-solid btn-big" data-i18n="hero_btn_listino">Richiedi il tuo link d'ordine</a>
     </div>
-  </div>
-
-  <div class="strip" id="strip" aria-hidden="true"></div>
-  <div class="wrap strip-caption">
-    <span data-i18n="strip_1">Rossetti · Smalti · Gel · Ombretti</span>
-    <span data-i18n="strip_2">Gamma completa</span>
+    <div class="hero-stats">
+      <div class="hero-stat"><b>60+</b><span data-i18n="stat_cat">Categorie a magazzino</span></div>
+      <div class="hero-stat"><b>0</b><span data-i18n="stat_app">App da scaricare</span></div>
+      <div class="hero-stat"><b>24h</b><span data-i18n="stat_reply">Tempo medio di risposta</span></div>
+    </div>
   </div>
 </header>
 
 <main>
 
-<section class="featured" id="categorie">
+<section class="na" id="novita">
+  <div class="wrap">
+    <div class="na-head rv">
+      <div>
+        <span class="eyebrow" data-i18n="na_eyebrow">Ultimo arrivo</span>
+        <h2 class="display" style="font-weight:400;font-size:clamp(28px,4vw,42px);margin:10px 0 0" data-i18n="na_h2">Le ultime novità</h2>
+        <p style="margin:12px 0 0;color:var(--muted-dark);font-weight:300;font-size:15px" data-i18n="na_p">Le new entry del nostro magazzino, aggiunte ogni settimana.</p>
+      </div>
+      <div class="na-nav">
+        <button id="naPrev" aria-label="Precedente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+        <button id="naNext" aria-label="Successivo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+      </div>
+    </div>
+
+    <div class="na-track rv" id="naTrack">
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#C9BFCE,#8C7F93)">
+        <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M9 3c0 3-2 3-2 6v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9c0-3-2-3-2-6"/><path d="M9 3h6"/></svg></span></div>
+        <div class="na-name" data-i18n="na_item1_n">Rossetto Opaco N.12</div>
+      </a>
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#D8D0DD,#A89AAF)">
+        <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg></span></div>
+        <div class="na-name" data-i18n="na_item2_n">Palette Ombretti Sunset</div>
+      </a>
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#A89AAF,#4A4150)">
+        <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 3c4 3 7 6.5 7 10.5A7 7 0 0 1 5 13.5C5 9.5 8 6 12 3Z"/></svg></span></div>
+        <div class="na-name" data-i18n="na_item3_n">Gel Semipermanente Rosa Cipria</div>
+      </a>
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#1E1E1E,#6B5F72)">
+        <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon" style="color:rgba(244,242,245,.35)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 4c2 3 1 5-1 6 3 0 5 2 5 5a5 5 0 0 1-10 0c0-4 3-6 6-11Z"/></svg></span></div>
+        <div class="na-name" data-i18n="na_item4_n">Mascara Volume Extra</div>
+      </a>
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#8C7F93,#2A252E)">
+        <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M9 3c0 3-2 3-2 6v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9c0-3-2-3-2-6"/><path d="M9 3h6"/></svg></span></div>
+        <div class="na-name" data-i18n="na_item5_n">Matita Labbra Long-Wear</div>
+      </a>
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#4A4150,#1E1E1E)">
+        <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 22V10M12 10c-4 0-6-2-6-6 4 0 6 2 6 6Zm0 0c0-4 2-6 6-6 0 4-2 6-6 6Z"/></svg></span></div>
+        <div class="na-name" data-i18n="na_item6_n">Set Pennelli Viso 6pz</div>
+      </a>
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#C9BFCE,#6B5F72)">
+        <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 2v3M9 5h6l1 4a4 4 0 0 1-8 0l1-4Z"/><path d="M10 9v10a2 2 0 0 0 4 0V9"/></svg></span></div>
+        <div class="na-name" data-i18n="na_item7_n">Profumo Ambra 50ml</div>
+      </a>
+      <a class="na-card" href="/contact.html" style="--g:linear-gradient(155deg,#6B5F72,#0A0A0A)">
+        <div class="na-thumb"><span class="na-badge" data-i18n="na_badge">Nuovo</span><span class="na-thumb-icon" style="color:rgba(244,242,245,.35)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span></div>
+        <div class="na-name" data-i18n="na_item8_n">Trousse Weekend 4pz</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="cats" id="categorie">
   <div class="wrap">
     <div class="sec-head rv">
-      <span class="eyebrow" data-i18n="featured_eyebrow">In evidenza</span>
-      <h2 data-i18n="featured_h2">Le linee più richieste</h2>
-      <p data-i18n="featured_p">Le categorie che i nostri clienti riordinano più spesso.</p>
+      <div>
+        <span class="eyebrow" data-i18n="featured_eyebrow">Il catalogo</span>
+        <h2 data-i18n="featured_h2">Tutte le nostre categorie</h2>
+        <p data-i18n="featured_p">Sfoglia per reparto: dal viso al profumo, tutto a magazzino pronto per l'ordine.</p>
+      </div>
     </div>
     <div class="cards rv">
       <a class="card" href="/contact.html">
+        <span class="card-glow" aria-hidden="true"></span>
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M9 3c0 3-2 3-2 6v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9c0-3-2-3-2-6"/><path d="M9 3h6"/></svg></span>
         <span class="card-label"><span class="n" data-i18n="card1_n">Rossetto</span><span class="s" data-i18n="card1_s">Labbra</span></span>
       </a>
       <a class="card" href="/contact.html">
-        <span class="card-label"><span class="n" data-i18n-html data-i18n="card2_n">Gel &amp; Smalto</span><span class="s" data-i18n="card2_s">Unghie</span></span>
+        <span class="card-glow" aria-hidden="true"></span>
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><ellipse cx="12" cy="12" rx="8" ry="5"/><circle cx="12" cy="12" r="2"/></svg></span>
+        <span class="card-label"><span class="n" data-i18n="card7_n">Fondotinta</span><span class="s" data-i18n="card7_s">Viso</span></span>
       </a>
       <a class="card" href="/contact.html">
+        <span class="card-glow" aria-hidden="true"></span>
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg></span>
         <span class="card-label"><span class="n" data-i18n="card3_n">Ombretto</span><span class="s" data-i18n="card3_s">Occhi</span></span>
       </a>
       <a class="card" href="/contact.html">
-        <span class="card-label"><span class="n" data-i18n="card4_n">Pennelli</span><span class="s" data-i18n="card4_s">Accessori</span></span>
+        <span class="card-glow" aria-hidden="true"></span>
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 3c4 3 7 6.5 7 10.5A7 7 0 0 1 5 13.5C5 9.5 8 6 12 3Z"/></svg></span>
+        <span class="card-label"><span class="n" data-i18n-html data-i18n="card2_n">Gel &amp; Smalto</span><span class="s" data-i18n="card2_s">Unghie</span></span>
       </a>
       <a class="card" href="/contact.html">
+        <span class="card-glow" aria-hidden="true"></span>
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
+        <span class="card-label"><span class="n" data-i18n="card6_n">Trousse</span><span class="s" data-i18n="card6_s">Makeup Set</span></span>
+      </a>
+      <a class="card" href="/contact.html">
+        <span class="card-glow" aria-hidden="true"></span>
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2v3M9 5h6l1 4a4 4 0 0 1-8 0l1-4Z"/><path d="M10 9v10a2 2 0 0 0 4 0V9"/></svg></span>
         <span class="card-label"><span class="n" data-i18n="card5_n">Profumo</span><span class="s" data-i18n="card5_s">Fragranze</span></span>
       </a>
       <a class="card" href="/contact.html">
-        <span class="card-label"><span class="n" data-i18n="card6_n">Trousse</span><span class="s" data-i18n="card6_s">Cofanetti</span></span>
+        <span class="card-glow" aria-hidden="true"></span>
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 22V10M12 10c-4 0-6-2-6-6 4 0 6 2 6 6Zm0 0c0-4 2-6 6-6 0 4-2 6-6 6Z"/></svg></span>
+        <span class="card-label"><span class="n" data-i18n="card4_n">Pennelli</span><span class="s" data-i18n="card4_s">Accessori</span></span>
       </a>
     </div>
   </div>
 </section>
 
-<section id="come-funziona">
+<section class="rev" id="recensioni">
   <div class="wrap">
     <div class="sec-head rv">
-      <span class="eyebrow" data-i18n="funziona_eyebrow">Diventare cliente</span>
-      <h2 data-i18n="funziona_h2">Tre passaggi, una volta sola.</h2>
-      <p data-i18n="funziona_p">Non serve scaricare app né creare password. Il link che ricevi è già il tuo listino.</p>
+      <div>
+        <span class="eyebrow" data-i18n="rev_eyebrow">Testimonianze</span>
+        <h2 data-i18n="rev_h2">Cosa dicono i nostri clienti</h2>
+        <p data-i18n="rev_p">Negozi, profumerie e centri estetici che riforniamo ogni settimana.</p>
+      </div>
     </div>
-    <div class="steps rv">
-      <div class="step">
-        <div class="step-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    <div class="rev-grid rv">
+      <div class="rev-card">
+        <span class="rev-quote-mark">&ldquo;</span>
+        <p data-i18n="rev1_quote">Non restiamo mai senza scorte: qualsiasi cosa ordiniamo arriva puntuale e nella quantità giusta.</p>
+        <div class="rev-foot">
+          <span class="rev-avatar" data-author-key="rev1_author">RT</span>
+          <div>
+            <div class="rev-name" data-i18n="rev1_author">Rosa T.</div>
+            <div class="rev-role" data-i18n="rev1_role">Profumeria, Napoli</div>
+          </div>
         </div>
-        <span class="num" data-i18n="step1_num">PASSO I</span>
-        <h3 data-i18n="step1_h3">Ci contatti</h3>
-        <p data-i18n="step1_p">Scrivici su WhatsApp o vieni in sede. Ci basta sapere che tipo di attività hai.</p>
       </div>
-      <div class="step">
-        <div class="step-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      <div class="rev-card">
+        <span class="rev-quote-mark">&ldquo;</span>
+        <p data-i18n="rev2_quote">I prodotti di Bella Italia si vendono da soli. Il rapporto qualità-prezzo convince subito le clienti.</p>
+        <div class="rev-foot">
+          <span class="rev-avatar" data-author-key="rev2_author">AM</span>
+          <div>
+            <div class="rev-name" data-i18n="rev2_author">Anna M.</div>
+            <div class="rev-role" data-i18n="rev2_role">Centro estetico, Caserta</div>
+          </div>
         </div>
-        <span class="num" data-i18n="step2_num">PASSO II</span>
-        <h3 data-i18n="step2_h3">Ricevi il tuo link</h3>
-        <p data-i18n="step2_p">Ti inviamo un link personale con i tuoi prezzi. Si apre dal telefono, senza registrazione.</p>
       </div>
-      <div class="step">
-        <div class="step-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+      <div class="rev-card">
+        <span class="rev-quote-mark">&ldquo;</span>
+        <p data-i18n="rev3_quote">Il link personale ha semplificato tutto: ordino dal telefono in cinque minuti, senza registrazioni.</p>
+        <div class="rev-foot">
+          <span class="rev-avatar" data-author-key="rev3_author">GD</span>
+          <div>
+            <div class="rev-name" data-i18n="rev3_author">Giuseppe D.</div>
+            <div class="rev-role" data-i18n="rev3_role">Negozio multimarca, Salerno</div>
+          </div>
         </div>
-        <span class="num" data-i18n="step3_num">PASSO III</span>
-        <h3 data-i18n="step3_h3">Ordini quando vuoi</h3>
-        <p data-i18n="step3_p">Sfogli le categorie, aggiungi le quantità, invii. Prepariamo la merce e ti avvisiamo.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section class="ordina">
-  <div class="wrap ordina-box">
-    <div class="rv">
-      <span class="eyebrow" data-i18n="ordina_eyebrow">Ordini online</span>
-      <h2 data-i18n-html data-i18n="ordina_h2">Il tuo listino,<br>sempre in tasca.</h2>
-      <p data-i18n="ordina_p">
-        Ogni cliente ha un link personale che mostra le categorie, le foto dei prodotti,
-        la disponibilità aggiornata e i suoi prezzi. Ordine minimo €500 per la spedizione.
-      </p>
-    </div>
-    <div class="ordina-panel rv">
-      <h4 data-i18n="panel_h4">Hai già il tuo link?</h4>
-      <p data-i18n="panel_p">Aprilo dal messaggio che ti abbiamo inviato — è personale e non richiede password.</p>
-      <a href="/contact.html" class="btn btn-solid btn-block" data-i18n="panel_btn">Non ce l'ho, richiedilo</a>
-    </div>
+<section class="final-cta">
+  <div class="wrap final-cta-inner rv">
+    <span class="eyebrow" data-i18n="ordina_eyebrow">Ordini online</span>
+    <h2 data-i18n-html data-i18n="ordina_h2">Il tuo listino,<br>sempre in tasca.</h2>
+    <p data-i18n="ordina_p">
+      Ogni cliente ha un link personale che mostra le categorie, le foto dei prodotti,
+      la disponibilità aggiornata e i suoi prezzi. Ordine minimo €500 per la spedizione.
+    </p>
+    <a href="/contact.html" class="btn btn-solid btn-big" data-i18n="hero_btn_listino">Richiedi il tuo link d'ordine</a>
   </div>
 </section>
 
@@ -372,12 +508,21 @@
         <p style="max-width:34ch;margin-top:10px" data-i18n-html data-i18n="foot_tagline">
           Ingrosso di cosmetici e accessori beauty.<br>Consegna in tutta Italia.
         </p>
+        <div class="foot-social">
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
+          </a>
+          <a href="https://www.tiktok.com/" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3c.4 2.4 2 4 4.4 4.2v2.8c-1.6.1-3-.4-4.4-1.3v6.6c0 3.5-2.8 6.2-6.3 6.2S4 18.8 4 15.3s2.8-6.2 6.3-6.2c.4 0 .8 0 1.2.1v3c-.4-.1-.8-.2-1.2-.2-1.8 0-3.2 1.4-3.2 3.2S8.5 18.4 10.3 18.4s3.3-1.4 3.3-3.2V3h3Z"/></svg>
+          </a>
+        </div>
       </div>
       <div class="foot-col">
         <h5 data-i18n="foot_naviga">Naviga</h5>
         <p>
+          <a href="#novita" data-i18n="nav_novita">Novità</a><br>
           <a href="#categorie" data-i18n="nav_categorie">Categorie</a><br>
-          <a href="#come-funziona" data-i18n="nav_come_funziona">Come funziona</a><br>
+          <a href="#recensioni" data-i18n="nav_recensioni">Recensioni</a><br>
           <a href="/contact.html" data-i18n="nav_contatti">Contatti</a>
         </p>
       </div>
@@ -390,10 +535,13 @@
           <span data-i18n="foot_hours">Lun&ndash;Sab 8:00&ndash;18:00 &middot; Dom 8:00&ndash;15:00</span>
         </p>
       </div>
+      <div class="foot-col">
+        <h5 data-i18n="foot_bar">Ingrosso riservato a operatori del settore</h5>
+        <p><a href="/privacy.html">Privacy Policy</a></p>
+      </div>
     </div>
     <div class="foot-bar">
       <span>© <span id="yr"></span> Bella Italia — P.IVA 00000000000</span>
-      <span data-i18n="foot_bar">Ingrosso riservato a operatori del settore</span>
       <span><a href="/privacy.html">Privacy Policy</a></span>
     </div>
   </div>
@@ -408,35 +556,86 @@
   document.getElementById('yr').textContent = new Date().getFullYear();
   I18N.initLangSwitch('langSwitch');
 
-  (function buildStrip(){
-    const shades = ['#F0D5CE','#E8BCB0','#DFA294','#D98C82','#D4736F','#CD5C63',
-                    '#C9506B','#B94467','#A83C63','#96335C','#7F2A52','#6B2447',
-                    '#5A1E3C','#7A2E4E','#98395C','#B34A69','#C86077','#DA7C8B',
-                    '#E79AA3','#F0B8BC'];
-    const strip = document.getElementById('strip');
-    shades.forEach((c,i)=>{
-      const s = document.createElement('span');
-      s.style.background = c;
-      s.style.animationDelay = (i*38)+'ms';
-      strip.appendChild(s);
+  function updateAvatarInitials() {
+    document.querySelectorAll('[data-author-key]').forEach(el => {
+      const name = I18N.t(el.getAttribute('data-author-key'));
+      const initials = name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      el.textContent = initials || name.slice(0, 2).toUpperCase();
     });
-  })();
+  }
+  updateAvatarInitials();
+  window.addEventListener('i18nchange', updateAvatarInitials);
 
   const nav = document.getElementById('nav');
   const onScroll = () => nav.classList.toggle('solid', window.scrollY > 40);
   onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
 
-  const tog = document.getElementById('navToggle'), links = document.getElementById('navLinks');
+  const tog = document.getElementById('navToggle');
+  // mobile menu: reuse nav-center as a dropdown panel
+  const navCenter = document.querySelector('.nav-center');
   tog.addEventListener('click', () => {
-    const open = links.classList.toggle('open');
+    const open = navCenter.classList.toggle('open');
     tog.setAttribute('aria-expanded', open);
+    navCenter.style.cssText = open
+      ? 'display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:rgba(18,18,18,.98);padding:20px;gap:16px'
+      : '';
   });
-  links.addEventListener('click', e => { if(e.target.tagName==='A') links.classList.remove('open'); });
+  navCenter.addEventListener('click', e => { if(e.target.tagName==='A'){ navCenter.classList.remove('open'); navCenter.style.cssText=''; } });
 
   const io = new IntersectionObserver(es => {
     es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
   }, {threshold:.12});
   document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canHover = window.matchMedia('(hover:hover)').matches;
+
+  // tilt + spotlight on category cards
+  if (!reduceMotion && canHover) {
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('pointermove', e => {
+        const r = card.getBoundingClientRect();
+        const x = ((e.clientX - r.left) / r.width) * 100;
+        const y = ((e.clientY - r.top) / r.height) * 100;
+        card.style.setProperty('--mx', x + '%');
+        card.style.setProperty('--my', y + '%');
+        const rx = ((y - 50) / 50) * -5, ry = ((x - 50) / 50) * 5;
+        card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-3px)`;
+      });
+      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+    });
+    document.querySelectorAll('.na-thumb').forEach(thumb => {
+      thumb.addEventListener('pointermove', e => {
+        const r = thumb.getBoundingClientRect();
+        thumb.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+        thumb.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+      });
+    });
+  }
+
+  // new-arrivals carousel controls
+  const naTrack = document.getElementById('naTrack');
+  const step = () => (naTrack.querySelector('.na-card')?.offsetWidth || 220) + 18;
+  document.getElementById('naPrev').addEventListener('click', () => naTrack.scrollBy({left: -step()*2, behavior:'smooth'}));
+  document.getElementById('naNext').addEventListener('click', () => naTrack.scrollBy({left: step()*2, behavior:'smooth'}));
+
+  // sliding pill on the language switch
+  function enhanceLangSwitch(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let thumb = el.querySelector('.lang-thumb');
+    if (!thumb) { thumb = document.createElement('span'); thumb.className = 'lang-thumb'; el.prepend(thumb); }
+    const active = el.querySelector('button.active');
+    if (active) { thumb.style.width = active.offsetWidth + 'px'; thumb.style.left = active.offsetLeft + 'px'; }
+    el.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => requestAnimationFrame(() => {
+        thumb.style.width = btn.offsetWidth + 'px';
+        thumb.style.left = btn.offsetLeft + 'px';
+      }));
+    });
+  }
+  enhanceLangSwitch('langSwitch');
+  window.addEventListener('resize', () => enhanceLangSwitch('langSwitch'));
 </script>
 </body>
 </html>
