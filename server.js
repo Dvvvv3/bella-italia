@@ -360,7 +360,7 @@ app.delete('/api/admin/products/:id', requireAdmin, (req, res) => {
 
 // 客户列表
 app.get('/api/admin/customers', requireAdmin, (req, res) => {
-  res.json(db.prepare('SELECT * FROM customers').all());
+  res.json(db.prepare('SELECT * FROM customers ORDER BY rowid DESC').all());
 });
 
 // 新增客户
