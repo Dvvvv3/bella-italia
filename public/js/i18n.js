@@ -97,7 +97,7 @@
       o_banner_min: "ORDINE MINIMO €300",
       o_banner_ship_it: "🚚 SPEDIZIONE €15 fino a 25kg in tutto Italia 🇮🇹",
       o_banner_ship_eu: "🌍 SPEDIZIONE IN TUTTO EUROPA!",
-      o_banner_vip: "Dopo l'ordine entri nel gruppo VIP Bella Italia 💎",
+      o_banner_vip: "Entra nel gruppo VIP Bella Italia dopo l'ordine 💎",
       o_iva_note: "Prezzo non compreso IVA",
       o_delivery_label: "Modalità di consegna *",
       o_delivery_ship: "Spedizione",
