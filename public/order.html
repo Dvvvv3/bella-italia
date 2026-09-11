@@ -75,6 +75,46 @@
     font-size: 13px;
   }
   #customerName { font-weight: 500; }
+  .orders-btn {
+    background: rgba(255,255,255,0.5);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    width: 30px; height: 30px;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0;
+    line-height: 1;
+  }
+  .order-card {
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    margin-bottom: 10px; overflow: hidden;
+  }
+  .order-card-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px; cursor: pointer;
+  }
+  .order-card-num { font-size: 13.5px; font-weight: 600; color: var(--rose-deep); }
+  .order-card-date { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+  .order-card-right { text-align: right; }
+  .order-card-total { font-size: 13px; font-weight: 600; margin-top: 4px; }
+  .order-status-badge {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    padding: 3px 9px; border-radius: 999px; letter-spacing: 0.02em;
+  }
+  .order-status-badge.status-pending { background: #fff3d6; color: #a87a00; }
+  .order-status-badge.status-confirmed { background: #e0ecff; color: #2f5db0; }
+  .order-status-badge.status-shipped { background: #e5f3e8; color: #2e7d4f; }
+  .order-card-items {
+    max-height: 0; overflow: hidden; transition: max-height 0.25s ease;
+    padding: 0 12px; border-top: 1px solid transparent;
+  }
+  .order-card.open .order-card-items {
+    max-height: 600px; padding: 4px 12px 12px; border-top-color: var(--line);
+  }
+  .order-item-line {
+    display: flex; justify-content: space-between; gap: 10px;
+    font-size: 12.5px; color: var(--ink-soft); padding: 4px 0;
+  }
   .tier-badge {
     display: inline-block;
     background: var(--gold);
@@ -536,7 +576,10 @@ window.addEventListener('appinstalled', () => {
   <div class="brand-tagline" data-i18n="o_tagline">Cosmetics Wholesale · Ingrosso Cosmetici</div>
   <div class="brand-meta">
     <span id="customerName">…</span>
-    <div class="lang-switch" id="langSwitch"></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="orders-btn" onclick="openOrderHistory()" aria-label="I miei ordini">📋</button>
+      <div class="lang-switch" id="langSwitch"></div>
+    </div>
   </div>
 </header>
 
@@ -881,6 +924,71 @@ function openCart() {
 function closeCart() {
   document.getElementById('cartOverlay')?.remove();
   unlockScroll();
+}
+
+async function openOrderHistory() {
+  if (document.getElementById('ordersOverlay')) return;
+  const ov = document.createElement('div');
+  ov.className = 'cart-overlay';
+  ov.id = 'ordersOverlay';
+  ov.onclick = (e) => { if (e.target === ov) closeOrderHistory(); };
+  ov.innerHTML = `
+    <div class="cart-panel">
+      <div class="handle"></div>
+      <div class="head">
+        <h3>${I18N.t('o_orders_title')}</h3>
+        <button onclick="closeOrderHistory()">&times;</button>
+      </div>
+      <div class="cart-list" id="ordersList"><p class="cart-empty">${I18N.t('o_loading')}</p></div>
+    </div>`;
+  document.body.appendChild(ov);
+  lockScroll();
+  try {
+    const res = await fetch(`/api/customer/${token}/orders`);
+    if (!res.ok) throw new Error('network');
+    const orders = await res.json();
+    renderOrdersList(orders);
+  } catch (e) {
+    const el = document.getElementById('ordersList');
+    if (el) el.innerHTML = `<p class="cart-empty">${I18N.t('o_error_network')}</p>`;
+  }
+}
+function closeOrderHistory() {
+  document.getElementById('ordersOverlay')?.remove();
+  unlockScroll();
+}
+function renderOrdersList(orders) {
+  const el = document.getElementById('ordersList');
+  if (!el) return;
+  if (!orders || orders.length === 0) {
+    el.innerHTML = `<p class="cart-empty">${I18N.t('o_orders_empty')}</p>`;
+    return;
+  }
+  const localeMap = { it: 'it-IT', en: 'en-GB', fr: 'fr-FR', es: 'es-ES' };
+  const locale = localeMap[I18N.getLang()] || 'it-IT';
+  el.innerHTML = orders.map(o => {
+    const date = new Date(o.created_at).toLocaleDateString(locale, { day: '2-digit', month: 'short', year: 'numeric' });
+    const statusText = I18N.t('o_status_' + o.status) || o.status;
+    const itemsHtml = (o.items || []).map(it => `
+      <div class="order-item-line">
+        <span>${it.qty}× ${it.product_name}</span>
+        <span>€${money(it.qty * it.unit_price)}</span>
+      </div>`).join('');
+    return `
+    <div class="order-card">
+      <div class="order-card-head" onclick="this.parentElement.classList.toggle('open')">
+        <div>
+          <div class="order-card-num">${formatOrderNum(o.id)}</div>
+          <div class="order-card-date">${date}</div>
+        </div>
+        <div class="order-card-right">
+          <span class="order-status-badge status-${o.status}">${statusText}</span>
+          <div class="order-card-total">€${money(o.total)}</div>
+        </div>
+      </div>
+      <div class="order-card-items">${itemsHtml}</div>
+    </div>`;
+  }).join('');
 }
 
 function openSearch() {

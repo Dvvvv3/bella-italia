@@ -155,7 +155,12 @@
       o_ios_s2_d: '"Aggiungi alla schermata Home" nel menu che si apre',
       o_ios_s3_t: 'Tocca "Aggiungi"',
       o_ios_s3_d: "L'icona di Bella Italia apparirà sulla tua schermata Home",
-      o_ios_gotit: "Ho capito ✓"
+      o_ios_gotit: "Ho capito ✓",
+      o_orders_title: "I miei ordini",
+      o_orders_empty: "Non hai ancora effettuato ordini",
+      o_status_pending: "In attesa",
+      o_status_confirmed: "Confermato",
+      o_status_shipped: "Spedito"
     },
 
     en: {
@@ -313,7 +318,12 @@
       o_ios_s2_d: '"Add to Home Screen" in the menu that opens',
       o_ios_s3_t: 'Tap "Add"',
       o_ios_s3_d: "The Bella Italia icon will appear on your Home Screen",
-      o_ios_gotit: "Got it ✓"
+      o_ios_gotit: "Got it ✓",
+      o_orders_title: "My orders",
+      o_orders_empty: "You haven't placed any orders yet",
+      o_status_pending: "Pending",
+      o_status_confirmed: "Confirmed",
+      o_status_shipped: "Shipped"
     },
 
     fr: {
@@ -471,7 +481,12 @@
       o_ios_s2_d: '« Sur l\'écran d\'accueil » dans le menu qui s\'ouvre',
       o_ios_s3_t: 'Appuyez sur « Ajouter »',
       o_ios_s3_d: "L'icône Bella Italia apparaîtra sur votre écran d'accueil",
-      o_ios_gotit: "Compris ✓"
+      o_ios_gotit: "Compris ✓",
+      o_orders_title: "Mes commandes",
+      o_orders_empty: "Vous n'avez pas encore passé de commande",
+      o_status_pending: "En attente",
+      o_status_confirmed: "Confirmée",
+      o_status_shipped: "Expédiée"
     },
 
     es: {
@@ -629,7 +644,12 @@
       o_ios_s2_d: '"Añadir a pantalla de inicio" en el menú que se abre',
       o_ios_s3_t: 'Toca "Añadir"',
       o_ios_s3_d: "El icono de Bella Italia aparecerá en tu pantalla de inicio",
-      o_ios_gotit: "Entendido ✓"
+      o_ios_gotit: "Entendido ✓",
+      o_orders_title: "Mis pedidos",
+      o_orders_empty: "Todavía no has hecho ningún pedido",
+      o_status_pending: "Pendiente",
+      o_status_confirmed: "Confirmado",
+      o_status_shipped: "Enviado"
     }
   };
 

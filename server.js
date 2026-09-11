@@ -200,6 +200,22 @@ function packSizeFromUnit(unit) {
   return m ? parseInt(m[1], 10) : 1;
 }
 
+// 客户自己查历史订单(下单后想看看自己买过什么)
+app.get('/api/customer/:token/orders', requireBoundDevice, (req, res) => {
+  const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
+  if (!customer) return res.status(404).json({ error: '链接无效或已过期' });
+  const orders = db.prepare('SELECT * FROM orders WHERE customer_id = ? ORDER BY created_at DESC').all(customer.id);
+  const itemsStmt = db.prepare('SELECT product_name, qty, unit_price FROM order_items WHERE order_id = ?');
+  res.json(orders.map(o => ({
+    id: o.id,
+    created_at: o.created_at,
+    status: o.status,
+    total: o.total,
+    note: o.note,
+    items: itemsStmt.all(o.id),
+  })));
+});
+
 app.post('/api/order/:token', requireBoundDevice, async (req, res) => {
   const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
   if (!customer) return res.status(404).json({ error: '链接无效或已过期' });
