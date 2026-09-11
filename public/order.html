@@ -118,9 +118,15 @@
     max-height: 600px; padding: 4px 12px 12px; border-top-color: var(--line);
   }
   .order-item-line {
-    display: flex; justify-content: space-between; gap: 10px;
-    font-size: 12.5px; color: var(--ink-soft); padding: 4px 0;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12.5px; color: var(--ink-soft); padding: 6px 0;
   }
+  .order-item-line img {
+    width: 38px; height: 38px; object-fit: cover; border-radius: 8px;
+    background: var(--blush); flex-shrink: 0;
+  }
+  .order-item-line .oi-name { flex: 1; min-width: 0; }
+  .order-item-line .oi-price { flex-shrink: 0; font-weight: 500; }
   .tier-badge {
     display: inline-block;
     background: var(--gold);
@@ -593,7 +599,7 @@ window.addEventListener('appinstalled', () => {
   <div class="min" data-i18n="o_banner_min">ORDINE MINIMO €300</div>
   <div class="line" data-i18n="o_banner_ship_it">🚚 SPEDIZIONE €15 fino a 25kg in tutto Italia 🇮🇹</div>
   <div class="line" data-i18n="o_banner_ship_eu">🌍 SPEDIZIONE IN TUTTO EUROPA!</div>
-  <div class="line" data-i18n="o_banner_vip">Entra nel gruppo VIP Bella Italia dopo l'ordine 💎</div>
+  <div class="line" data-i18n="o_banner_vip">Dopo l'ordine, contattaci in privato per il gruppo whatsapp. 💎</div>
 </div>
 <div class="iva-note" id="ivaNote" data-i18n="o_iva_note">Prezzo non compreso IVA</div>
 
@@ -978,8 +984,9 @@ function renderOrdersList(orders) {
     const statusText = I18N.t('o_status_' + o.status) || o.status;
     const itemsHtml = (o.items || []).map(it => `
       <div class="order-item-line">
-        <span>${it.qty}× ${it.product_name}</span>
-        <span>€${money(it.qty * it.unit_price)}</span>
+        <img src="${it.image || 'https://placehold.co/80x80'}" alt="">
+        <span class="oi-name">${it.qty}× ${it.product_name}</span>
+        <span class="oi-price">€${money(it.qty * it.unit_price)}</span>
       </div>`).join('');
     return `
     <div class="order-card">

@@ -205,7 +205,12 @@ app.get('/api/customer/:token/orders', requireBoundDevice, (req, res) => {
   const customer = db.prepare('SELECT * FROM customers WHERE token = ?').get(req.params.token);
   if (!customer) return res.status(404).json({ error: '链接无效或已过期' });
   const orders = db.prepare('SELECT * FROM orders WHERE customer_id = ? ORDER BY created_at DESC').all(customer.id);
-  const itemsStmt = db.prepare('SELECT product_name, qty, unit_price FROM order_items WHERE order_id = ?');
+  const itemsStmt = db.prepare(`
+    SELECT oi.product_name, oi.qty, oi.unit_price, p.image AS image
+    FROM order_items oi
+    LEFT JOIN products p ON p.id = oi.product_id
+    WHERE oi.order_id = ?
+  `);
   res.json(orders.map(o => ({
     id: o.id,
     created_at: o.created_at,
