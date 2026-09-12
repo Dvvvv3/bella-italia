@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BELLA ITALIA — Ingrosso Cosmetici & Profumi</title>
+<meta name="description" content="BELLA ITALIA — ingrosso cosmetici e profumi. Richiedi il listino su WhatsApp.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Patrick+Hand&display=swap');
+:root{--pink:#f9e4e9;--pink2:#f3c1d0;--deep:#5a2940;--paper:#fffaf8;--muted:#765d67;--line:#d7a1b0}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--deep);font-family:"DM Sans",Arial,sans-serif}
+a{text-decoration:none;color:inherit}
+.site{width:min(100% - 24px,1180px);margin:12px auto;border:3px dashed #9b6b7c;border-radius:28px;overflow:hidden;background:#fff}
+.topbar{height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 25px;border-bottom:2px dashed var(--line);position:sticky;top:0;z-index:20;background:rgba(255,250,248,.94);backdrop-filter:blur(10px)}
+.topbar img{width:115px;mix-blend-mode:multiply}.nav{display:flex;gap:27px;font-size:11px;text-transform:uppercase;letter-spacing:1.3px}.nav a:hover{opacity:.55}
+.nav-wa{border:2px solid var(--deep);padding:9px 15px;border-radius:20px;font-size:10px}.lang-select{border:2px solid var(--deep);padding:8px 12px;border-radius:20px;background:#fffaf8;color:var(--deep);font:600 10px "DM Sans",Arial,sans-serif;letter-spacing:.7px;cursor:pointer;outline:none}
+.cover{position:relative;line-height:0}.cover img{display:block;width:100%;height:auto}
+.cover .hit{position:absolute;left:17.3%;top:33.35%;width:63%;height:8.5%;border-radius:999px}
+.cover .hit:hover{background:rgba(255,255,255,.12);transform:translateY(-4px) scale(1.015);transition:.2s}
+.intro{padding:75px 7%;background:var(--pink);text-align:center;border-top:2px dashed var(--line)}
+.kicker{font:23px "Patrick Hand",cursive;letter-spacing:2px}.intro h1,.section h2{font:clamp(42px,6vw,70px) "Patrick Hand",cursive;font-weight:400;line-height:.95;margin:12px 0 20px}
+.intro p{max-width:720px;margin:0 auto 26px;font-size:16px;line-height:1.8;color:var(--muted)}
+.wa{display:inline-block;background:var(--deep);color:#fff;padding:14px 25px;border-radius:30px;font:22px "Patrick Hand",cursive;transition:.2s}.wa:hover{transform:translateY(-3px);box-shadow:0 9px 18px #5a294033}
+.section{padding:80px 7%;border-top:2px dashed var(--line)}.section-head{text-align:center;margin-bottom:38px}.section h2{margin-bottom:10px}
+.section-head p{max-width:650px;margin:auto;line-height:1.75;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.card{min-height:150px;border:3px solid var(--deep);border-radius:20px;background:#fff7f8;display:flex;align-items:center;justify-content:center;text-align:center;font:30px "Patrick Hand",cursive;position:relative;transition:.2s}.card:nth-child(odd){transform:rotate(-1deg)}.card:nth-child(even){transform:rotate(1deg)}.card:hover{transform:translateY(-5px) rotate(0)}
+.card small{position:absolute;top:12px;right:14px;font:10px Arial;letter-spacing:2px;opacity:.45}
+.about{display:grid;grid-template-columns:1fr 1fr;gap:55px;align-items:center}.about img{width:100%;border-radius:24px;border:2px dashed #9b6b7c;background:#fbecef}.about-copy h2{font-size:clamp(40px,5vw,62px);margin:0 0 18px}.about-copy p{line-height:1.85;color:var(--muted)}
+.contact{text-align:center;background:#fff2f4;padding:85px 7%;border-top:2px dashed var(--line)}.contact h2{font:clamp(48px,7vw,78px) "Patrick Hand",cursive;font-weight:400;margin:8px 0 15px}.contact p{max-width:600px;margin:0 auto 28px;line-height:1.8;color:var(--muted)}
+footer{padding:28px 25px;text-align:center;border-top:2px dashed var(--line);font-size:11px;letter-spacing:1px;color:#7d6870}
+.float{position:fixed;right:18px;bottom:18px;width:58px;height:58px;border:3px solid var(--deep);border-radius:50%;background:#f3b6c8;display:grid;place-items:center;font-size:11px;font-weight:600;z-index:30;box-shadow:0 8px 22px #5a294033}
+@media(max-width:800px){.nav{display:none}.topbar{height:62px}.grid{grid-template-columns:repeat(2,1fr)}.about{grid-template-columns:1fr;gap:30px}.section,.intro,.contact{padding-left:5%;padding-right:5%}}
+@media(max-width:500px){.site{width:calc(100% - 8px);margin:4px auto;border-radius:18px}.topbar{padding:0 15px}.topbar img{width:100px}.grid{grid-template-columns:1fr 1fr;gap:10px}.card{min-height:105px;font-size:25px}.intro{padding-top:55px;padding-bottom:55px}.section{padding-top:60px;padding-bottom:60px}.float{width:52px;height:52px;right:12px;bottom:12px}}
+</style>
+</head>
+<body>
+<div class="site">
+<header class="topbar">
+  <a href="#home"><img src="logo.jpg" alt="BELLA ITALIA MAKE UP"></a>
+  <nav class="nav"><a href="#chi-siamo" data-i18n="nav_about">Chi siamo</a><a href="#beauty" data-i18n="nav_beauty">Beauty</a><a href="#contatti" data-i18n="nav_contact">Contatti</a></nav>
+  <select class="lang-select" id="languageSelect" aria-label="Language selector">
+    <option value="it">Italiano</option>
+    <option value="en">English</option>
+    <option value="es">Español</option>
+    <option value="pt">Português</option>
+    <option value="fr">Français</option>
+    <option value="de">Deutsch</option>
+  </select>
+</header>
+
+<main id="home">
+  <section class="cover">
+    <img src="cover.png" alt="BELLA ITALIA — ingrosso cosmetici e profumi">
+    <a class="hit" href="https://wa.me/393485180143?text=Ciao%20Bella%20Italia%2C%20vorrei%20richiedere%20il%20listino." target="_blank" aria-label="Richiedi il listino su WhatsApp"></a>
+  </section>
+
+  <section class="intro" id="chi-siamo">
+    <div class="kicker" data-i18n="welcome">♡ BENVENUTI IN BELLA ITALIA ♡</div>
+    <h1 data-i18n="hero_title">Beauty wholesale,<br>with a little sparkle.</h1>
+    <p data-i18n="hero_text">Ogni cliente ha un link personale che mostra le categorie, le foto dei prodotti, la disponibilità aggiornata e i suoi prezzi. Ordine minimo €300 per la spedizione.</p>
+    <a class="wa" href="https://wa.me/393485180143?text=Ciao%20Bella%20Italia%2C%20vorrei%20richiedere%20il%20listino." target="_blank" data-i18n="request_list">RICHIEDI IL LISTINO ♡</a>
+  </section>
+
+  <section class="section" id="beauty">
+    <div class="section-head">
+      <div class="kicker" data-i18n="our_world">♡ IL NOSTRO MONDO ♡</div>
+      <h2 data-i18n="beauty_title">Beauty & profumi</h2>
+      <p data-i18n="beauty_text">Una selezione pensata per il mondo professionale e wholesale.</p>
+    </div>
+    <div class="grid">
+      <div class="card"><span data-i18n="makeup">TRUCCHI</span> <small>01</small></div>
+      <div class="card"><span data-i18n="perfumes">PROFUMI</span> <small>02</small></div>
+      <div class="card"><span data-i18n="accessories">ACCESSORI</span> <small>03</small></div>
+      <div class="card"><span data-i18n="skincare">SKINCARE</span> <small>04</small></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="about">
+      <img src="cover.png" alt="BELLA ITALIA beauty">
+      <div class="about-copy">
+        <div class="kicker" data-i18n="bella">♡ BELLA ITALIA</div>
+        <h2 data-i18n="about_title">Il tuo contatto diretto nel beauty.</h2>
+        <p data-i18n="about_text">Il nostro sito è il punto di partenza: qui scopri il brand, mentre per disponibilità, prezzi e listino puoi parlare direttamente con noi.</p>
+        <a class="wa" href="https://wa.me/393485180143?text=Ciao%20Bella%20Italia%2C%20vorrei%20richiedere%20il%20listino." target="_blank" data-i18n="write_whatsapp">SCRIVICI SU WHATSAPP</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contatti">
+    <div class="kicker" data-i18n="talk">♡ LET'S TALK BEAUTY ♡</div>
+    <h2 data-i18n="request_title">RICHIEDI IL LISTINO</h2>
+    <p data-i18n="contact_text">Clicca e contattaci direttamente su WhatsApp. Ti invieremo il tuo link personale per procedere con gli ordini.</p>
+    <a class="wa" href="https://wa.me/393485180143?text=Ciao%20Bella%20Italia%2C%20vorrei%20richiedere%20il%20listino." target="_blank" data-i18n="open_whatsapp">💬 APRI WHATSAPP</a>
+  </section>
+</main>
+<footer>© BELLA ITALIA MAKE UP · INGROSSO COSMETICI & PROFUMI · +39 348 518 0143</footer>
+</div>
+<a class="float" href="https://wa.me/393485180143?text=Ciao%20Bella%20Italia%2C%20vorrei%20richiedere%20il%20listino." target="_blank">WA</a>
+<script>
+const translations = {
+  it:{nav_about:'Chi siamo',nav_beauty:'Beauty',nav_contact:'Contatti',welcome:'♡ BENVENUTI IN BELLA ITALIA ♡',hero_title:'Beauty wholesale,<br>with a little sparkle.',hero_text:'Ogni cliente ha un link personale che mostra le categorie, le foto dei prodotti, la disponibilità aggiornata e i suoi prezzi. Ordine minimo €300 per la spedizione.',request_list:'RICHIEDI IL LISTINO ♡',our_world:'♡ IL NOSTRO MONDO ♡',beauty_title:'Beauty & profumi',beauty_text:'Una selezione pensata per il mondo professionale e wholesale.',makeup:'TRUCCHI',perfumes:'PROFUMI',accessories:'ACCESSORI',skincare:'SKINCARE',bella:'♡ BELLA ITALIA',about_title:'Il tuo contatto diretto nel beauty.',about_text:'Il nostro sito è il punto di partenza: qui scopri il brand, mentre per disponibilità, prezzi e listino puoi parlare direttamente con noi.',write_whatsapp:'SCRIVICI SU WHATSAPP',talk:'♡ LET\'S TALK BEAUTY ♡',request_title:'RICHIEDI IL LISTINO',contact_text:'Clicca e contattaci direttamente su WhatsApp. Ti invieremo il tuo link personale per procedere con gli ordini.',open_whatsapp:'💬 APRI WHATSAPP'},
+  en:{nav_about:'About us',nav_beauty:'Beauty',nav_contact:'Contact',welcome:'♡ WELCOME TO BELLA ITALIA ♡',hero_title:'Beauty wholesale,<br>with a little sparkle.',hero_text:'Every customer has a personal link showing categories, product photos, updated availability and their prices. Minimum order €300 for shipping.',request_list:'REQUEST THE PRICE LIST ♡',our_world:'♡ OUR WORLD ♡',beauty_title:'Beauty & fragrances',beauty_text:'A selection designed for the professional and wholesale beauty world.',makeup:'MAKEUP',perfumes:'FRAGRANCES',accessories:'ACCESSORIES',skincare:'SKINCARE',bella:'♡ BELLA ITALIA',about_title:'Your direct contact in beauty.',about_text:'Our website is the starting point: discover the brand here, while for availability, prices and the price list you can contact us directly.',write_whatsapp:'WRITE TO US ON WHATSAPP',talk:'♡ LET\'S TALK BEAUTY ♡',request_title:'REQUEST THE PRICE LIST',contact_text:'Click to contact us directly on WhatsApp. We will send you your personal link to place orders.',open_whatsapp:'💬 OPEN WHATSAPP'},
+  es:{nav_about:'Quiénes somos',nav_beauty:'Belleza',nav_contact:'Contacto',welcome:'♡ BIENVENIDOS A BELLA ITALIA ♡',hero_title:'Belleza al por mayor,<br>con un toque de brillo.',hero_text:'Cada cliente tiene un enlace personal que muestra las categorías, las fotos de los productos, la disponibilidad actualizada y sus precios. Pedido mínimo de €300 para el envío.',request_list:'SOLICITA EL LISTADO ♡',our_world:'♡ NUESTRO MUNDO ♡',beauty_title:'Belleza y perfumes',beauty_text:'Una selección pensada para el mundo profesional y mayorista de la belleza.',makeup:'MAQUILLAJE',perfumes:'PERFUMES',accessories:'ACCESORIOS',skincare:'CUIDADO DE LA PIEL',bella:'♡ BELLA ITALIA',about_title:'Tu contacto directo en belleza.',about_text:'Nuestro sitio web es el punto de partida: descubre aquí la marca y, para disponibilidad, precios y listado, puedes hablar directamente con nosotros.',write_whatsapp:'ESCRÍBENOS POR WHATSAPP',talk:'♡ HABLEMOS DE BELLEZA ♡',request_title:'SOLICITA EL LISTADO',contact_text:'Haz clic para contactarnos directamente por WhatsApp. Te enviaremos tu enlace personal para realizar pedidos.',open_whatsapp:'💬 ABRIR WHATSAPP'},
+  pt:{nav_about:'Sobre nós',nav_beauty:'Beleza',nav_contact:'Contacto',welcome:'♡ BEM-VINDOS À BELLA ITALIA ♡',hero_title:'Beleza por atacado,<br>com um toque de brilho.',hero_text:'Cada cliente tem um link pessoal que mostra as categorias, as fotos dos produtos, a disponibilidade atualizada e os seus preços. Pedido mínimo de €300 para envio.',request_list:'PEDIR A TABELA DE PREÇOS ♡',our_world:'♡ O NOSSO MUNDO ♡',beauty_title:'Beleza e perfumes',beauty_text:'Uma seleção pensada para o mundo profissional e grossista da beleza.',makeup:'MAQUILHAGEM',perfumes:'PERFUMES',accessories:'ACESSÓRIOS',skincare:'CUIDADOS DE PELE',bella:'♡ BELLA ITALIA',about_title:'O seu contacto direto no mundo da beleza.',about_text:'O nosso site é o ponto de partida: descubra aqui a marca e, para disponibilidade, preços e tabela, pode falar diretamente connosco.',write_whatsapp:'FALE CONNOSCO NO WHATSAPP',talk:'♡ VAMOS FALAR DE BELEZA ♡',request_title:'PEDIR A TABELA DE PREÇOS',contact_text:'Clique para nos contactar diretamente pelo WhatsApp. Enviaremos o seu link pessoal para fazer encomendas.',open_whatsapp:'💬 ABRIR WHATSAPP'},
+  fr:{nav_about:'À propos',nav_beauty:'Beauté',nav_contact:'Contact',welcome:'♡ BIENVENUE CHEZ BELLA ITALIA ♡',hero_title:'Beauté en gros,<br>avec une touche d’éclat.',hero_text:'Chaque client dispose d’un lien personnel présentant les catégories, les photos des produits, la disponibilité actualisée et ses prix. Commande minimum de 300 € pour l’expédition.',request_list:'DEMANDER LE TARIF ♡',our_world:'♡ NOTRE UNIVERS ♡',beauty_title:'Beauté & parfums',beauty_text:'Une sélection pensée pour l’univers professionnel et la vente en gros de produits de beauté.',makeup:'MAQUILLAGE',perfumes:'PARFUMS',accessories:'ACCESSOIRES',skincare:'SOINS DE LA PEAU',bella:'♡ BELLA ITALIA',about_title:'Votre contact direct dans l’univers de la beauté.',about_text:'Notre site est le point de départ : découvrez la marque ici et, pour la disponibilité, les prix et le tarif, contactez-nous directement.',write_whatsapp:'ÉCRIVEZ-NOUS SUR WHATSAPP',talk:'♡ PARLONS BEAUTÉ ♡',request_title:'DEMANDER LE TARIF',contact_text:'Cliquez pour nous contacter directement sur WhatsApp. Nous vous enverrons votre lien personnel pour passer vos commandes.',open_whatsapp:'💬 OUVRIR WHATSAPP'},
+  de:{nav_about:'Über uns',nav_beauty:'Beauty',nav_contact:'Kontakt',welcome:'♡ WILLKOMMEN BEI BELLA ITALIA ♡',hero_title:'Beauty-Großhandel,<br>mit einem Hauch von Glanz.',hero_text:'Jeder Kunde erhält einen persönlichen Link mit Kategorien, Produktfotos, aktueller Verfügbarkeit und seinen Preisen. Mindestbestellwert für den Versand: 300 €.',request_list:'PREISLISTE ANFORDERN ♡',our_world:'♡ UNSERE WELT ♡',beauty_title:'Beauty & Parfüms',beauty_text:'Eine Auswahl für den professionellen Beauty- und Großhandelsbereich.',makeup:'MAKE-UP',perfumes:'PARFÜMS',accessories:'ACCESSOIRES',skincare:'HAUTPFLEGE',bella:'♡ BELLA ITALIA',about_title:'Ihr direkter Kontakt in der Beauty-Welt.',about_text:'Unsere Website ist der Ausgangspunkt: Entdecken Sie hier die Marke. Für Verfügbarkeit, Preise und Preisliste können Sie uns direkt kontaktieren.',write_whatsapp:'SCHREIBEN SIE UNS AUF WHATSAPP',talk:'♡ LET’S TALK BEAUTY ♡',request_title:'PREISLISTE ANFORDERN',contact_text:'Klicken Sie hier, um uns direkt über WhatsApp zu kontaktieren. Wir senden Ihnen Ihren persönlichen Link für Bestellungen.',open_whatsapp:'💬 WHATSAPP ÖFFNEN'}
+};
+function setLanguage(lang){const t=translations[lang]||translations.it;document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>{const key=el.dataset.i18n;if(t[key]!==undefined)el.innerHTML=t[key]});localStorage.setItem('bellaLanguage',lang)}
+const select=document.getElementById('languageSelect');select.value=localStorage.getItem('bellaLanguage')||'it';select.addEventListener('change',e=>setLanguage(e.target.value));setLanguage(select.value);
+</script>
+</body>
+</html>
