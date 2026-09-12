@@ -2,354 +2,199 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Privacy Policy — BELLA ITALIA</title>
-<meta name="description" content="Informativa sulla privacy e trattamento dei dati personali.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Privacy Policy — Bella Italia</title>
+<meta name="description" content="Informativa privacy di Bella Italia, in conformità al Regolamento (UE) 2016/679 (GDPR).">
+<meta name="theme-color" content="#f7d3da">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --plum:#1C1719;
-    --plum-soft:#2A2325;
-    --ivory:#F7F1F2;
-    --rose:#B96B80;
-    --gold:#E89AAF;
-    --blush:#F0C9D3;
-    --muted:rgba(247,241,242,.55);
-    --muted-dark:rgba(28,23,25,.72);
-    --maxw:820px;
+  :root {
+    --paper: #f7d3da;
+    --paper-deep: #f3c2cc;
+    --box-fill: #fdedf0;
+    --ink: #4a1d29;
+    --ink-soft: rgba(74,29,41,.68);
+    --white: #fffaf9;
   }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{margin:0;background:var(--ivory);color:var(--plum);font-family:'Jost',system-ui,sans-serif;-webkit-font-smoothing:antialiased;touch-action:manipulation}
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
-  .eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;font-weight:500;color:var(--gold)}
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper-deep);
+    color: var(--ink);
+    font-family: 'Patrick Hand', cursive;
+    touch-action: manipulation;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+  .page {
+    position: relative;
+    width: 100%;
+    max-width: 620px;
+    background: var(--paper);
+    padding: max(28px, env(safe-area-inset-top)) 26px max(40px, env(safe-area-inset-bottom));
+  }
+  @media (min-width: 660px) {
+    body { padding: 32px 16px; }
+    .page { box-shadow: 0 20px 60px rgba(74,29,41,0.2); }
+  }
+  .frame-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .content { position: relative; z-index: 1; }
 
-  /* ---------- nav ---------- */
-  .nav{
-    position:fixed;top:0;left:0;right:0;z-index:50;
-    display:flex;align-items:center;justify-content:space-between;
-    padding:18px 28px;background:rgba(28,23,25,0);transition:background .4s,padding .4s;
+  .back-link {
+    font-size: 15px; font-weight: 500; color: var(--ink-soft);
+    text-decoration: none; display: inline-flex; align-items: center; gap: 4px;
+    margin-bottom: 10px;
   }
-  .nav.solid{background:rgba(28,23,25,.95);backdrop-filter:blur(10px);padding:13px 28px;box-shadow:0 2px 20px rgba(0,0,0,.15)}
-  .nav a{color:var(--ivory);text-decoration:none}
-  .nav-mark{font-family:'Bodoni Moda',serif;font-style:italic;font-size:22px}
-  .nav-back{font-size:13px;opacity:.75;position:relative}
-  .nav-back::after{
-    content:"";position:absolute;left:0;bottom:-3px;width:100%;height:1px;
-    background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .3s ease;
+  .logo-mini {
+    font-family: 'Caveat', cursive; font-weight: 700; font-size: 26px;
+    color: var(--ink-soft); text-align: center; margin-bottom: 4px;
   }
-  .nav-back:hover{opacity:1}
-  .nav-back:hover::after{transform:scaleX(1)}
-
-  /* ---------- page head ---------- */
-  .page-head{
-    background:
-      radial-gradient(45vw 45vw at 90% -20%, rgba(185,107,128,.22), transparent 65%),
-      var(--plum);
-    color:var(--ivory);padding:130px 0 60px;position:relative;overflow:hidden;
+  h1 {
+    font-family: 'Caveat', cursive; font-weight: 700; font-size: 44px;
+    text-align: center; margin: 0 0 6px;
   }
-  .page-head h1{font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(32px,6vw,52px);line-height:1.05;margin:14px 0 0;position:relative;z-index:1}
-  .page-head p{max-width:52ch;margin:16px 0 0;color:var(--muted);line-height:1.7;font-weight:300;font-size:14px;position:relative;z-index:1}
-
-  /* ---------- content ---------- */
-  .content{padding:48px 0 90px}
-  .content p, .content li{font-size:14.5px;line-height:1.8;color:rgba(28,23,25,.85)}
-  .content ul{padding-left:20px;margin:10px 0}
-  .content li{margin-bottom:6px}
-  .content a{color:var(--rose);text-decoration:none;border-bottom:1px solid var(--gold)}
-  .content a:hover{color:var(--plum)}
-  .box{position:relative;background:#fff;border:1px solid rgba(28,23,25,.1);border-left:3px solid var(--gold);border-radius:3px;padding:24px 26px;margin:28px 0}
-  .box h2{font-family:'Bodoni Moda',serif;font-weight:400;font-size:20px;margin:0 0 10px}
-  .updated{font-size:12px;color:var(--muted-dark);margin-top:6px}
-
-  /* ---------- accordion ---------- */
-  .acc{border-bottom:1px solid rgba(28,23,25,.12)}
-  .acc:first-child{border-top:1px solid rgba(28,23,25,.12)}
-  .acc-trigger{
-    all:unset;box-sizing:border-box;display:flex;width:100%;gap:16px;
-    align-items:center;justify-content:space-between;cursor:pointer;padding:20px 2px;
-  }
-  .acc-trigger:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-  .acc-trigger h2{font-family:'Bodoni Moda',serif;font-weight:400;font-size:20px;margin:0}
-  .acc-trigger .chev{flex-shrink:0;width:18px;height:18px;color:var(--gold);transition:transform .35s cubic-bezier(.4,0,.2,1)}
-  .acc-trigger[aria-expanded="false"] .chev{transform:rotate(-90deg)}
-  .acc-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1)}
-  .acc-body.closed{grid-template-rows:0fr}
-  .acc-inner{overflow:hidden}
-  .acc-inner > div{padding:0 2px 22px}
-  @media (prefers-reduced-motion:reduce){.acc-body{transition:none}}
-
-  /* ---------- footer ---------- */
-  footer{background:var(--plum);color:var(--ivory);padding:70px 0 34px}
-  .foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px}
-  .foot-mark{font-family:'Bodoni Moda',serif;font-style:italic;font-size:30px}
-  .foot-grid p,.foot-grid a{color:var(--muted);font-size:14px;line-height:1.9;text-decoration:none}
-  .foot-grid a:hover{color:var(--ivory)}
-  .foot-col h5{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:0 0 12px;font-weight:500}
-  .foot-social{display:flex;gap:10px;margin-top:16px}
-  .foot-social a{
-    width:38px;height:38px;border-radius:50%;border:1px solid rgba(247,241,242,.25);
-    display:flex;align-items:center;justify-content:center;color:var(--ivory);
-    transition:border-color .25s,background .25s,transform .25s;
-  }
-  .foot-social a:hover{border-color:var(--gold);background:var(--gold);color:var(--plum);transform:translateY(-2px)}
-  .foot-social svg{width:17px;height:17px}
-  .foot-bar{
-    margin-top:48px;padding-top:20px;border-top:1px solid rgba(247,241,242,.12);
-    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
-    font-size:12px;color:rgba(247,241,242,.4);
+  .intro {
+    text-align: center; font-size: 15px; color: var(--ink-soft);
+    max-width: 440px; margin: 0 auto 30px; line-height: 1.5;
   }
 
-  .rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
-  .rv.in{opacity:1;transform:none}
+  section { margin-bottom: 20px; }
+  h2 {
+    font-family: 'Caveat', cursive; font-weight: 700; font-size: 26px;
+    margin: 0 0 8px; color: var(--ink);
+  }
+  p, li { font-size: 16px; line-height: 1.55; margin: 0 0 8px; }
+  ul { margin: 0 0 8px; padding-left: 22px; }
+  a { color: var(--ink); }
+  .box {
+    background: var(--box-fill);
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .box-frame { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .box-inner { position: relative; }
+  .updated { font-size: 13px; color: var(--ink-soft); margin-top: 10px; }
 
-  a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-
-  /* ---------- whatsapp floating bubble ---------- */
-  .whatsapp-float{
-    position:fixed;right:20px;bottom:20px;z-index:200;display:flex;align-items:center;gap:10px;
-    background:#25D366;color:#fff;text-decoration:none;padding:13px 18px;border-radius:50px;
-    box-shadow:0 6px 20px rgba(0,0,0,.28);font-family:'Jost',system-ui,sans-serif;font-size:13px;
-    font-weight:500;line-height:1.3;max-width:270px;transition:transform .2s,box-shadow .2s;
-    animation:wa-pulse 2.4s ease-in-out infinite;
+  footer {
+    text-align: center; font-size: 13px; color: var(--ink-soft);
+    margin-top: 30px;
   }
-  .whatsapp-float:hover{transform:scale(1.04);box-shadow:0 8px 24px rgba(0,0,0,.34)}
-  .whatsapp-float svg{flex-shrink:0;width:26px;height:26px}
-  @keyframes wa-pulse{
-    0%,100%{box-shadow:0 6px 20px rgba(0,0,0,.28),0 0 0 0 rgba(37,211,102,.5)}
-    50%{box-shadow:0 6px 20px rgba(0,0,0,.28),0 0 0 8px rgba(37,211,102,0)}
-  }
-  @media (max-width:640px){.whatsapp-float span{display:none}.whatsapp-float{padding:14px;border-radius:50%}}
-
-  @media (max-width:1000px){.foot-grid{grid-template-columns:1fr 1fr}}
-  @media (max-width:640px){
-    .wrap{padding:0 20px}
-    .page-head{padding:110px 0 50px}
-    .foot-grid{grid-template-columns:1fr}
-  }
-  @media (prefers-reduced-motion:reduce){
-    *{transition:none!important;animation:none!important}
-    .rv{opacity:1;transform:none}
-    html{scroll-behavior:auto}
-  }
+  footer a { text-decoration: underline; }
 </style>
 </head>
 <body>
 
-<nav class="nav" id="nav">
-  <a href="/" class="nav-mark">Bella Italia</a>
-  <a href="/" class="nav-back">← Torna alla home</a>
-</nav>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="wobble" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.01 0.018" numOctaves="2" seed="9" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="6"/>
+  </filter>
+  <filter id="wobble-sm" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.02 0.05" numOctaves="2" seed="5" result="noise2"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise2" scale="3.5"/>
+  </filter>
+</svg>
 
-<header class="page-head">
-  <div class="wrap">
-    <span class="eyebrow">Informativa</span>
+<div class="page">
+  <svg class="frame-svg" viewBox="0 0 400 600" preserveAspectRatio="none">
+    <rect x="10" y="10" width="380" height="580" rx="30" fill="none" stroke="var(--ink,#4a1d29)" stroke-width="3" filter="url(#wobble)"/>
+  </svg>
+
+  <div class="content">
+    <a class="back-link" href="index.html">‹ Torna alla home</a>
+    <div class="logo-mini">Bella ♥ Italia</div>
     <h1>Privacy Policy</h1>
-    <p>Come raccogliamo, utilizziamo e proteggiamo i dati dei nostri clienti, in conformità al Regolamento (UE) 2016/679 (GDPR).</p>
-  </div>
-</header>
+    <p class="intro">Come raccogliamo, utilizziamo e proteggiamo i dati dei nostri clienti, in conformità al Regolamento (UE) 2016/679 (GDPR).</p>
 
-<main class="content">
-  <div class="wrap">
-
-    <div class="acc rv">
-      <button class="acc-trigger" aria-expanded="true" aria-controls="acc-body-1">
+    <div class="box">
+      <svg class="box-frame" viewBox="0 0 340 90" preserveAspectRatio="none"><rect x="4" y="4" width="332" height="82" rx="14" fill="none" stroke="var(--ink,#4a1d29)" stroke-width="2.5" filter="url(#wobble-sm)"/></svg>
+      <div class="box-inner">
         <h2>Titolare del trattamento</h2>
-        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-      </button>
-      <div class="acc-body" id="acc-body-1"><div class="acc-inner"><div>
-        <p>
-          TNC GOLD A8 — Via Galileo Ferraris 136, 80147 Napoli (NA), Italia.<br>
-          Contatto: <a href="https://wa.me/393485180143">+39 348 518 0143</a> (WhatsApp)
-        </p>
-      </div></div></div>
+        <p>TNC GOLD A8 — Via Galileo Ferraris 136, 80147 Napoli (NA), Italia.<br>
+        Contatto: <a href="https://wa.me/393485180143">+39 348 518 0143</a> (WhatsApp)</p>
+      </div>
     </div>
 
-    <div class="acc rv">
-      <button class="acc-trigger" aria-expanded="true" aria-controls="acc-body-2">
-        <h2>Quali dati raccogliamo</h2>
-        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-      </button>
-      <div class="acc-body" id="acc-body-2"><div class="acc-inner"><div>
-        <p>Per fornire il servizio di ordine all'ingrosso raccogliamo:</p>
-        <ul>
-          <li><strong>Dati aziendali:</strong> ragione sociale, partita IVA, indirizzo, numero di telefono — forniti dal cliente al primo accesso al proprio link personale.</li>
-          <li><strong>Dati degli ordini:</strong> prodotti, quantità, importi e note di consegna relative agli ordini effettuati.</li>
-          <li><strong>Dati tecnici di accesso:</strong> data e ora di accesso al link personale, indirizzo IP e tipo di dispositivo/browser — registrati automaticamente per motivi di sicurezza (vedi sotto).</li>
-        </ul>
-      </div></div></div>
+    <section>
+      <h2>Quali dati raccogliamo</h2>
+      <p>Per fornire il servizio di ordine all'ingrosso raccogliamo:</p>
+      <ul>
+        <li><strong>Dati aziendali:</strong> ragione sociale, partita IVA, indirizzo, numero di telefono — forniti dal cliente al primo accesso al proprio link personale.</li>
+        <li><strong>Dati degli ordini:</strong> prodotti, quantità, importi e note di consegna relative agli ordini effettuati.</li>
+        <li><strong>Dati tecnici di accesso:</strong> data e ora di accesso al link personale, indirizzo IP e tipo di dispositivo/browser — registrati automaticamente per motivi di sicurezza (vedi sotto).</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Perché li raccogliamo</h2>
+      <p>I dati sono utilizzati esclusivamente per:</p>
+      <ul>
+        <li>Gestire ed evadere gli ordini all'ingrosso;</li>
+        <li>Predisporre documenti di trasporto e fatturazione;</li>
+        <li>Comunicare con il cliente riguardo a pagamento e spedizione (tramite WhatsApp o telefono);</li>
+        <li>Individuare accessi anomali al link personale del cliente (es. se il link viene condiviso senza autorizzazione), a tutela del cliente stesso.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Base giuridica</h2>
+      <p>Il trattamento si basa sull'esecuzione di un rapporto commerciale/contrattuale tra le parti e sul legittimo interesse a garantire la sicurezza dell'accesso al servizio.</p>
+    </section>
+
+    <section>
+      <h2>Conservazione dei dati</h2>
+      <p>I dati anagrafici e degli ordini sono conservati per la durata del rapporto commerciale e, successivamente, per il periodo previsto dalla normativa fiscale italiana per la documentazione contabile (10 anni). I log di accesso tecnico sono conservati per un periodo limitato, utile solo a scopi di sicurezza.</p>
+    </section>
+
+    <section>
+      <h2>Comunicazione a terzi</h2>
+      <p>I dati non vengono venduti né ceduti a terzi per finalità di marketing. Possono essere trattati da fornitori tecnici (es. hosting del sito) esclusivamente per l'erogazione del servizio, nel rispetto del GDPR.</p>
+    </section>
+
+    <div class="box">
+      <svg class="box-frame" viewBox="0 0 340 140" preserveAspectRatio="none"><rect x="4" y="4" width="332" height="132" rx="14" fill="none" stroke="var(--ink,#4a1d29)" stroke-width="2.5" filter="url(#wobble-sm)"/></svg>
+      <div class="box-inner">
+        <h2>Sicurezza del link personale</h2>
+        <p>Ogni cliente riceve un link univoco e riservato per accedere al proprio listino e inviare ordini. Il link non richiede registrazione né password: è quindi importante non condividerlo con terzi. Per tutelare i clienti, registriamo automaticamente gli accessi (data, IP, dispositivo) e segnaliamo eventuali pattern di accesso insoliti che potrebbero indicare una condivisione non autorizzata del link. In tal caso, il cliente può richiedere in qualsiasi momento la rigenerazione del proprio link.</p>
+      </div>
     </div>
 
-    <div class="acc rv">
-      <button class="acc-trigger" aria-expanded="true" aria-controls="acc-body-3">
-        <h2>Perché li raccogliamo</h2>
-        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-      </button>
-      <div class="acc-body" id="acc-body-3"><div class="acc-inner"><div>
-        <p>I dati sono utilizzati esclusivamente per:</p>
-        <ul>
-          <li>Gestire ed evadere gli ordini all'ingrosso;</li>
-          <li>Predisporre documenti di trasporto e fatturazione;</li>
-          <li>Comunicare con il cliente riguardo a pagamento e spedizione (tramite WhatsApp o telefono);</li>
-          <li>Individuare accessi anomali al link personale del cliente (es. se il link viene condiviso senza autorizzazione), a tutela del cliente stesso.</li>
-        </ul>
-      </div></div></div>
-    </div>
+    <section>
+      <h2>Cookie e memorizzazione locale</h2>
+      <p>Il sito non utilizza cookie di profilazione o di tracciamento pubblicitario. Viene salvata solo la preferenza di lingua scelta dall'utente, memorizzata localmente sul dispositivo.</p>
+    </section>
 
-    <div class="acc rv">
-      <button class="acc-trigger" aria-expanded="true" aria-controls="acc-body-4">
-        <h2>Base giuridica</h2>
-        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-      </button>
-      <div class="acc-body" id="acc-body-4"><div class="acc-inner"><div>
-        <p>Il trattamento si basa sull'esecuzione di un rapporto commerciale/contrattuale tra le parti e sul legittimo interesse a garantire la sicurezza dell'accesso al servizio.</p>
-      </div></div></div>
-    </div>
+    <section>
+      <h2>I tuoi diritti</h2>
+      <p>In qualsiasi momento puoi richiedere:</p>
+      <ul>
+        <li>L'accesso ai tuoi dati personali;</li>
+        <li>La rettifica di dati inesatti;</li>
+        <li>La cancellazione dei tuoi dati (diritto all'oblio), salvo obblighi di legge relativi alla documentazione fiscale;</li>
+        <li>La limitazione o opposizione al trattamento;</li>
+        <li>La rigenerazione del tuo link personale, in caso di sospetta condivisione non autorizzata.</li>
+      </ul>
+      <p>Per esercitare questi diritti, contattaci su <a href="https://wa.me/393485180143">WhatsApp al +39 348 518 0143</a>.</p>
+    </section>
 
-    <div class="acc rv">
-      <button class="acc-trigger" aria-expanded="true" aria-controls="acc-body-5">
-        <h2>Conservazione dei dati</h2>
-        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-      </button>
-      <div class="acc-body" id="acc-body-5"><div class="acc-inner"><div>
-        <p>I dati anagrafici e degli ordini sono conservati per la durata del rapporto commerciale e, successivamente, per il periodo previsto dalla normativa fiscale italiana per la documentazione contabile (10 anni). I log di accesso tecnico sono conservati per un periodo limitato, utile solo a scopi di sicurezza.</p>
-      </div></div></div>
-    </div>
+    <section>
+      <h2>Modifiche a questa informativa</h2>
+      <p>Questa informativa può essere aggiornata periodicamente. La versione più recente è sempre disponibile a questo indirizzo.</p>
+      <p class="updated">Ultimo aggiornamento: settembre 2026</p>
+    </section>
 
-    <div class="acc rv">
-      <button class="acc-trigger" aria-expanded="true" aria-controls="acc-body-6">
-        <h2>Comunicazione a terzi</h2>
-        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-      </button>
-      <div class="acc-body" id="acc-body-6"><div class="acc-inner"><div>
-        <p>I dati non vengono venduti né ceduti a terzi per finalità di marketing. Possono essere trattati da fornitori tecnici (es. hosting del sito) esclusivamente per l'erogazione del servizio, nel rispetto del GDPR.</p>
-      </div></div></div>
-    </div>
-
-    <div class="box rv">
-      <h2>Sicurezza del link personale</h2>
-      <p style="margin-bottom:0">
-        Ogni cliente riceve un link univoco e riservato per accedere al proprio listino e inviare ordini.
-        Il link non richiede registrazione né password: è quindi importante non condividerlo con terzi.
-        Per tutelare i clienti, registriamo automaticamente gli accessi (data, IP, dispositivo) e segnaliamo
-        eventuali pattern di accesso insoliti che potrebbero indicare una condivisione non autorizzata del link.
-        In tal caso, il cliente può richiedere in qualsiasi momento la rigenerazione del proprio link.
-      </p>
-    </div>
-
-    <div class="acc rv">
-      <button class="acc-trigger" aria-expanded="true" aria-controls="acc-body-7">
-        <h2>Cookie e memorizzazione locale</h2>
-        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-      </button>
-      <div class="acc-body" id="acc-body-7"><div class="acc-inner"><div>
-        <p>Il sito non utilizza cookie di profilazione o di tracciamento pubblicitario. Viene salvata solo la preferenza di lingua scelta dall'utente, memorizzata localmente sul dispositivo.</p>
-      </div></div></div>
-    </div>
-
-    <div class="acc rv">
-      <button class="acc-trigger" aria-expanded="true" aria-controls="acc-body-8">
-        <h2>I tuoi diritti</h2>
-        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-      </button>
-      <div class="acc-body" id="acc-body-8"><div class="acc-inner"><div>
-        <p>In qualsiasi momento puoi richiedere:</p>
-        <ul>
-          <li>L'accesso ai tuoi dati personali;</li>
-          <li>La rettifica di dati inesatti;</li>
-          <li>La cancellazione dei tuoi dati (diritto all'oblio), salvo obblighi di legge relativi alla documentazione fiscale;</li>
-          <li>La limitazione o opposizione al trattamento;</li>
-          <li>La rigenerazione del tuo link personale, in caso di sospetta condivisione non autorizzata.</li>
-        </ul>
-        <p>Per esercitare questi diritti, contattaci su <a href="https://wa.me/393485180143">WhatsApp al +39 348 518 0143</a>.</p>
-      </div></div></div>
-    </div>
-
-    <div class="acc rv">
-      <button class="acc-trigger" aria-expanded="true" aria-controls="acc-body-9">
-        <h2>Modifiche a questa informativa</h2>
-        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-      </button>
-      <div class="acc-body" id="acc-body-9"><div class="acc-inner"><div>
-        <p>Questa informativa può essere aggiornata periodicamente. La versione più recente è sempre disponibile a questo indirizzo.</p>
-        <p class="updated">Ultimo aggiornamento: settembre 2026</p>
-      </div></div></div>
-    </div>
-
+    <footer>
+      © <span id="yr"></span> Bella Italia — P.IVA 00000000000<br>
+      <a href="contact.html">Contatti</a>
+    </footer>
   </div>
-</main>
+</div>
 
-<footer>
-  <div class="wrap">
-    <div class="foot-grid">
-      <div>
-        <div class="foot-mark">Bella Italia</div>
-        <p style="max-width:34ch;margin-top:10px">Ingrosso di cosmetici e accessori beauty.<br>Consegna in tutta Italia.</p>
-        <div class="foot-social">
-          <a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
-          </a>
-          <a href="https://www.tiktok.com/" target="_blank" rel="noopener" aria-label="TikTok">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3c.4 2.4 2 4 4.4 4.2v2.8c-1.6.1-3-.4-4.4-1.3v6.6c0 3.5-2.8 6.2-6.3 6.2S4 18.8 4 15.3s2.8-6.2 6.3-6.2c.4 0 .8 0 1.2.1v3c-.4-.1-.8-.2-1.2-.2-1.8 0-3.2 1.4-3.2 3.2S8.5 18.4 10.3 18.4s3.3-1.4 3.3-3.2V3h3Z"/></svg>
-          </a>
-        </div>
-      </div>
-      <div class="foot-col">
-        <h5>Naviga</h5>
-        <p>
-          <a href="/#novita">Novità</a><br>
-          <a href="/#categorie">Categorie</a><br>
-          <a href="/#recensioni">Recensioni</a><br>
-          <a href="/contact.html">Contatti</a>
-        </p>
-      </div>
-      <div class="foot-col">
-        <h5>Contatti</h5>
-        <p>
-          TNC GOLD A8<br>
-          <a href="https://maps.app.goo.gl/ZqHhxGBQMCTcr6Uc7?g_st=ic" target="_blank" rel="noopener">Via Galileo Ferraris, 136, 80146 Napoli NA</a><br>
-          <a href="tel:+393485180143">+39 348 518 0143</a><br>
-          <span>Lun&ndash;Sab 8:00&ndash;18:00 &middot; Dom 8:00&ndash;15:00</span>
-        </p>
-      </div>
-      <div class="foot-col">
-        <h5>Ingrosso riservato a operatori del settore</h5>
-        <p><a href="/privacy.html">Privacy Policy</a></p>
-      </div>
-    </div>
-    <div class="foot-bar">
-      <span>© <span id="yr"></span> Bella Italia — P.IVA 00000000000</span>
-      <span><a href="/">Torna alla home</a></span>
-    </div>
-  </div>
-</footer>
-
-<a href="https://wa.me/393485180143" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contatta su WhatsApp">
-  <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.386.702 4.607 1.909 6.472L4 29l7.72-1.877A11.94 11.94 0 0 0 16.001 27C22.628 27 28 21.627 28 15S22.628 3 16.001 3zm6.995 16.997c-.297.833-1.474 1.517-2.403 1.716-.638.136-1.47.245-4.276-.918-3.587-1.486-5.897-5.115-6.077-5.352-.178-.237-1.454-1.936-1.454-3.693 0-1.757.914-2.62 1.238-2.978.324-.357.706-.446.941-.446.235 0 .47.002.674.012.216.01.507-.082.792.605.297.712.99 2.469 1.078 2.649.089.18.148.39.03.627-.119.238-.178.386-.353.594-.178.209-.373.466-.533.626-.178.178-.363.372-.156.73.207.357.92 1.518 1.976 2.459 1.358 1.211 2.503 1.586 2.86 1.764.357.178.564.148.772-.089.207-.238.892-1.039 1.13-1.396.238-.357.475-.297.792-.178.317.119 2.014.951 2.36 1.124.346.172.577.257.663.401.089.148.089.85-.208 1.673z"/></svg>
-  <span>Contatta subito per avere il link personale con i tuoi prezzi</span>
-</a>
-
-<script>
-  document.getElementById('yr').textContent = new Date().getFullYear();
-
-  const nav = document.getElementById('nav');
-  const onScroll = () => nav.classList.toggle('solid', window.scrollY > 40);
-  onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
-
-  document.querySelectorAll('.acc-trigger').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const open = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', String(!open));
-      document.getElementById(btn.getAttribute('aria-controls')).classList.toggle('closed', open);
-    });
-  });
-
-  const io = new IntersectionObserver(es => {
-    es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, {threshold:.1});
-  document.querySelectorAll('.rv').forEach(el => io.observe(el));
-</script>
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 </body>
 </html>

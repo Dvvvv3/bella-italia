@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>BELLA ITALIA — Ingrosso Cosmetici</title>
-<meta name="description" content="Ingrosso cosmetici e profumi. Trucchi, profumi, accessori e skincare. Richiedi il listino su WhatsApp.">
+<title>TRUCCHI — Bella Italia</title>
+<meta name="description" content="Trucchi all'ingrosso: fondotinta, palette, rossetti, cipria e altro. Richiedi il listino su WhatsApp.">
 <meta name="theme-color" content="#fdeeea">
 <script src="/js/i18n.js"></script>
 <style>
@@ -18,26 +18,30 @@
     flex-direction: column;
     align-items: center;
   }
+  .top-bar {
+    width: 100%; max-width: 700px;
+    padding: max(14px, env(safe-area-inset-top)) 18px 10px;
+  }
+  .back-link {
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px; font-weight: 500;
+    color: #4a1d29;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
   .art-wrap {
     position: relative;
     width: 100%;
-    max-width: 480px;
+    max-width: 700px;
     line-height: 0;
   }
   .art-wrap img { width: 100%; height: auto; display: block; }
   .listino-hit {
     position: absolute;
-    left: 13%;
-    top: 30.5%;
-    width: 60%;
-    height: 9.5%;
-  }
-  .trucchi-hit {
-    position: absolute;
-    left: 20%;
-    top: 54.5%;
-    width: 58%;
-    height: 7%;
+    left: 2.5%;
+    top: 81%;
+    width: 20%;
+    height: 13%;
   }
   footer {
     padding: 18px 20px max(18px, env(safe-area-inset-bottom));
@@ -50,10 +54,13 @@
 </head>
 <body>
 
+<div class="top-bar">
+  <a class="back-link" href="index.html">‹ Torna alla home</a>
+</div>
+
 <div class="art-wrap">
-  <img src="/img/homepage.webp" alt="Bella Italia — Ingrosso cosmetici e profumi">
+  <img src="/img/trucchi.webp" alt="Trucchi — Bella Italia">
   <a class="listino-hit" id="listinoBtn" href="#" target="_blank" rel="noopener" aria-label="Richiedi il listino su WhatsApp"></a>
-  <a class="trucchi-hit" href="trucchi.html" aria-label="Trucchi"></a>
 </div>
 
 <footer>
@@ -64,10 +71,10 @@
 
 <script>
   var WA_MESSAGES = {
-    it: "Ciao! Vorrei ricevere il listino prezzi 😊",
-    en: "Hi! I'd like to receive the price list 😊",
-    fr: "Bonjour ! Je voudrais recevoir la liste des prix 😊",
-    es: "¡Hola! Me gustaría recibir la lista de precios 😊"
+    it: "Ciao! Vorrei ricevere il listino trucchi 😊",
+    en: "Hi! I'd like to receive the makeup price list 😊",
+    fr: "Bonjour ! Je voudrais recevoir la liste des prix maquillage 😊",
+    es: "¡Hola! Me gustaría recibir la lista de precios de maquillaje 😊"
   };
   function updateWhatsAppLink() {
     var lang = (window.I18N && I18N.getLang) ? I18N.getLang() : 'it';
