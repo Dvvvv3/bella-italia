@@ -22,6 +22,22 @@
   section { display: none; }
   section.active { display: block; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 10px; }
+  @keyframes orderFlash {
+    0%, 100% { background: var(--card); border-color: var(--line); }
+    50% { background: #fff3d6; border-color: var(--gold); }
+  }
+  .order-flash { animation: orderFlash 1s ease-in-out 4; }
+  #newOrderToast {
+    position: fixed; top: 14px; left: 50%; transform: translateX(-50%) translateY(-140%);
+    background: #2e2e2e; color: #fff; border-radius: 12px; padding: 14px 18px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 999; max-width: 90vw;
+    display: flex; align-items: center; gap: 12px; cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  #newOrderToast.show { transform: translateX(-50%) translateY(0); }
+  #newOrderToast .toast-title { font-weight: 600; font-size: 14px; }
+  #newOrderToast .toast-body { font-size: 12.5px; opacity: 0.85; margin-top: 2px; }
+  #newOrderToast .toast-close { font-size: 18px; opacity: 0.6; padding: 0 4px; }
   .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   .row > div { flex: 1; min-width: 90px; }
   label { display: block; font-size: 11px; color: #888; margin-bottom: 3px; }
@@ -58,6 +74,13 @@
 </style>
 </head>
 <body>
+<div id="newOrderToast" onclick="dismissOrderToast(true)">
+  <div style="flex:1">
+    <div class="toast-title" id="toastTitle">🆕 Nuovo ordine!</div>
+    <div class="toast-body" id="toastBody"></div>
+  </div>
+  <span class="toast-close" onclick="event.stopPropagation();dismissOrderToast(false)">✕</span>
+</div>
 <div class="gate" id="gate">
   <div class="gate-card" style="text-align:center">
     <h2>BELLA ITALIA 后台</h2>
@@ -806,7 +829,7 @@ async function loadOrders() {
     filtered = orders.filter(o => o.status === 'cancelled');
   }
   document.getElementById('orderList').innerHTML = filtered.map(o => `
-    <div class="card">
+    <div class="card ${newlyFlashedIds.has(o.id) ? 'order-flash' : ''}">
       <div class="row" style="justify-content:space-between">
         <div class="item-title">${o.customer_name}</div>
         <span class="badge ${o.status}">${statusLabel[o.status]||o.status}</span>
@@ -858,6 +881,64 @@ if (scanInputEl) {
 }
 
 async function loadAll(){await loadCategoryCache();loadProducts();loadCategories();loadCustomers();loadOrders();loadVisitorLog();document.getElementById('scanInput')?.focus();}
+
+// ---- 新订单提醒:定时轮询,发现新订单就弹通知 + 页内弹窗 + 让订单卡片闪烁 ----
+let seenOrderIds = new Set(JSON.parse(localStorage.getItem('bi_seen_orders') || '[]'));
+let newlyFlashedIds = new Set();
+let toastTimer = null;
+
+function persistSeenOrders() {
+  // 只保留最近300个,避免localStorage无限变大
+  const arr = Array.from(seenOrderIds).slice(-300);
+  localStorage.setItem('bi_seen_orders', JSON.stringify(arr));
+}
+
+function showOrderToast(title, body) {
+  const toast = document.getElementById('newOrderToast');
+  document.getElementById('toastTitle').textContent = title;
+  document.getElementById('toastBody').textContent = body;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => dismissOrderToast(false), 8000);
+}
+function dismissOrderToast(goToOrders) {
+  document.getElementById('newOrderToast').classList.remove('show');
+  clearTimeout(toastTimer);
+  if (goToOrders) document.querySelector('nav button[data-tab="orders"]')?.click();
+}
+
+async function pollNewOrders() {
+  let orders;
+  try { orders = await api('/api/admin/orders'); } catch (e) { return; } // 网络问题就静默跳过,下次再试
+  const isFirstRun = seenOrderIds.size === 0 && !localStorage.getItem('bi_seen_orders_init');
+  const freshOrders = orders.filter(o => !seenOrderIds.has(o.id));
+  if (freshOrders.length === 0) return;
+
+  freshOrders.forEach(o => seenOrderIds.add(o.id));
+  persistSeenOrders();
+  localStorage.setItem('bi_seen_orders_init', '1');
+
+  if (isFirstRun) return; // 第一次运行只是建立基准,不弹通知(避免把所有旧订单都当"新订单"提醒一遍)
+
+  freshOrders.forEach(o => newlyFlashedIds.add(o.id));
+  const latest = freshOrders[0];
+  const title = freshOrders.length === 1 ? '🆕 Nuovo ordine!' : `🆕 ${freshOrders.length} nuovi ordini!`;
+  const body = freshOrders.length === 1
+    ? `${latest.customer_name} — €${latest.total}`
+    : freshOrders.map(o => `${o.customer_name} (€${o.total})`).join(', ');
+
+  showOrderToast(title, body);
+  if (window.Notification && Notification.permission === 'granted') {
+    try { new Notification(title, { body }); } catch (e) {}
+  }
+  if (currentOrderTab === 'pending') loadOrders();
+}
+
+if (window.Notification && Notification.permission === 'default') {
+  Notification.requestPermission();
+}
+setInterval(pollNewOrders, 15000);
+if (ADMIN_KEY) setTimeout(pollNewOrders, 2000); // 建立"已知订单"基准,不在启动瞬间弹通知
 if(ADMIN_KEY) loadAll();
 </script>
 </body>
