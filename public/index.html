@@ -12,7 +12,7 @@
 a{text-decoration:none;color:inherit}
 .site{width:min(100% - 24px,1180px);margin:12px auto;border:3px dashed #9b6b7c;border-radius:28px;overflow:hidden;background:#fff}
 .topbar{height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 25px;border-bottom:2px dashed var(--line);position:sticky;top:0;z-index:20;background:rgba(255,250,248,.94);backdrop-filter:blur(10px)}
-.topbar img{width:115px;mix-blend-mode:multiply}.nav{display:flex;gap:27px;font-size:11px;text-transform:uppercase;letter-spacing:1.3px}.nav a:hover{opacity:.55}
+.logo-text{font:600 20px "DM Sans",Arial,sans-serif;color:var(--deep);letter-spacing:.3px;display:flex;flex-direction:column;line-height:1.15}.logo-text small{font:600 9px "DM Sans",Arial,sans-serif;text-transform:uppercase;letter-spacing:1.6px;color:var(--muted)}.nav{display:flex;gap:27px;font-size:11px;text-transform:uppercase;letter-spacing:1.3px}.nav a:hover{opacity:.55}
 .nav-wa{border:2px solid var(--deep);padding:9px 15px;border-radius:20px;font-size:10px}.lang-select{border:2px solid var(--deep);padding:8px 12px;border-radius:20px;background:#fffaf8;color:var(--deep);font:600 10px "DM Sans",Arial,sans-serif;letter-spacing:.7px;cursor:pointer;outline:none}
 .cover{position:relative;line-height:0}.cover img{display:block;width:100%;height:auto}
 .cover .hit{position:absolute;left:17.3%;top:33.35%;width:63%;height:8.5%;border-radius:999px}
@@ -30,14 +30,14 @@ a{text-decoration:none;color:inherit}
 footer{padding:28px 25px;text-align:center;border-top:2px dashed var(--line);font-size:11px;letter-spacing:1px;color:#7d6870}
 .float{position:fixed;right:18px;bottom:18px;width:58px;height:58px;border:3px solid var(--deep);border-radius:50%;background:#f3b6c8;display:grid;place-items:center;font-size:11px;font-weight:600;z-index:30;box-shadow:0 8px 22px #5a294033}
 @media(max-width:800px){.nav{display:none}.topbar{height:62px}.grid{grid-template-columns:repeat(2,1fr)}.about{grid-template-columns:1fr;gap:30px}.section,.intro,.contact{padding-left:5%;padding-right:5%}}
-@media(max-width:500px){.site{width:calc(100% - 8px);margin:4px auto;border-radius:18px}.topbar{padding:0 15px}.topbar img{width:100px}.grid{grid-template-columns:1fr 1fr;gap:10px}.card{min-height:105px;font-size:25px}.intro{padding-top:55px;padding-bottom:55px}.section{padding-top:60px;padding-bottom:60px}.float{width:52px;height:52px;right:12px;bottom:12px}}
+@media(max-width:500px){.site{width:calc(100% - 8px);margin:4px auto;border-radius:18px}.topbar{padding:0 15px}.logo-text{font-size:16px}.grid{grid-template-columns:1fr 1fr;gap:10px}.card{min-height:105px;font-size:25px}.intro{padding-top:55px;padding-bottom:55px}.section{padding-top:60px;padding-bottom:60px}.float{width:52px;height:52px;right:12px;bottom:12px}}
 </style>
 </head>
 <body>
 <div class="site">
 <header class="topbar">
-  <a href="#home"><img src="logo.jpg" alt="BELLA ITALIA MAKE UP"></a>
-  <nav class="nav"><a href="#chi-siamo" data-i18n="nav_about">Chi siamo</a><a href="#beauty" data-i18n="nav_beauty">Beauty</a><a href="#contatti" data-i18n="nav_contact">Contatti</a></nav>
+  <a href="#home" class="logo-text">BELLA ITALIA <small>cosmetici beauty</small></a>
+  <nav class="nav"><a href="#beauty" data-i18n="nav_beauty">Beauty</a><a href="#contatti" data-i18n="nav_contact">Contatti</a></nav>
   <select class="lang-select" id="languageSelect" aria-label="Language selector">
     <option value="it">Italiano</option>
     <option value="en">English</option>
@@ -49,18 +49,6 @@ footer{padding:28px 25px;text-align:center;border-top:2px dashed var(--line);fon
 </header>
 
 <main id="home">
-  <section class="cover">
-    <img src="cover.png" alt="BELLA ITALIA — ingrosso cosmetici e profumi">
-    <a class="hit" href="https://wa.me/393485180143?text=Ciao%20Bella%20Italia%2C%20vorrei%20richiedere%20il%20listino." target="_blank" aria-label="Richiedi il listino su WhatsApp"></a>
-  </section>
-
-  <section class="intro" id="chi-siamo">
-    <div class="kicker" data-i18n="welcome">♡ BENVENUTI IN BELLA ITALIA ♡</div>
-    <h1 data-i18n="hero_title">Beauty wholesale,<br>with a little sparkle.</h1>
-    <p data-i18n="hero_text">Ogni cliente ha un link personale che mostra le categorie, le foto dei prodotti, la disponibilità aggiornata e i suoi prezzi. Ordine minimo €300 per la spedizione.</p>
-    <a class="wa" href="https://wa.me/393485180143?text=Ciao%20Bella%20Italia%2C%20vorrei%20richiedere%20il%20listino." target="_blank" data-i18n="request_list">RICHIEDI IL LISTINO ♡</a>
-  </section>
-
   <section class="section" id="beauty">
     <div class="section-head">
       <div class="kicker" data-i18n="our_world">♡ IL NOSTRO MONDO ♡</div>
@@ -72,18 +60,6 @@ footer{padding:28px 25px;text-align:center;border-top:2px dashed var(--line);fon
       <div class="card"><span data-i18n="perfumes">PROFUMI</span> <small>02</small></div>
       <div class="card"><span data-i18n="accessories">ACCESSORI</span> <small>03</small></div>
       <div class="card"><span data-i18n="skincare">SKINCARE</span> <small>04</small></div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="about">
-      <img src="cover.png" alt="BELLA ITALIA beauty">
-      <div class="about-copy">
-        <div class="kicker" data-i18n="bella">♡ BELLA ITALIA</div>
-        <h2 data-i18n="about_title">Il tuo contatto diretto nel beauty.</h2>
-        <p data-i18n="about_text">Il nostro sito è il punto di partenza: qui scopri il brand, mentre per disponibilità, prezzi e listino puoi parlare direttamente con noi.</p>
-        <a class="wa" href="https://wa.me/393485180143?text=Ciao%20Bella%20Italia%2C%20vorrei%20richiedere%20il%20listino." target="_blank" data-i18n="write_whatsapp">SCRIVICI SU WHATSAPP</a>
-      </div>
     </div>
   </section>
 
