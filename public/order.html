@@ -1051,7 +1051,7 @@ function renderSearchResults(query) {
     const qty = cart[p.id] || 0;
     return `
     <div class="cart-row">
-      <img src="${p.image || 'https://placehold.co/160x160'}" alt="">
+      <img src="${p.image || 'https://placehold.co/160x160'}" alt="" onclick="event.stopPropagation();zoomImage('${(p.image || 'https://placehold.co/800x800').replace(/'/g, '')}', '${p.name.replace(/'/g, '')}')" style="cursor:zoom-in">
       <div class="ci">
         <div class="n">${p.name}</div>
         <div class="s">ID: ${p.id} · ${pack} pz/confezione · €${money(p.price)}${I18N.t('o_per_pc')}</div>
