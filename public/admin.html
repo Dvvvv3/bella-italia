@@ -657,7 +657,7 @@ async function loadCustomers() {
     <div class="card">
       <div class="row" style="justify-content:space-between;align-items:flex-start">
         <div>
-          <div class="item-title">${c.name} <span class="badge pending">${c.tier} 级</span></div>
+          <div class="item-title">${c.ragione_sociale ? `<span style="color:#a85068">${c.ragione_sociale}</span> — ` : ''}${c.name} <span class="badge pending">${c.tier} 级</span></div>
           <div class="item-sub mono">/o/${c.token}</div>
         </div>
         <div style="text-align:right">

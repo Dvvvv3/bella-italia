@@ -482,8 +482,8 @@ app.get('/api/admin/orders/:id/print', requireAdminViaQuery, (req, res) => {
       ? (i.image.startsWith('http') ? i.image : host + i.image)
       : '';
     const imgCell = imgSrc
-      ? `<img src="${imgSrc}" style="width:56px;height:56px;object-fit:cover;border-radius:8px;display:block">`
-      : `<div style="width:56px;height:56px;border-radius:8px;background:#f5e8ec;display:flex;align-items:center;justify-content:center;color:#ddd;font-size:20px">☁</div>`;
+      ? `<img src="${imgSrc}" onclick="zoomImg('${imgSrc.replace(/'/g, "\\'")}')" style="width:52px;height:52px;object-fit:cover;border-radius:8px;display:block;cursor:zoom-in">`
+      : `<div style="width:52px;height:52px;border-radius:8px;background:#f5e8ec;display:flex;align-items:center;justify-content:center;color:#ddd;font-size:20px">☁</div>`;
     return `
     <tr>
       <td class="c-img">${imgCell}</td>
@@ -502,7 +502,7 @@ app.get('/api/admin/orders/:id/print', requireAdminViaQuery, (req, res) => {
   res.send(`<!DOCTYPE html>
 <html lang="it"><head><meta charset="UTF-8"><title>DDT #${order.id.slice(0,8)}</title>
 <style>
-  @page { size: A4 landscape; margin: 12mm 14mm; }
+  @page { size: A4 portrait; margin: 12mm 14mm; }
   * { box-sizing: border-box; }
   body { font-family: "PingFang SC","Helvetica Neue",Arial,sans-serif; color: #1a1a1a; margin:0; padding:16px 20px; font-size:12px; }
   .brand { font-size: 22px; font-weight: 800; letter-spacing: 0.04em; color: #a85068; }
@@ -516,13 +516,13 @@ app.get('/api/admin/orders/:id/print', requireAdminViaQuery, (req, res) => {
   .doc-box .doc-date { font-size:11px; color:#888; margin-top:2px; }
 
   table { width:100%; border-collapse:collapse; table-layout:fixed; }
-  col.c-img   { width: 72px; }
-  col.c-id    { width: 90px; }
-  col.c-bc    { width: 110px; }
+  col.c-img   { width: 52px; }
+  col.c-id    { width: 68px; }
+  col.c-bc    { width: 82px; }
   col.c-name  { width: auto; }
-  col.c-qty   { width: 70px; }
-  col.c-price { width: 80px; }
-  col.c-total { width: 90px; }
+  col.c-qty   { width: 54px; }
+  col.c-price { width: 60px; }
+  col.c-total { width: 68px; }
 
   thead tr { background: #a85068; color: #fff; }
   thead th { font-size:10px; text-transform:uppercase; letter-spacing:0.05em; padding:8px 6px; text-align:left; font-weight:600; }
@@ -548,7 +548,10 @@ app.get('/api/admin/orders/:id/print', requireAdminViaQuery, (req, res) => {
   .note-box { margin-top:14px; padding:8px 12px; background:#fdf5f7; border-left:3px solid #cf7e93; border-radius:4px; font-size:11px; color:#666; }
   .footer { margin-top:20px; border-top:1px solid #e0d0d5; padding-top:8px; font-size:10px; color:#bbb; display:flex; justify-content:space-between; }
   .print-btn { margin-top:16px; padding:9px 22px; background:#a85068; color:#fff; border:none; border-radius:999px; font-size:13px; cursor:pointer; }
-  @media print { .print-btn { display:none; } body { padding:0; } }
+  .zoom-overlay { display:none; position:fixed; inset:0; background:rgba(20,10,14,0.85); z-index:999; align-items:center; justify-content:center; cursor:zoom-out; }
+  .zoom-overlay.show { display:flex; }
+  .zoom-overlay img { max-width:90vw; max-height:90vh; border-radius:10px; box-shadow:0 10px 40px rgba(0,0,0,0.5); }
+  @media print { .print-btn { display:none; } .zoom-overlay { display:none !important; } body { padding:0; } }
 </style></head>
 <body>
   <div class="header">
@@ -608,6 +611,16 @@ app.get('/api/admin/orders/:id/print', requireAdminViaQuery, (req, res) => {
   </div>
 
   <button class="print-btn" onclick="window.print()">🖨️ Stampa / Salva PDF</button>
+
+  <div class="zoom-overlay" id="zoomOverlay" onclick="this.classList.remove('show')">
+    <img id="zoomImgEl" src="" alt="">
+  </div>
+  <script>
+    function zoomImg(src) {
+      document.getElementById('zoomImgEl').src = src;
+      document.getElementById('zoomOverlay').classList.add('show');
+    }
+  </script>
 </body></html>`);
 });
 
