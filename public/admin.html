@@ -658,9 +658,10 @@ async function loadCustomers() {
       <div class="row" style="justify-content:space-between;align-items:flex-start;gap:8px">
         <div style="flex:1;min-width:0">
           <div class="item-title" style="display:flex;align-items:center;gap:6px">
-            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">${c.ragione_sociale ? `<span style="color:#a85068">${c.ragione_sociale}</span> — ` : ''}${c.name}</span>
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;color:${c.ragione_sociale?'#a85068':'inherit'}">${c.ragione_sociale || c.name}</span>
             <span class="badge pending" style="flex-shrink:0">${c.tier} 级</span>
           </div>
+          ${c.ragione_sociale ? `<div style="font-size:12px;color:#999;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px">${c.name}</div>` : ''}
           <div class="item-sub mono">/o/${c.token}</div>
         </div>
         <div style="text-align:right;flex-shrink:0">
