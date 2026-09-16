@@ -655,12 +655,15 @@ async function loadCustomers() {
   const customers=await api('/api/admin/customers');
   document.getElementById('customerList').innerHTML=customers.map(c=>`
     <div class="card">
-      <div class="row" style="justify-content:space-between;align-items:flex-start">
-        <div>
-          <div class="item-title">${c.ragione_sociale ? `<span style="color:#a85068">${c.ragione_sociale}</span> — ` : ''}${c.name} <span class="badge pending">${c.tier} 级</span></div>
+      <div class="row" style="justify-content:space-between;align-items:flex-start;gap:8px">
+        <div style="flex:1;min-width:0">
+          <div class="item-title" style="display:flex;align-items:center;gap:6px">
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">${c.ragione_sociale ? `<span style="color:#a85068">${c.ragione_sociale}</span> — ` : ''}${c.name}</span>
+            <span class="badge pending" style="flex-shrink:0">${c.tier} 级</span>
+          </div>
           <div class="item-sub mono">/o/${c.token}</div>
         </div>
-        <div style="text-align:right">
+        <div style="text-align:right;flex-shrink:0">
           <span class="badge ${c.profile_done?'confirmed':'shipped'}">${c.profile_done?'已填资料':'未填资料'}</span><br>
           <span class="badge" style="margin-top:4px;background:${c.activated_at?'#e5f3e8':'#fff3d6'};color:${c.activated_at?'#2e7d4f':'#a87a00'}">${c.activated_at?'🔒 已绑定设备':'⏳ 待激活'}</span>
         </div>

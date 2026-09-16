@@ -482,8 +482,8 @@ app.get('/api/admin/orders/:id/print', requireAdminViaQuery, (req, res) => {
       ? (i.image.startsWith('http') ? i.image : host + i.image)
       : '';
     const imgCell = imgSrc
-      ? `<img src="${imgSrc}" onclick="zoomImg('${imgSrc.replace(/'/g, "\\'")}')" style="width:52px;height:52px;object-fit:cover;border-radius:8px;display:block;cursor:zoom-in">`
-      : `<div style="width:52px;height:52px;border-radius:8px;background:#f5e8ec;display:flex;align-items:center;justify-content:center;color:#ddd;font-size:20px">☁</div>`;
+      ? `<img src="${imgSrc}" onclick="zoomImg('${imgSrc.replace(/'/g, "\\'")}')" style="width:36px;height:36px;object-fit:cover;border-radius:6px;display:block;cursor:zoom-in">`
+      : `<div style="width:36px;height:36px;border-radius:6px;background:#f5e8ec;display:flex;align-items:center;justify-content:center;color:#ddd;font-size:15px">☁</div>`;
     return `
     <tr>
       <td class="c-img">${imgCell}</td>
@@ -502,51 +502,51 @@ app.get('/api/admin/orders/:id/print', requireAdminViaQuery, (req, res) => {
   res.send(`<!DOCTYPE html>
 <html lang="it"><head><meta charset="UTF-8"><title>DDT #${order.id.slice(0,8)}</title>
 <style>
-  @page { size: A4 portrait; margin: 12mm 14mm; }
+  @page { size: A4 portrait; margin: 8mm 10mm; }
   * { box-sizing: border-box; }
-  body { font-family: "PingFang SC","Helvetica Neue",Arial,sans-serif; color: #1a1a1a; margin:0; padding:16px 20px; font-size:12px; }
-  .brand { font-size: 22px; font-weight: 800; letter-spacing: 0.04em; color: #a85068; }
-  .brand small { display:block; font-size: 10px; font-weight: 400; color: #aaa; margin-top: 2px; }
-  .header { display:flex; justify-content:space-between; align-items:flex-start; border-bottom: 2px solid #a85068; padding-bottom:12px; margin-bottom:14px; }
-  .dest-label { font-size:9px; text-transform:uppercase; color:#aaa; letter-spacing:0.08em; margin-bottom:4px; }
-  .dest-name { font-size:14px; font-weight:700; margin-bottom:3px; }
-  .dest-info { font-size:11px; color:#555; line-height:1.7; }
-  .doc-box { text-align:right; min-width:160px; }
-  .doc-box .doc-num { font-size:20px; font-weight:700; color:#a85068; }
-  .doc-box .doc-date { font-size:11px; color:#888; margin-top:2px; }
+  body { font-family: "PingFang SC","Helvetica Neue",Arial,sans-serif; color: #1a1a1a; margin:0; padding:6px 8px; font-size:11px; }
+  .brand { font-size: 16px; font-weight: 800; letter-spacing: 0.03em; color: #a85068; }
+  .brand small { display:block; font-size: 8px; font-weight: 400; color: #aaa; margin-top: 1px; }
+  .header { display:flex; justify-content:space-between; align-items:flex-start; border-bottom: 1.5px solid #a85068; padding-bottom:6px; margin-bottom:8px; }
+  .dest-label { font-size:8px; text-transform:uppercase; color:#aaa; letter-spacing:0.06em; margin-bottom:2px; }
+  .dest-name { font-size:12px; font-weight:700; margin-bottom:2px; }
+  .dest-info { font-size:9.5px; color:#555; line-height:1.35; }
+  .doc-box { text-align:right; min-width:120px; }
+  .doc-box .doc-num { font-size:15px; font-weight:700; color:#a85068; }
+  .doc-box .doc-date { font-size:9px; color:#888; margin-top:1px; }
 
   table { width:100%; border-collapse:collapse; table-layout:fixed; }
-  col.c-img   { width: 52px; }
-  col.c-id    { width: 68px; }
-  col.c-bc    { width: 82px; }
+  col.c-img   { width: 40px; }
+  col.c-id    { width: 56px; }
+  col.c-bc    { width: 70px; }
   col.c-name  { width: auto; }
-  col.c-qty   { width: 54px; }
-  col.c-price { width: 60px; }
-  col.c-total { width: 68px; }
+  col.c-qty   { width: 46px; }
+  col.c-price { width: 52px; }
+  col.c-total { width: 60px; }
 
   thead tr { background: #a85068; color: #fff; }
-  thead th { font-size:10px; text-transform:uppercase; letter-spacing:0.05em; padding:8px 6px; text-align:left; font-weight:600; }
+  thead th { font-size:9px; text-transform:uppercase; letter-spacing:0.04em; padding:5px 6px; text-align:left; font-weight:600; }
   thead th.num { text-align:right; }
 
   tbody tr { border-bottom: 1px solid #f0e6ea; }
   tbody tr:nth-child(even) { background: #fdf5f7; }
   tbody tr:last-child { border-bottom: 2px solid #c0a0aa; }
 
-  td { padding: 7px 6px; vertical-align: middle; }
-  .c-img { padding: 5px 4px; }
+  td { padding: 4px 6px; vertical-align: middle; }
+  .c-img { padding: 3px 4px; }
   .num { text-align: right; }
-  .mono { font-family: "Courier New", monospace; font-size: 11px; color: #555; }
-  .name-it { font-weight: 600; font-size: 12px; }
-  .name-cn { font-size: 11px; color: #999; margin-top: 2px; }
-  .sub { font-size: 10px; color: #aaa; margin-top: 2px; }
+  .mono { font-family: "Courier New", monospace; font-size: 10px; color: #555; }
+  .name-it { font-weight: 600; font-size: 11px; }
+  .name-cn { font-size: 10px; color: #999; margin-top: 1px; }
+  .sub { font-size: 9px; color: #aaa; margin-top: 1px; }
   .c-total { font-weight: 700; color: #a85068; }
 
   tfoot tr { background: #f9f0f3; }
-  tfoot td { padding: 10px 6px; font-weight: 700; font-size: 13px; border-top: 2px solid #a85068; }
-  .total-val { color: #a85068; font-size: 16px; }
+  tfoot td { padding: 6px 6px; font-weight: 700; font-size: 12px; border-top: 2px solid #a85068; }
+  .total-val { color: #a85068; font-size: 14px; }
 
-  .note-box { margin-top:14px; padding:8px 12px; background:#fdf5f7; border-left:3px solid #cf7e93; border-radius:4px; font-size:11px; color:#666; }
-  .footer { margin-top:20px; border-top:1px solid #e0d0d5; padding-top:8px; font-size:10px; color:#bbb; display:flex; justify-content:space-between; }
+  .note-box { margin-top:8px; padding:6px 10px; background:#fdf5f7; border-left:3px solid #cf7e93; border-radius:4px; font-size:10px; color:#666; }
+  .footer { margin-top:10px; border-top:1px solid #e0d0d5; padding-top:6px; font-size:9px; color:#bbb; display:flex; justify-content:space-between; }
   .print-btn { margin-top:16px; padding:9px 22px; background:#a85068; color:#fff; border:none; border-radius:999px; font-size:13px; cursor:pointer; }
   .zoom-overlay { display:none; position:fixed; inset:0; background:rgba(20,10,14,0.85); z-index:999; align-items:center; justify-content:center; cursor:zoom-out; }
   .zoom-overlay.show { display:flex; }
@@ -557,7 +557,7 @@ app.get('/api/admin/orders/:id/print', requireAdminViaQuery, (req, res) => {
   <div class="header">
     <div>
       <div class="brand">BELLA ITALIA <small>Cosmetics Wholesale · Documento di Trasporto</small></div>
-      <div style="margin-top:16px">
+      <div style="margin-top:8px">
         <div class="dest-label">Destinatario</div>
         <div class="dest-name">${customer.ragione_sociale||order.customer_name}</div>
         <div class="dest-info">
