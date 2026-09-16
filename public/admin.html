@@ -93,8 +93,9 @@
   <span class="status" id="statusMsg"></span>
 </header>
 <nav>
-  <button class="active" data-tab="products">商品</button>
-  <button data-tab="categories">分类</button>
+  <button class="active" data-tab="products">添加</button>
+  <button data-tab="categories">在售产品</button>
+  <button data-tab="discontinued">已下架产品</button>
   <button data-tab="customers">客户</button>
   <button data-tab="orders">订单</button>
 </nav>
@@ -161,6 +162,9 @@
       <button class="btn btn-primary" style="margin-top:10px" onclick="addCategory()">添加分类</button>
     </div>
     <div id="categoryList"></div>
+  </section>
+  <section id="discontinued">
+    <div id="discontinuedList"></div>
   </section>
   <section id="customers">
     <div class="add-form" style="border-color:var(--accent);background:var(--accent-soft)">
@@ -318,6 +322,36 @@ async function loadProducts() {
   ALL_PRODUCTS = products;
   renderProductList();
   if (typeof renderCategoryList === 'function' && CATEGORIES) renderCategoryList();
+  renderDiscontinuedList();
+}
+function renderDiscontinuedList() {
+  const el = document.getElementById('discontinuedList');
+  if (!el) return;
+  const prods = (ALL_PRODUCTS||[]).filter(p => p.active === 0);
+  el.innerHTML = prods.map(p=>`
+    <div class="card">
+      <div class="row" style="align-items:flex-start">
+        <img class="thumb" style="width:56px;height:56px" src="${p.image||'https://placehold.co/80x80'}" alt="">
+        <div style="flex:1">
+          <div class="item-title">${p.name} ${p.is_new_arrival?'<span class="badge" style="background:#fff3d6;color:#a87a00">✨ New Arrivals</span>':''}</div>
+          ${p.name_cn?`<div style="font-size:12px;color:var(--accent);margin-top:1px">🈶 ${p.name_cn}</div>`:''}
+          <div class="item-sub" style="margin-top:3px">
+            ${p.category_name?`<span class="badge confirmed">${p.category_name}</span>`:'<span class="badge pending">未分类</span>'}
+            <span class="mono" style="color:#aaa;font-size:11px"> ${p.id}</span>
+            ${p.barcode?`<span class="mono" style="color:#aaa;font-size:11px"> · 条码 ${p.barcode}</span>`:''}
+          </div>
+        </div>
+      </div>
+      <div class="prod-facts">
+        <div><span class="f-label">规格</span><span class="f-val" style="font-size:12px">${p.unit||'—'}</span></div>
+        <div><span class="f-label">价格</span><span class="f-val">€${p.price}</span></div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="editProduct('${p.id}')">编辑</button>
+        <button class="btn btn-primary" onclick="toggleActive('${p.id}')">重新上架</button>
+        <button class="btn btn-danger" onclick="deleteProduct('${p.id}')">删除</button>
+      </div>
+    </div>`).join('') || `<p style="color:#888;font-size:13px">目前没有已下架的商品</p>`;
 }
 function renderProductList() {
   const filtered = ALL_PRODUCTS.filter(p => {
@@ -470,18 +504,12 @@ function renderCategoryList() {
   const cats = CATEGORIES || [];
   document.getElementById('categoryList').innerHTML = cats.map(c=>{
     const isOpen = !!expandedCat[c.id];
-    const tab = catProductTab[c.id] || 'active';
     const prods = (ALL_PRODUCTS||[]).filter(p => {
-      const statusOk = tab==='inactive' ? p.active===0 : p.active!==0;
       const belongsHere = c.show_new_arrivals ? !!p.is_new_arrival : String(p.category_id)===String(c.id);
-      return belongsHere && statusOk;
+      return belongsHere && p.active !== 0;
     });
     const productsHtml = !isOpen ? '' : `
       <div style="margin-top:10px;padding-top:10px;border-top:1px solid #f0e6ea">
-        <div class="row" style="gap:6px;margin-bottom:8px">
-          <button class="btn ${tab==='active'?'btn-primary':'btn-ghost'}" onclick="event.stopPropagation();setCatProductTab(${c.id},'active')">在售</button>
-          <button class="btn ${tab==='inactive'?'btn-primary':'btn-ghost'}" onclick="event.stopPropagation();setCatProductTab(${c.id},'inactive')">已下架</button>
-        </div>
         ${prods.map(p=>`
           <div class="card" style="margin-bottom:8px" onclick="event.stopPropagation()">
             <div class="row" style="align-items:flex-start">
