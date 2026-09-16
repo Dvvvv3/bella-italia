@@ -305,7 +305,7 @@
     box-shadow: 0 12px 50px rgba(0,0,0,0.4);
   }
   .img-zoom-overlay .close-hint {
-    position: absolute; top: 18px; right: 20px;
+    position: absolute; top: max(18px, env(safe-area-inset-top)); right: max(20px, env(safe-area-inset-right));
     color: #fff; font-size: 26px; opacity: 0.8;
     width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
   }
