@@ -462,6 +462,13 @@
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 const isAndroid = /Android/.test(navigator.userAgent);
 
+// 判断是不是从 WhatsApp / Instagram / Facebook 等App内置的浏览器里打开的。
+// 这类内置浏览器不是真正的Safari,"添加到主屏幕"这个功能用不了。
+// WhatsApp不会像Instagram/Facebook那样在UA里留下明显的名字标记,
+// 所以用一个更通用的办法判断:真正的iOS Safari的UA一定带"Safari/xxx"这个标记,
+// 而几乎所有App内置浏览器都没有这个标记(哪怕UA里假装是iPhone)。
+const isInAppBrowser = isIOS && !/Safari\//.test(navigator.userAgent);
+
 // 已经从主屏幕图标打开的(standalone模式),说明已经装过了,不用再弹安装提示
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches
   || window.navigator.standalone === true;
@@ -493,7 +500,13 @@ if (isIOS && !isStandalone) {
       // body 还没解析到的极端情况下延后重试一次,而不是直接报错沉默失败
       if (!document.body) { setTimeout(safeShowIosGuide, 200); return; }
       iosPromptShown = true;
-      showiOSInstallGuide();
+      // 内置浏览器(比如从 WhatsApp 里点开的链接)里没有"添加到主屏幕"这个功能,
+      // 得先引导用户用真正的 Safari 打开,三步添加教程留到真在 Safari 里时再弹
+      if (isInAppBrowser) {
+        showOpenInSafariGuide();
+      } else {
+        showiOSInstallGuide();
+      }
     } catch (e) {
       console.error('iOS安装引导弹窗出错:', e);
     }
@@ -519,6 +532,21 @@ function showInstallPrompt() {
   `;
   document.body.appendChild(overlay);
   setTimeout(() => overlay.remove(), 8000);
+}
+
+function showOpenInSafariGuide() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(60,43,48,0.55);display:flex;align-items:flex-end;justify-content:center;z-index:100;padding-bottom:0';
+  overlay.innerHTML = `
+    <div style="background:#fff8f4;border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(60,43,48,0.2);text-align:center">
+      <div style="width:36px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 20px"></div>
+      <div style="font-size:34px;margin-bottom:10px">🧭</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:#a85068;margin-bottom:8px">${I18N.t('o_safari_title')}</div>
+      <div style="font-size:13px;color:#888;margin-bottom:24px;line-height:1.6">${I18N.t('o_safari_desc')}</div>
+      <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:14px;background:linear-gradient(135deg,#cf7e93,#a85068);border:none;border-radius:999px;color:#fff;font-size:15px;font-weight:500;cursor:pointer">${I18N.t('o_ios_gotit')}</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
 }
 
 function showiOSInstallGuide() {
