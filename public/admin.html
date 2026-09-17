@@ -868,7 +868,6 @@ async function loadOrders() {
         <select id="carrier_${o.id}" onchange="updateTrackPlaceholder('${o.id}')" style="flex-shrink:0;padding:6px 4px;border:1px solid var(--line);border-radius:8px;font-size:12px;background:#fff">
           <option value="dhl" ${o.carrier==='dhl'?'selected':''}>DHL</option>
           <option value="gls" ${o.carrier==='gls'?'selected':''}>GLS</option>
-          <option value="molinari" ${o.carrier==='molinari'?'selected':''}>Molinari(仅记单号)</option>
           <option value="other" ${o.carrier==='other'?'selected':''}>其他/粘贴链接</option>
         </select>
         <input type="text" id="track_${o.id}" placeholder="${o.carrier==='other'?'粘贴完整查询链接':'快递单号'}" value="${o.tracking_number || ''}" style="flex:1;min-width:0;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:12px">

@@ -997,7 +997,7 @@ function renderOrdersList(orders) {
         <span class="oi-name">${it.qty}× ${it.product_name}</span>
         <span class="oi-price">€${money(it.qty * it.unit_price)}</span>
       </div>`).join('');
-    const carrierNames = { dhl: 'DHL', gls: 'GLS', molinari: 'Molinari' };
+    const carrierNames = { dhl: 'DHL', gls: 'GLS' };
     const carrierLabel = carrierNames[o.carrier] || '';
     let trackingHtml = '';
     if (o.tracking_url && o.tracking_number) {
