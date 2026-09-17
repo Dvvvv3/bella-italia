@@ -101,6 +101,13 @@
   }
   .order-card-num { font-size: 13.5px; font-weight: 600; color: var(--rose-deep); }
   .order-card-date { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+  .order-tracking-link {
+    display: inline-block; margin-top: 5px; font-size: 11px; font-weight: 600;
+    color: #fff; background: var(--rose-deep); padding: 3px 10px; border-radius: 999px;
+    text-decoration: none;
+  }
+  .order-tracking-text { margin-top: 5px; font-size: 11px; color: var(--ink-soft); }
+  .order-tracking-text .mono { color: var(--ink); }
   .order-card-right { text-align: right; }
   .order-card-total { font-size: 13px; font-weight: 600; margin-top: 4px; }
   .order-status-badge {
@@ -990,12 +997,19 @@ function renderOrdersList(orders) {
         <span class="oi-name">${it.qty}× ${it.product_name}</span>
         <span class="oi-price">€${money(it.qty * it.unit_price)}</span>
       </div>`).join('');
+    let trackingHtml = '';
+    if (o.tracking_url) {
+      trackingHtml = `<a href="${o.tracking_url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="order-tracking-link">📦 ${I18N.t('o_track_shipment')}</a>`;
+    } else if (o.tracking_number) {
+      trackingHtml = `<div class="order-tracking-text">📦 ${I18N.t('o_tracking_number')}: <span class="mono">${o.tracking_number}</span></div>`;
+    }
     return `
     <div class="order-card">
       <div class="order-card-head" onclick="this.parentElement.classList.toggle('open')">
         <div>
           <div class="order-card-num">${formatOrderNum(o.id)}</div>
           <div class="order-card-date">${date}</div>
+          ${trackingHtml}
         </div>
         <div class="order-card-right">
           <span class="order-status-badge status-${o.status}">${statusText}</span>

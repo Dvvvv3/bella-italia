@@ -159,6 +159,8 @@
       o_ios_gotit: "Ho capito ✓",
       o_orders_title: "I miei ordini",
       o_orders_empty: "Non hai ancora effettuato ordini",
+      o_track_shipment: "Traccia spedizione",
+      o_tracking_number: "N. tracking",
       o_status_pending: "In attesa",
       o_status_confirmed: "Confermato",
       o_status_shipped: "Spedito"
@@ -323,6 +325,8 @@
       o_ios_gotit: "Got it ✓",
       o_orders_title: "My orders",
       o_orders_empty: "You haven't placed any orders yet",
+      o_track_shipment: "Track shipment",
+      o_tracking_number: "Tracking no.",
       o_status_pending: "Pending",
       o_status_confirmed: "Confirmed",
       o_status_shipped: "Shipped"
@@ -487,6 +491,8 @@
       o_ios_gotit: "Compris ✓",
       o_orders_title: "Mes commandes",
       o_orders_empty: "Vous n'avez pas encore passé de commande",
+      o_track_shipment: "Suivre le colis",
+      o_tracking_number: "N° de suivi",
       o_status_pending: "En attente",
       o_status_confirmed: "Confirmée",
       o_status_shipped: "Expédiée"
@@ -651,6 +657,8 @@
       o_ios_gotit: "Entendido ✓",
       o_orders_title: "Mis pedidos",
       o_orders_empty: "Todavía no has hecho ningún pedido",
+      o_track_shipment: "Rastrear envío",
+      o_tracking_number: "N.º de seguimiento",
       o_status_pending: "Pendiente",
       o_status_confirmed: "Confirmado",
       o_status_shipped: "Enviado"
@@ -724,6 +732,8 @@
       o_ios_gotit: "Entendido ✓",
       o_orders_title: "As minhas encomendas",
       o_orders_empty: "Ainda não fez nenhuma encomenda",
+      o_track_shipment: "Rastrear encomenda",
+      o_tracking_number: "N.º de rastreio",
       o_status_pending: "Pendente",
       o_status_confirmed: "Confirmada",
       o_status_shipped: "Enviada"
@@ -797,6 +807,8 @@
       o_ios_gotit: "Το κατάλαβα ✓",
       o_orders_title: "Οι παραγγελίες μου",
       o_orders_empty: "Δεν έχετε κάνει ακόμα καμία παραγγελία",
+      o_track_shipment: "Παρακολούθηση αποστολής",
+      o_tracking_number: "Αρ. αποστολής",
       o_status_pending: "Σε αναμονή",
       o_status_confirmed: "Επιβεβαιωμένη",
       o_status_shipped: "Απεστάλη"

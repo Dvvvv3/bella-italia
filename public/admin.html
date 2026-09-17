@@ -864,6 +864,10 @@ async function loadOrders() {
       <div class="item-sub">${fmtTime(o.created_at)} · 合计 €${o.total}</div>
       <div class="item-sub">${o.items.map(i=>i.product_name+' x'+i.qty).join(', ')}</div>
       ${o.note ? `<div class="item-sub">备注: ${o.note}</div>` : ''}
+      <div class="row" style="margin-top:6px;gap:6px;align-items:center">
+        <input type="text" id="track_${o.id}" placeholder="快递单号,或直接粘贴官网查询链接" value="${o.tracking_number || o.tracking_url || ''}" style="flex:1;min-width:0;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:12px">
+        <button class="btn btn-ghost" style="flex-shrink:0" onclick="saveTracking('${o.id}')">保存单号</button>
+      </div>
       <div class="actions">
         ${o.status !== 'cancelled' ? `
           <button class="btn btn-ghost" onclick="setStatus('${o.id}','confirmed')">确认</button>
@@ -878,6 +882,15 @@ async function loadOrders() {
     </div>`).join('') || '<p style="color:#888;font-size:13px">暂无订单</p>';
 }
 function printOrder(id){window.open(`/api/admin/orders/${id}/print?key=${encodeURIComponent(ADMIN_KEY)}`,'_blank');}
+async function saveTracking(id) {
+  const val = document.getElementById(`track_${id}`).value.trim();
+  const isUrl = /^https?:\/\//i.test(val);
+  await api(`/api/admin/orders/${id}/tracking`, {
+    method: 'PUT',
+    body: JSON.stringify(isUrl ? { tracking_number: '', tracking_url: val } : { tracking_number: val, tracking_url: '' }),
+  });
+  flash('快递单号已保存');
+}
 async function setStatus(id,status){await api(`/api/admin/orders/${id}/status`,{method:'PUT',body:JSON.stringify({status})});loadOrders();}
 function handleScan(code) {
   code = code.trim();

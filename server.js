@@ -217,6 +217,8 @@ app.get('/api/customer/:token/orders', requireBoundDevice, (req, res) => {
     status: o.status,
     total: o.total,
     note: o.note,
+    tracking_number: o.tracking_number,
+    tracking_url: o.tracking_url,
     items: itemsStmt.all(o.id),
   })));
 });
@@ -459,6 +461,14 @@ app.get('/api/admin/orders', requireAdmin, (req, res) => {
 app.put('/api/admin/orders/:id/status', requireAdmin, (req, res) => {
   const { status } = req.body; // pending | confirmed | shipped
   db.prepare('UPDATE orders SET status = ? WHERE id = ?').run(status, req.params.id);
+  res.json({ ok: true });
+});
+
+// 填写/更新快递单号 + 查询链接(查询链接可选,没有的话客户只看到单号文字)
+app.put('/api/admin/orders/:id/tracking', requireAdmin, (req, res) => {
+  const { tracking_number, tracking_url } = req.body;
+  db.prepare('UPDATE orders SET tracking_number = ?, tracking_url = ? WHERE id = ?')
+    .run((tracking_number || '').trim(), (tracking_url || '').trim(), req.params.id);
   res.json({ ok: true });
 });
 

@@ -84,6 +84,14 @@ const catCols = db.prepare("PRAGMA table_info(categories)").all().map(c => c.nam
 if (!catCols.includes('image')) {
   db.exec('ALTER TABLE categories ADD COLUMN image TEXT');
 }
+// 快递单号 + 查询链接: 发货后管理员填入,客户在订单历史里能看到并点击查询
+const orderCols = db.prepare("PRAGMA table_info(orders)").all().map(c => c.name);
+if (!orderCols.includes('tracking_number')) {
+  db.exec('ALTER TABLE orders ADD COLUMN tracking_number TEXT');
+}
+if (!orderCols.includes('tracking_url')) {
+  db.exec('ALTER TABLE orders ADD COLUMN tracking_url TEXT');
+}
 // 标记"这个分类是 New Arrivals 虚拟文件夹":打开它时不按 category_id 找商品,
 // 而是显示所有被标记 is_new_arrival 的商品(商品还留在自己原来的分类里)
 if (!catCols.includes('show_new_arrivals')) {
