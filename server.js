@@ -219,6 +219,7 @@ app.get('/api/customer/:token/orders', requireBoundDevice, (req, res) => {
     note: o.note,
     tracking_number: o.tracking_number,
     tracking_url: o.tracking_url,
+    carrier: o.carrier,
     items: itemsStmt.all(o.id),
   })));
 });
@@ -466,10 +467,22 @@ app.put('/api/admin/orders/:id/status', requireAdmin, (req, res) => {
 
 // 填写/更新快递单号 + 查询链接(查询链接可选,没有的话客户只看到单号文字)
 app.put('/api/admin/orders/:id/tracking', requireAdmin, (req, res) => {
-  const { tracking_number, tracking_url } = req.body;
-  db.prepare('UPDATE orders SET tracking_number = ?, tracking_url = ? WHERE id = ?')
-    .run((tracking_number || '').trim(), (tracking_url || '').trim(), req.params.id);
-  res.json({ ok: true });
+  const { carrier, tracking_number } = req.body;
+  const num = (tracking_number || '').trim();
+  let url = '';
+  if (carrier === 'dhl' && num) {
+    // DHL 支持直接带单号的官方查询链接
+    url = `https://www.dhl.com/it-it/home/tracking.html?tracking-id=${encodeURIComponent(num)}&submit=1`;
+  } else if (carrier === 'gls' && num) {
+    // GLS 官网查询是表单提交,没有可靠的"直接带单号跳转"链接,只给官方查询入口,单号靠客户自己复制粘贴
+    url = 'https://www.gls-italy.com/it/servizi-per-destinatari/ricerca-spedizione/';
+  } else if (carrier === 'other' && /^https?:\/\//i.test(num)) {
+    // "其他"选项里如果直接粘贴的是完整链接,就当查询链接用,不再单独存单号
+    url = num;
+  }
+  db.prepare('UPDATE orders SET tracking_number = ?, tracking_url = ?, carrier = ? WHERE id = ?')
+    .run(num, url, (carrier || '').trim(), req.params.id);
+  res.json({ ok: true, tracking_url: url });
 });
 
 // 可打印的送货单页面。浏览器打开后用 Cmd/Ctrl+P 打印,或"打印"对话框里选

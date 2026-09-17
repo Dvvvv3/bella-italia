@@ -92,6 +92,9 @@ if (!orderCols.includes('tracking_number')) {
 if (!orderCols.includes('tracking_url')) {
   db.exec('ALTER TABLE orders ADD COLUMN tracking_url TEXT');
 }
+if (!orderCols.includes('carrier')) {
+  db.exec('ALTER TABLE orders ADD COLUMN carrier TEXT');
+}
 // 标记"这个分类是 New Arrivals 虚拟文件夹":打开它时不按 category_id 找商品,
 // 而是显示所有被标记 is_new_arrival 的商品(商品还留在自己原来的分类里)
 if (!catCols.includes('show_new_arrivals')) {

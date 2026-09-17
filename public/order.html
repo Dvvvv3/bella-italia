@@ -997,11 +997,17 @@ function renderOrdersList(orders) {
         <span class="oi-name">${it.qty}× ${it.product_name}</span>
         <span class="oi-price">€${money(it.qty * it.unit_price)}</span>
       </div>`).join('');
+    const carrierNames = { dhl: 'DHL', gls: 'GLS', molinari: 'Molinari' };
+    const carrierLabel = carrierNames[o.carrier] || '';
     let trackingHtml = '';
-    if (o.tracking_url) {
-      trackingHtml = `<a href="${o.tracking_url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="order-tracking-link">📦 ${I18N.t('o_track_shipment')}</a>`;
+    if (o.tracking_url && o.tracking_number) {
+      // 有查询链接、但链接没法预填单号(比如GLS),把单号也显示出来方便客户复制粘贴
+      trackingHtml = `<div class="order-tracking-text">📦 ${carrierLabel ? carrierLabel + ' · ' : ''}${I18N.t('o_tracking_number')}: <span class="mono">${o.tracking_number}</span></div>
+        <a href="${o.tracking_url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="order-tracking-link">${I18N.t('o_track_shipment')}</a>`;
+    } else if (o.tracking_url) {
+      trackingHtml = `<a href="${o.tracking_url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="order-tracking-link">📦 ${carrierLabel ? carrierLabel + ' · ' : ''}${I18N.t('o_track_shipment')}</a>`;
     } else if (o.tracking_number) {
-      trackingHtml = `<div class="order-tracking-text">📦 ${I18N.t('o_tracking_number')}: <span class="mono">${o.tracking_number}</span></div>`;
+      trackingHtml = `<div class="order-tracking-text">📦 ${carrierLabel ? carrierLabel + ' · ' : ''}${I18N.t('o_tracking_number')}: <span class="mono">${o.tracking_number}</span></div>`;
     }
     return `
     <div class="order-card">
