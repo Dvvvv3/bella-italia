@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#cf7e93">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="INGROSSO">
+<link rel="apple-touch-icon" href="/img/logo.jpg">
+<title>BELLA ITALIA · 订货</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="/js/i18n.js"></script>
+<style>
+  :root {
+    --blush: #f7dde3;
+    --blush-deep: #eec3cf;
+    --rose: #cf7e93;
+    --rose-deep: #a85068;
+    --gold: #c6a15b;
+    --gold-soft: #e4cd9a;
+    --cream: #fff8f4;
+    --ink: #3c2b30;
+    --ink-soft: rgba(60,43,48,0.6);
+    --line: rgba(60,43,48,0.14);
+  }
+  * { box-sizing: border-box; }
+  html { overflow-x: hidden; }
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Jost', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    touch-action: manipulation;
+    padding-bottom: 100px;
+    max-width: 100vw;
+  }
+  .serif { font-family: 'Cormorant Garamond', serif; }
+
+  header.brand {
+    background: linear-gradient(160deg, var(--blush) 0%, var(--blush-deep) 100%);
+    padding: max(30px, calc(env(safe-area-inset-top) + 14px)) 20px 22px;
+    border-bottom: 1px solid var(--gold-soft);
+    position: relative;
+    overflow: hidden;
+  }
+  header.brand::after {
+    content: "";
+    position: absolute; right: -30px; top: -30px;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.5), transparent 70%);
+  }
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 30px;
+    letter-spacing: 0.02em;
+    color: var(--rose-deep);
+    margin: 0;
+    position: relative;
+  }
+  .brand-tagline {
+    font-size: 10.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+  .brand-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 16px;
+    font-size: 13px;
+  }
+  #customerName {
+    font-weight: 500;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    min-width: 0; flex: 1; margin-right: 10px;
+  }
+  .orders-btn {
+    background: rgba(255,255,255,0.6);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 14px 7px 11px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--rose-deep);
+    display: flex; align-items: center; gap: 6px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .order-card {
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    margin-bottom: 10px; overflow: hidden;
+  }
+  .order-card-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px; cursor: pointer;
+  }
+  .order-card-num { font-size: 13.5px; font-weight: 600; color: var(--rose-deep); }
+  .order-card-date { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+  .order-tracking-link {
+    display: inline-block; margin-top: 5px; font-size: 11px; font-weight: 600;
+    color: #fff; background: var(--rose-deep); padding: 3px 10px; border-radius: 999px;
+    text-decoration: none;
+  }
+  .order-tracking-text { margin-top: 5px; font-size: 11px; color: var(--ink-soft); }
+  .order-tracking-text .mono { color: var(--ink); }
+  .order-card-right { text-align: right; }
+  .order-card-total { font-size: 13px; font-weight: 600; margin-top: 4px; }
+  .order-status-badge {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    padding: 3px 9px; border-radius: 999px; letter-spacing: 0.02em;
+  }
+  .order-status-badge.status-pending { background: #fff3d6; color: #a87a00; }
+  .order-status-badge.status-confirmed { background: #e0ecff; color: #2f5db0; }
+  .order-status-badge.status-shipped { background: #e5f3e8; color: #2e7d4f; }
+  .order-card-items {
+    max-height: 0; overflow: hidden; transition: max-height 0.25s ease;
+    padding: 0 12px; border-top: 1px solid transparent;
+  }
+  .order-card.open .order-card-items {
+    max-height: 600px; padding: 4px 12px 12px; border-top-color: var(--line);
+  }
+  .order-item-line {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12.5px; color: var(--ink-soft); padding: 6px 0;
+  }
+  .order-item-line img {
+    width: 38px; height: 38px; object-fit: cover; border-radius: 8px;
+    background: var(--blush); flex-shrink: 0;
+  }
+  .order-item-line .oi-name { flex: 1; min-width: 0; }
+  .order-item-line .oi-price { flex-shrink: 0; font-weight: 500; }
+  .tier-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: #fff;
+    padding: 3px 11px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+
+  main { padding: 16px 14px 4px; }
+
+  .product {
+    display: flex; gap: 13px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 13px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 10px rgba(207,126,147,0.08);
+    position: relative;
+  }
+  .product-img-wrap { position: relative; flex-shrink: 0; }
+  .new-badge {
+    position: absolute; top: -6px; left: -6px;
+    background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+    color: #fff;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 3px 7px;
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(168,80,104,0.35);
+    z-index: 2;
+    white-space: nowrap;
+  }
+
+  /* 分类进入/返回的侧滑转场(仅在支持 View Transitions API 的浏览器生效,
+     不支持的旧机型会自动优雅降级成直接切换,不会报错) */
+  @keyframes va-slide-in-right { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  @keyframes va-slide-out-right { from { transform: translateX(0); } to { transform: translateX(100%); } }
+  ::view-transition-group(root) { animation-duration: 0.32s; }
+  html.nav-forward::view-transition-old(root) { animation: none; }
+  html.nav-forward::view-transition-new(root) {
+    animation: va-slide-in-right 0.32s cubic-bezier(.4,0,.2,1) both;
+    z-index: 2;
+  }
+  html.nav-back::view-transition-old(root) {
+    animation: va-slide-out-right 0.32s cubic-bezier(.4,0,.2,1) both;
+    z-index: 2;
+  }
+  html.nav-back::view-transition-new(root) { animation: none; }
+  .product img {
+    width: 100px; height: 100px;
+    object-fit: cover;
+    border-radius: 14px;
+    background: var(--blush);
+    flex-shrink: 0;
+  }
+  .product-info { flex: 1; min-width: 0; }
+  .product-name { font-weight: 500; font-size: 15px; line-height: 1.3; overflow-wrap: break-word; word-break: break-word; }
+  .product-unit { font-size: 11.5px; color: var(--ink-soft); margin-top: 2px; overflow-wrap: break-word; word-break: break-word; }
+  .product-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 9px;
+  }
+  .product-price { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 600; color: var(--rose-deep); }
+  .product-price .cur { font-size: 12px; opacity: 0.7; margin-right: 1px; }
+  .stock-tag { font-size: 10.5px; margin-top: 4px; letter-spacing: 0.02em; }
+  .stock-tag.ok { color: #7c9473; }
+  .stock-tag.out { color: var(--rose-deep); font-weight: 500; }
+
+  .stepper {
+    display: flex; align-items: center;
+    background: var(--blush);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .stepper button {
+    width: 28px; height: 28px;
+    border: none; background: transparent;
+    font-size: 15px; font-weight: 600;
+    color: var(--rose-deep);
+  }
+  .stepper button:disabled { opacity: 0.3; }
+  .stepper input {
+    width: 42px; text-align: center;
+    border: none; background: transparent;
+    height: 28px; font-size: 13px; color: var(--ink);
+    -moz-appearance: textfield;
+    cursor: default; caret-color: transparent;
+  }
+  .stepper input::-webkit-outer-spin-button,
+  .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  .note-block { padding: 6px 14px 0; }
+  .note-block label {
+    display: block; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--ink-soft); margin-bottom: 6px;
+  }
+  .note-block textarea {
+    width: 100%; min-height: 58px;
+    border: 1px solid var(--line); border-radius: 12px;
+    background: #fff; padding: 10px; font-size: 14px;
+    font-family: 'Jost', sans-serif; resize: vertical;
+  }
+  .note-block textarea:focus { outline: 2px solid var(--rose); }
+
+  .cart-bar {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    background: #fff;
+    border-top: 1px solid var(--line);
+    padding: 13px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 -6px 20px rgba(207,126,147,0.15);
+  }
+  .cart-bar .total-block .label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+  .cart-bar .total-block .value { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--rose-deep); }
+  .cart-bar button {
+    background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+    color: #fff; border: none;
+    padding: 13px 26px;
+    font-size: 13.5px; font-weight: 500; letter-spacing: 0.04em;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(168,80,104,0.35);
+  }
+  .cart-bar button:disabled { opacity: 0.35; box-shadow: none; }
+
+  .toast {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: #fff;
+    padding: 10px 18px; font-size: 13px;
+    border-radius: 999px; z-index: 50;
+    max-width: 88%; text-align: center;
+  }
+
+  .seal-overlay {
+    position: fixed; inset: 0; background: rgba(60,43,48,0.45);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 60;
+  }
+  .seal-card {
+    background: var(--cream); border-radius: 20px;
+    padding: 30px 24px 24px; width: 82%; max-width: 300px;
+    text-align: center;
+    box-shadow: 0 12px 40px rgba(60,43,48,0.25);
+  }
+  .seal {
+    width: 64px; height: 64px; margin: 0 auto 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--gold-soft), var(--gold) 70%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 26px; font-weight: 600; color: #fff;
+    box-shadow: 0 4px 14px rgba(198,161,91,0.5);
+  }
+  .seal-card .big { font-family: 'Cormorant Garamond', serif; color: var(--rose-deep); font-size: 21px; font-weight: 600; }
+  .seal-card .oid { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+  .seal-card button {
+    margin-top: 20px; border: none; background: var(--blush);
+    color: var(--rose-deep); border-radius: 999px;
+    padding: 9px 22px; font-size: 13px; font-weight: 500;
+  }
+
+  .product img { cursor: zoom-in; }
+
+  .img-zoom-overlay {
+    position: fixed; inset: 0; background: rgba(20,12,14,0.88);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200; padding: 24px; cursor: zoom-out;
+  }
+  .img-zoom-overlay img {
+    max-width: 100%; max-height: 100%;
+    border-radius: 16px;
+    box-shadow: 0 12px 50px rgba(0,0,0,0.4);
+  }
+  .img-zoom-overlay .close-hint {
+    position: absolute; top: max(18px, env(safe-area-inset-top)); right: max(20px, env(safe-area-inset-right));
+    color: #fff; font-size: 26px; opacity: 0.8;
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  }
+
+  .info-banner {
+    margin: 10px 14px 4px;
+    background: linear-gradient(135deg, #a85068, #cf7e93);
+    color: #fff; border-radius: 14px; padding: 13px 16px;
+    font-size: 12.5px; line-height: 1.65;
+    box-shadow: 0 3px 12px rgba(168,80,104,0.22);
+  }
+  .info-banner .min {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px; font-weight: 600;
+    letter-spacing: 0.02em; margin-bottom: 4px;
+  }
+  .info-banner .line { opacity: 0.93; }
+  .iva-note {
+    margin: 6px 14px 0; font-size: 11px; color: var(--ink-soft);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .cart-bar .cart-btn {
+    position: relative; background: var(--blush); color: var(--rose-deep);
+    border: none; border-radius: 999px; padding: 0; width: 44px; height: 44px;
+    font-size: 19px; flex-shrink: 0; box-shadow: none; margin-right: 4px;
+  }
+  .cart-bar .cart-btn:disabled { opacity: 0.35; }
+  .cart-badge {
+    position: absolute; top: -3px; right: -3px;
+    background: var(--rose-deep); color: #fff;
+    font-size: 10px; font-weight: 600; min-width: 18px; height: 18px;
+    border-radius: 999px; display: flex; align-items: center; justify-content: center;
+    padding: 0 4px; border: 2px solid var(--cream);
+  }
+  .min-warning {
+    text-align: center; font-size: 11.5px; color: #b5484c;
+    background: #fdeaea; padding: 7px 14px; border-top: 1px solid #f6d6d6;
+  }
+  .cart-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    height: 100vh; height: 100dvh;
+    background: rgba(60,43,48,0.5);
+    z-index: 95; display: flex; align-items: flex-end;
+  }
+  .cart-panel {
+    background: var(--cream); width: 100%; max-height: 82vh; max-height: 82dvh;
+    border-radius: 22px 22px 0 0; display: flex; flex-direction: column;
+    box-shadow: 0 -8px 40px rgba(60,43,48,0.25);
+  }
+  .cart-panel .handle { width: 38px; height: 4px; background: #ddd; border-radius: 2px; margin: 10px auto 4px; flex-shrink: 0; }
+  .cart-panel .head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 18px 12px; border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+  .cart-panel .head h3 {
+    margin: 0; font-family: 'Cormorant Garamond', serif;
+    font-size: 21px; font-weight: 600; color: var(--rose-deep);
+  }
+  .cart-panel .head button {
+    background: none; border: none; font-size: 22px; color: var(--ink-soft); padding: 0 4px;
+  }
+  .cart-list { overflow-y: auto; padding: 8px 14px 4px; flex: 1; min-height: 0; }
+  .cart-row {
+    display: flex; gap: 11px; align-items: center;
+    background: #fff; border: 1px solid var(--line);
+    border-radius: 14px; padding: 10px; margin-bottom: 9px;
+  }
+  .cart-row img { width: 54px; height: 54px; object-fit: cover; border-radius: 10px; flex-shrink: 0; background: var(--blush); }
+  .cart-row .ci { flex: 1; min-width: 0; }
+  .cart-row .ci .n { font-size: 13px; font-weight: 600; }
+  .cart-row .ci .s { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+  .cart-row .ci .p { font-size: 13px; color: var(--rose-deep); font-weight: 600; margin-top: 3px; }
+  .cart-row .ops { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+  .cart-row .stepper { margin: 0; }
+  .cart-row .del { background: none; border: none; color: #c98; font-size: 11px; padding: 0; }
+  .cart-empty { text-align: center; color: var(--ink-soft); font-size: 13px; padding: 40px 0; }
+
+  .search-overlay { align-items: flex-start; }
+  .search-card {
+    width: 100%; max-width: 480px; margin: 0 auto;
+    margin-top: max(14px, env(safe-area-inset-top));
+    background: var(--cream);
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(60,43,48,0.3);
+    display: flex; flex-direction: column;
+    max-height: 75vh; max-height: 75dvh;
+    overflow: hidden;
+  }
+  .search-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px; flex-shrink: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .search-head input {
+    flex: 1; padding: 12px 16px; border: 1px solid var(--line); border-radius: 999px;
+    font-size: 16px; font-family: 'Jost', sans-serif; box-sizing: border-box;
+    background: #fff; color: var(--ink);
+  }
+  .search-head input:focus { outline: 2px solid var(--rose); border-color: transparent; }
+  .search-head button {
+    background: var(--blush); border: none; color: var(--rose-deep);
+    width: 40px; height: 40px; border-radius: 50%; font-size: 20px;
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  }
+  .cart-foot { padding: 12px 18px 22px; border-top: 1px solid var(--line); }
+  .cart-foot .sum { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .cart-foot .sum .l { font-size: 12px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.08em; }
+  .cart-foot .sum .v { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; color: var(--rose-deep); }
+
+  .lang-switch { display: flex; gap: 4px; }
+  .lang-switch button {
+    background: rgba(255,255,255,0.5); border: 1px solid rgba(168,80,104,0.25);
+    color: var(--rose-deep); font-size: 10px; letter-spacing: 0.03em;
+    padding: 4px 7px; border-radius: 999px; cursor: pointer;
+    font-family: 'Jost', sans-serif; font-weight: 500;
+  }
+  .lang-switch button.active { background: var(--rose-deep); color: #fff; border-color: var(--rose-deep); }
+
+  .wa-float {
+    position: fixed; right: 16px; bottom: 92px; z-index: 60;
+    width: 52px; height: 52px; border-radius: 50%;
+    background: #25D366; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(37,211,102,0.4); text-decoration: none;
+    animation: waPulse 2.2s infinite;
+  }
+  .wa-float svg { width: 27px; height: 27px; fill: #fff; }
+  @keyframes waPulse {
+    0%, 100% { box-shadow: 0 4px 16px rgba(37,211,102,0.4); }
+    50% { box-shadow: 0 4px 22px rgba(37,211,102,0.7); }
+  }
+
+  .delivery-modal .lbl {
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-soft); margin-bottom: 10px; text-align: center;
+  }
+  .delivery-opts { display: flex; gap: 10px; padding: 0 18px 18px; }
+  .delivery-opt {
+    flex: 1; padding: 18px 10px; border: 1.5px solid var(--line); border-radius: 14px;
+    background: #fff; text-align: center; font-size: 13px; font-weight: 500;
+    color: var(--ink-soft); cursor: pointer; transition: all 0.15s;
+  }
+  .delivery-opt:active { transform: scale(0.97); }
+  .delivery-opt .ic { font-size: 26px; display: block; margin-bottom: 6px; }
+</style>
+<script>
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isAndroid = /Android/.test(navigator.userAgent);
+
+// 已经从主屏幕图标打开的(standalone模式),说明已经装过了,不用再弹安装提示
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+  || window.navigator.standalone === true;
+
+// manifest 只有安卓装PWA用得到,用JS动态插入,iOS的HTML源码里从一开始就没有这个标签
+// (iOS Safari在页面加载时就会读取manifest准备"添加到主屏幕",JS事后删除来不及)
+if (isAndroid) {
+  const _token = location.pathname.split('/o/')[1] || location.pathname.split('/').pop();
+  const m = document.createElement('link');
+  m.rel = 'manifest';
+  m.href = `/api/customer/${_token}/manifest.json`;
+  document.head.appendChild(m);
+}
+let deferredPrompt;
+
+if (isAndroid && !isStandalone) {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallPrompt();
+  });
+}
+
+if (isIOS && !isStandalone) {
+  let iosPromptShown = false;
+  function safeShowIosGuide() {
+    if (iosPromptShown) return;
+    try {
+      // body 还没解析到的极端情况下延后重试一次,而不是直接报错沉默失败
+      if (!document.body) { setTimeout(safeShowIosGuide, 200); return; }
+      iosPromptShown = true;
+      showiOSInstallGuide();
+    } catch (e) {
+      console.error('iOS安装引导弹窗出错:', e);
+    }
+  }
+  setTimeout(safeShowIosGuide, 1000);
+  // 双保险:万一上面这次因为某些时序问题没触发,页面完全加载完之后再兜底试一次
+  window.addEventListener('load', () => setTimeout(safeShowIosGuide, 500));
+}
+
+function showInstallPrompt() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(60,43,48,0.45);display:flex;align-items:center;justify-content:center;z-index:100';
+  overlay.innerHTML = `
+    <div style="background:#fff8f4;border-radius:20px;padding:30px 24px;width:82%;max-width:320px;text-align:center;box-shadow:0 12px 40px rgba(60,43,48,0.25)">
+      <div style="font-size:28px;margin-bottom:12px">📱</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#a85068;margin-bottom:8px">${I18N.t('o_pwa_title')}</div>
+      <div style="font-size:13px;color:#666;margin-bottom:20px;line-height:1.5">${I18N.t('o_pwa_desc')}</div>
+      <div style="display:flex;gap:10px;justify-content:center">
+        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--blush);border:none;border-radius:999px;color:var(--rose-deep);font-weight:500;cursor:pointer">${I18N.t('o_pwa_not_now')}</button>
+        <button onclick="installApp()" style="flex:1;padding:10px;background:linear-gradient(135deg,#cf7e93,#a85068);border:none;border-radius:999px;color:#fff;font-weight:500;cursor:pointer">${I18N.t('o_pwa_install')}</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  setTimeout(() => overlay.remove(), 8000);
+}
+
+function showiOSInstallGuide() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(60,43,48,0.55);display:flex;align-items:flex-end;justify-content:center;z-index:100;padding-bottom:0';
+  overlay.innerHTML = `
+    <div style="background:#fff8f4;border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(60,43,48,0.2)">
+      <div style="width:36px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 20px"></div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:#a85068;margin-bottom:6px;text-align:center">${I18N.t('o_ios_title')}</div>
+      <div style="font-size:13px;color:#888;text-align:center;margin-bottom:22px">${I18N.t('o_ios_desc')}</div>
+
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;background:#fff;border-radius:14px;padding:14px">
+        <div style="background:linear-gradient(135deg,#cf7e93,#a85068);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">①</div>
+        <div>
+          <div style="font-weight:600;font-size:14px;margin-bottom:3px">${I18N.t('o_ios_s1_t')}</div>
+          <div style="font-size:12px;color:#999">${I18N.t('o_ios_s1_d')}</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;background:#fff;border-radius:14px;padding:14px">
+        <div style="background:linear-gradient(135deg,#cf7e93,#a85068);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">②</div>
+        <div>
+          <div style="font-weight:600;font-size:14px;margin-bottom:3px">${I18N.t('o_ios_s2_t')}</div>
+          <div style="font-size:12px;color:#999">${I18N.t('o_ios_s2_d')}</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;background:#fff;border-radius:14px;padding:14px">
+        <div style="background:linear-gradient(135deg,#cf7e93,#a85068);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">③</div>
+        <div>
+          <div style="font-weight:600;font-size:14px;margin-bottom:3px">${I18N.t('o_ios_s3_t')}</div>
+          <div style="font-size:12px;color:#999">${I18N.t('o_ios_s3_d')}</div>
+        </div>
+      </div>
+
+      <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:14px;background:linear-gradient(135deg,#cf7e93,#a85068);border:none;border-radius:999px;color:#fff;font-size:15px;font-weight:500;cursor:pointer">${I18N.t('o_ios_gotit')}</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+async function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') {
+    toast(I18N.t('o_pwa_installed'));
+  }
+  deferredPrompt = null;
+  document.querySelector('[style*="background:rgba"]')?.remove();
+}
+
+window.addEventListener('appinstalled', () => {
+  console.log('App installata con successo');
+});
+</script>
+</head>
+<body>
+<div id="profileOverlay" style="display:none;position:fixed;inset:0;background:#fff8f4;z-index:80;overflow-y:auto;padding:24px 18px 40px">
+  <div class="lang-switch" id="langSwitchProfile" style="justify-content:flex-end;margin-bottom:14px"></div>
+  <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:#a85068;font-size:24px;margin:0 0 4px">Bella Italia</p>
+  <p style="font-size:12px;color:#888;margin-bottom:20px" data-i18n="o_profile_sub">Prima di ordinare, compila i dati per la fatturazione</p>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_ragione">Ragione Sociale *</label><input id="pf_ragione_sociale" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_piva">P.IVA *</label><input id="pf_piva" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_indirizzo">Indirizzo *</label><input id="pf_indirizzo" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_cap">CAP *</label><input id="pf_cap" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_citta">Citta *</label><input id="pf_citta" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
+  <div style="margin-bottom:12px">
+    <label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_tel">Telefono *</label>
+    <div style="display:flex;gap:6px">
+      <select id="pf_tel_prefix" style="padding:10px 4px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;background:#fff;flex-shrink:0;width:88px">
+        <option value="+39">🇮🇹 +39</option>
+        <option value="+33">🇫🇷 +33</option>
+        <option value="+34">🇪🇸 +34</option>
+        <option value="+49">🇩🇪 +49</option>
+        <option value="+351">🇵🇹 +351</option>
+        <option value="+30">🇬🇷 +30</option>
+      </select>
+      <input id="pf_telefono" style="flex:1;min-width:0;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box" placeholder="333 1234567">
+    </div>
+  </div>
+  <button id="profileSubmit" onclick="submitProfile()" style="width:100%;padding:14px;background:linear-gradient(135deg,#cf7e93,#a85068);color:#fff;border:none;border-radius:999px;font-size:15px;font-weight:500;margin-top:8px" data-i18n="o_pf_save">Salva e continua</button>
+  <p style="font-size:11px;color:#aaa;text-align:center;margin-top:12px">
+    Continuando accetti il trattamento dei tuoi dati secondo la nostra <a href="/privacy.html" style="color:#a85068">Privacy Policy</a>.
+  </p>
+</div>
+
+<header class="brand" id="pageHeader">
+  <p class="brand-name">Bella Italia</p>
+  <div class="brand-tagline" data-i18n="o_tagline">Cosmetics Wholesale · Ingrosso Cosmetici</div>
+  <div class="brand-meta">
+    <span id="customerName">…</span>
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+      <button class="orders-btn" onclick="openOrderHistory()"><span>📋</span><span data-i18n="o_orders_title">I miei ordini</span></button>
+      <div class="lang-switch" id="langSwitch"></div>
+    </div>
+  </div>
+</header>
+
+<div class="info-banner" id="infoBanner">
+  <div class="min" data-i18n="o_banner_min">ORDINE MINIMO €300</div>
+  <div class="line" data-i18n="o_banner_ship_it">🚚 SPEDIZIONE €15 fino a 25kg in tutto Italia 🇮🇹</div>
+  <div class="line" data-i18n="o_banner_ship_eu">🌍 SPEDIZIONE €35 fino a 25kg IN TUTTO EUROPA!</div>
+  <div class="line" data-i18n="o_banner_vip">💎 Dopo l'ordine, contattaci per entrare nel gruppo WhatsApp e ricevere subito le novità sui prodotti.</div>
+</div>
+<div class="iva-note" id="ivaNote" data-i18n="o_iva_note">Prezzo non compreso IVA</div>
+
+<main id="mainView">
+  <!-- 商品列表由 JS 渲染 -->
+</main>
+
+<div class="note-block">
+  <label data-i18n="o_note_label">Note / Istruzioni di consegna</label>
+  <textarea id="note" data-i18n-placeholder="o_note_placeholder" placeholder="Es: consegnare entro venerdì, corriere espresso..."></textarea>
+</div>
+
+<a class="wa-float" href="https://wa.me/393485180143" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.9-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-1 1.1-.2.2-.4.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.4.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1.1 2.8 1.2 3c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.5-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.6 1.4 5.1L2 22l5.1-1.3C8.5 21.5 10.2 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.6 0-3.2-.4-4.5-1.2l-.3-.2-3.3.9.9-3.2-.2-.3C3.7 14.7 3.2 13.4 3.2 12 3.2 7.1 7.1 3.2 12 3.2S20.8 7.1 20.8 12 16.9 20.2 12 20.2z"/></svg>
+</a>
+
+<div id="minWarning" class="min-warning" style="display:none"></div>
+<div class="cart-bar">
+  <button class="cart-btn" id="searchBtn" onclick="openSearch()">🔍</button>
+  <button class="cart-btn" id="cartBtn" onclick="openCart()" disabled>
+    🛒<span class="cart-badge" id="cartBadge" style="display:none">0</span>
+  </button>
+  <div class="total-block">
+    <div class="label" data-i18n="o_total_label">Totale (IVA escl.)</div>
+    <div class="value">€ <span id="totalValue">0.00</span></div>
+  </div>
+  <button id="submitBtn" onclick="submitOrder()" disabled data-i18n="o_submit_btn">Invia Ordine</button>
+</div>
+
+<script>
+const token = location.pathname.split('/o/')[1] || location.pathname.split('/').pop();
+
+// 彩蛋: 只有这一个客户能看到
+if (token === '8cf6fe0e') {
+  const heart = document.createElement('a');
+  heart.href = 'https://dvannalisa.netlify.app';
+  heart.target = '_blank';
+  heart.rel = 'noopener';
+  heart.textContent = '♥';
+  heart.style.cssText = 'position:fixed;top:64px;right:16px;z-index:50;font-size:26px;color:#e0607a;text-decoration:none;animation:heartBeat 1.4s ease-in-out infinite;padding:12px;margin:-12px;display:flex;align-items:center;justify-content:center';
+  const style = document.createElement('style');
+  style.textContent = '@keyframes heartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}';
+  document.head.appendChild(style);
+  document.body.appendChild(heart);
+}
+
+function money(n) { return n.toFixed(2); }
+
+// 从规格文字里提取"每件数量",比如 "盒(24支/盒)" -> 24, "箱(30包/箱)" -> 30
+// 提取不到就当作 1(按件卖)
+function packSize(unit) {
+  if (!unit) return 1;
+  const m = String(unit).match(/(\d+)/);
+  return m ? parseInt(m[1], 10) : 1;
+}
+
+let PRODUCTS = [];
+let CATEGORIES = [];
+const cart = {};
+let deliveryMode = null;
+
+// ---------------------------------------------------------------------------
+// 购物车持久化: 按客户 token 存到 localStorage,刷新页面/退出重进都能恢复
+// ---------------------------------------------------------------------------
+const CART_STORAGE_KEY = 'bi_cart_' + token;
+
+function saveCart() {
+  try {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  } catch (e) { /* 隐私模式等场景 localStorage 不可用时静默忽略,不影响下单 */ }
+}
+
+function loadCart() {
+  try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (saved && typeof saved === 'object') {
+      Object.keys(saved).forEach(id => { cart[id] = saved[id]; });
+    }
+  } catch (e) { /* 存储内容损坏就当没保存过 */ }
+}
+
+function clearSavedCart() {
+  try { localStorage.removeItem(CART_STORAGE_KEY); } catch (e) {}
+}
+
+function openDeliveryModal() {
+  if (document.getElementById('deliveryOverlay')) return;
+  const ov = document.createElement('div');
+  ov.className = 'cart-overlay';
+  ov.id = 'deliveryOverlay';
+  ov.innerHTML = `
+    <div class="cart-panel delivery-modal">
+      <div class="handle"></div>
+      <div class="head">
+        <h3 data-i18n="o_delivery_label">Modalità di consegna *</h3>
+        <button onclick="document.getElementById('deliveryOverlay').remove()">&times;</button>
+      </div>
+      <div class="delivery-opts" style="padding-top:14px">
+        <div class="delivery-opt" onclick="chooseDelivery('shipping')">
+          <span class="ic">🚚</span><span>${I18N.t('o_delivery_ship')}</span>
+        </div>
+        <div class="delivery-opt" onclick="chooseDelivery('pickup')">
+          <span class="ic">🏪</span><span>${I18N.t('o_delivery_pickup')}</span>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+}
+
+function chooseDelivery(mode) {
+  deliveryMode = mode;
+  document.getElementById('deliveryOverlay')?.remove();
+  submitOrder();
+}
+
+let currentView = 'cats'; // 'cats' | 'products'
+let currentCat = null;
+let catsScrollY = 0; // 记住浏览分类列表时滚动到的位置,退出分类详情后恢复到这里
+
+// 用户主动点击"进入分类"/"返回"时才走这个带侧滑动画的包装,
+// 语言切换、首次加载等程序内部刷新继续直接调 openCat()/renderCats(),不带动画
+function withNavTransition(direction, fn) {
+  if (!document.startViewTransition) { fn(); return; }
+  document.documentElement.classList.remove('nav-forward', 'nav-back');
+  document.documentElement.classList.add(direction);
+  const t = document.startViewTransition(fn);
+  t.finished.finally(() => document.documentElement.classList.remove('nav-forward', 'nav-back'));
+}
+function navOpenCat(id, name) { withNavTransition('nav-forward', () => openCat(id, name)); }
+function navBackToCats() { withNavTransition('nav-back', () => renderCats()); }
+
+// 取某个分类下要展示的商品: 如果这个分类被标记为 "New Arrivals 虚拟文件夹",
+// 就按商品自己的 is_new_arrival 标记来找(商品还留在自己原来的分类里);
+// 普通分类照旧按 category_id 匹配
+function productsForCategory(c) {
+  if (c.show_new_arrivals) {
+    return PRODUCTS.filter(p => Number(p.is_new_arrival) === 1);
+  }
+  return PRODUCTS.filter(p => String(p.category_id) === String(c.id));
+}
+
+function renderCats() {
+  currentView = 'cats';
+  document.getElementById('pageHeader').style.display = '';
+  document.getElementById('infoBanner').style.display = '';
+  document.getElementById('ivaNote').style.display = '';
+  const main = document.getElementById('mainView');
+  if (CATEGORIES.length === 0) {
+    main.innerHTML = PRODUCTS.map(productCard).join('') || `<p style="text-align:center;color:#aaa;padding:30px;font-size:13px">${I18N.t('o_no_products')}</p>`;
+    requestAnimationFrame(() => window.scrollTo(0, catsScrollY));
+    return;
+  }
+  main.innerHTML = CATEGORIES.map(c => {
+    const inCat = productsForCategory(c);
+    if (inCat.length === 0) return '';
+    const imgSrc = c.image && !c.image.includes('placehold')
+      ? c.image
+      : (inCat.find(p => p.image && !p.image.includes('placehold'))?.image || '');
+    const imgHTML = imgSrc
+      ? `<img src="${imgSrc}" style="width:88px;height:88px;object-fit:cover;border-radius:14px;flex-shrink:0">`
+      : `<div style="width:88px;height:88px;border-radius:14px;background:linear-gradient(135deg,#f7dde3,#eec3cf);flex-shrink:0"></div>`;
+    const isNewArrivals = !!c.show_new_arrivals;
+    const cardStyle = isNewArrivals
+      ? "display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#fff8ee,#fdeee3);border:1.5px solid var(--gold);border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 3px 12px rgba(198,161,91,0.25);cursor:pointer;position:relative"
+      : "display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #f0e6ea;border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 2px 8px rgba(207,126,147,0.08);cursor:pointer";
+    return `<div onclick="navOpenCat(${c.id}, '${c.name.replace(/'/g,"")}')" style="${cardStyle}">
+      ${isNewArrivals ? `<div class="new-badge" style="top:-6px;left:8px">✨ NEW</div>` : ''}
+      ${imgHTML}
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:15px">${isNewArrivals ? '✨ ' : ''}${c.name}</div>
+        <div style="font-size:12px;color:#aaa;margin-top:2px">${inCat.length} ${I18N.t('o_articles')}</div>
+      </div>
+      <div style="color:#cf7e93;font-size:18px">›</div>
+    </div>`;
+  }).join('');
+  requestAnimationFrame(() => window.scrollTo(0, catsScrollY));
+}
+
+function openCat(id, name) {
+  catsScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+  currentView = 'products';
+  currentCat = id;
+  document.getElementById('pageHeader').style.display = 'none';
+  document.getElementById('infoBanner').style.display = 'none';
+  document.getElementById('ivaNote').style.display = 'none';
+  const main = document.getElementById('mainView');
+  const cat = CATEGORIES.find(c => String(c.id) === String(id));
+  const filtered = cat ? productsForCategory(cat) : PRODUCTS.filter(p => String(p.category_id) === String(id));
+  main.innerHTML = `
+    <div onclick="navBackToCats()" style="position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:8px;padding-top:max(12px, env(safe-area-inset-top));padding-bottom:12px;padding-left:4px;padding-right:4px;cursor:pointer;color:#a85068;font-size:14px;font-weight:500;background:var(--cream);backdrop-filter:blur(6px)">
+      ‹ <span>${I18N.t('o_all')}</span>
+    </div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#a85068;margin-bottom:12px">${name}</div>
+    ${filtered.map(productCard).join('') || `<p style="text-align:center;color:#aaa;padding:30px;font-size:13px">${I18N.t('o_no_products_cat')}</p>`}
+  `;
+  window.scrollTo(0, 0);
+}
+
+function productCard(p) {
+  const pack = packSize(p.unit);
+  const newBadge = p.is_new_arrival ? `<div class="new-badge">✨ NEW</div>` : '';
+  return `
+    <div class="product">
+      <div class="product-img-wrap">
+        ${newBadge}
+        <img src="${p.image || 'https://placehold.co/160x160'}" alt="" onclick="event.stopPropagation();zoomImage('${(p.image || 'https://placehold.co/800x800').replace(/'/g, '')}', '${p.name.replace(/'/g, '')}')">
+      </div>
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div class="product-unit">${pack} pz/confezione</div>
+        <div style="font-size:10.5px;color:#bbb;margin-top:1px;letter-spacing:0.02em">ID: ${p.id}</div>
+        <div class="product-bottom">
+          <div class="product-price"><span class="cur">€</span>${money(p.price)}<span style="font-size:11px;color:var(--ink-soft);font-weight:400"> ${I18N.t('o_per_pc')}</span></div>
+          <div class="stepper">
+            <button onclick="changeQty('${p.id}', -${pack})">−</button>
+            <input type="number" min="0" step="${pack}" value="${cart[p.id] || 0}" data-pid="${p.id}" readonly
+                   onchange="setQty('${p.id}', this.value)">
+            <button onclick="changeQty('${p.id}', ${pack})">+</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function getQtyInput(id) {
+  return document.querySelector(`input[data-pid="${id}"]`);
+}
+
+function updateCartUI(id) {
+  const input = getQtyInput(id);
+  if (input) input.value = cart[id] || 0;
+  updateTotals();
+  saveCart();
+  if (document.getElementById('cartOverlay')) renderCartList();
+  if (document.getElementById('searchOverlay')) renderSearchResults(document.getElementById('searchInput').value);
+}
+
+const MIN_ORDER = 300;
+
+function cartTotal() {
+  let total = 0;
+  for (const id in cart) {
+    const qty = cart[id];
+    if (!qty) continue;
+    const p = PRODUCTS.find(x => x.id === id);
+    if (p) total += p.price * qty;
+  }
+  return total;
+}
+
+function cartLines() {
+  return Object.keys(cart)
+    .filter(id => cart[id] > 0)
+    .map(id => ({ id, qty: cart[id], p: PRODUCTS.find(x => x.id === id) }))
+    .filter(l => l.p);
+}
+
+function updateTotals() {
+  const total = cartTotal();
+  const lines = cartLines();
+  document.getElementById('totalValue').textContent = money(total);
+
+  const badge = document.getElementById('cartBadge');
+  const cartBtn = document.getElementById('cartBtn');
+  if (badge && cartBtn) {
+    badge.textContent = lines.length;
+    badge.style.display = lines.length ? 'flex' : 'none';
+    cartBtn.disabled = lines.length === 0;
+  }
+
+  const warn = document.getElementById('minWarning');
+  const missing = MIN_ORDER - total;
+  if (warn) {
+    if (total > 0 && missing > 0) {
+      warn.textContent = I18N.t('o_min_missing', { a: money(missing), b: MIN_ORDER });
+      warn.style.display = 'block';
+    } else {
+      warn.style.display = 'none';
+    }
+  }
+
+  document.getElementById('submitBtn').disabled = total < MIN_ORDER;
+  const cf = document.getElementById('cartFootTotal');
+  if (cf) cf.textContent = money(total);
+  const cs = document.getElementById('cartSubmitBtn');
+  if (cs) cs.disabled = total < MIN_ORDER;
+}
+
+function lockScroll() {
+  document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.width = '100%';
+  document.body.dataset.scrollY = window.scrollY;
+  document.body.style.top = `-${window.scrollY}px`;
+}
+function unlockScroll() {
+  const y = parseInt(document.body.dataset.scrollY || '0', 10);
+  document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.width = '';
+  document.body.style.top = '';
+  window.scrollTo(0, y);
+}
+
+function openCart() {
+  if (document.getElementById('cartOverlay')) return;
+  const ov = document.createElement('div');
+  ov.className = 'cart-overlay';
+  ov.id = 'cartOverlay';
+  ov.onclick = (e) => { if (e.target === ov) closeCart(); };
+  ov.innerHTML = `
+    <div class="cart-panel">
+      <div class="handle"></div>
+      <div class="head">
+        <h3>${I18N.t('o_cart_title')}</h3>
+        <button onclick="closeCart()">&times;</button>
+      </div>
+      <div class="cart-list" id="cartList"></div>
+      <div class="cart-foot">
+        <div class="sum">
+          <span class="l">${I18N.t('o_total_label')}</span>
+          <span class="v">€ <span id="cartFootTotal">0.00</span></span>
+        </div>
+        <button id="cartSubmitBtn" onclick="closeCart();submitOrder()" style="width:100%;padding:13px;border:none;border-radius:999px;background:linear-gradient(135deg,#cf7e93,#a85068);color:#fff;font-size:15px;font-weight:500">${I18N.t('o_submit_btn')}</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  lockScroll();
+  renderCartList();
+  updateTotals();
+}
+
+function closeCart() {
+  document.getElementById('cartOverlay')?.remove();
+  unlockScroll();
+}
+
+async function openOrderHistory() {
+  if (document.getElementById('ordersOverlay')) return;
+  const ov = document.createElement('div');
+  ov.className = 'cart-overlay';
+  ov.id = 'ordersOverlay';
+  ov.onclick = (e) => { if (e.target === ov) closeOrderHistory(); };
+  ov.innerHTML = `
+    <div class="cart-panel">
+      <div class="handle"></div>
+      <div class="head">
+        <h3>${I18N.t('o_orders_title')}</h3>
+        <button onclick="closeOrderHistory()">&times;</button>
+      </div>
+      <div class="cart-list" id="ordersList"><p class="cart-empty">${I18N.t('o_loading')}</p></div>
+    </div>`;
+  document.body.appendChild(ov);
+  lockScroll();
+  try {
+    const res = await fetch(`/api/customer/${token}/orders`);
+    if (!res.ok) throw new Error('network');
+    const orders = await res.json();
+    renderOrdersList(orders);
+  } catch (e) {
+    const el = document.getElementById('ordersList');
+    if (el) el.innerHTML = `<p class="cart-empty">${I18N.t('o_error_network')}</p>`;
+  }
+}
+function closeOrderHistory() {
+  document.getElementById('ordersOverlay')?.remove();
+  unlockScroll();
+}
+function renderOrdersList(orders) {
+  const el = document.getElementById('ordersList');
+  if (!el) return;
+  if (!orders || orders.length === 0) {
+    el.innerHTML = `<p class="cart-empty">${I18N.t('o_orders_empty')}</p>`;
+    return;
+  }
+  const localeMap = { it: 'it-IT', en: 'en-GB', fr: 'fr-FR', es: 'es-ES' };
+  const locale = localeMap[I18N.getLang()] || 'it-IT';
+  el.innerHTML = orders.map(o => {
+    const date = new Date(o.created_at).toLocaleDateString(locale, { day: '2-digit', month: 'short', year: 'numeric' });
+    const statusText = I18N.t('o_status_' + o.status) || o.status;
+    const itemsHtml = (o.items || []).map(it => `
+      <div class="order-item-line">
+        <img src="${it.image || 'https://placehold.co/80x80'}" alt="">
+        <span class="oi-name">${it.qty}× ${it.product_name}</span>
+        <span class="oi-price">€${money(it.qty * it.unit_price)}</span>
+      </div>`).join('');
+    const carrierNames = { dhl: 'DHL', gls: 'GLS' };
+    const carrierLabel = carrierNames[o.carrier] || '';
+    let trackingHtml = '';
+    if (o.tracking_url && o.tracking_number) {
+      // 有查询链接、但链接没法预填单号(比如GLS),把单号也显示出来方便客户复制粘贴
+      trackingHtml = `<div class="order-tracking-text">📦 ${carrierLabel ? carrierLabel + ' · ' : ''}${I18N.t('o_tracking_number')}: <span class="mono">${o.tracking_number}</span></div>
+        <a href="${o.tracking_url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="order-tracking-link">${I18N.t('o_track_shipment')}</a>`;
+    } else if (o.tracking_url) {
+      trackingHtml = `<a href="${o.tracking_url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="order-tracking-link">📦 ${carrierLabel ? carrierLabel + ' · ' : ''}${I18N.t('o_track_shipment')}</a>`;
+    } else if (o.tracking_number) {
+      trackingHtml = `<div class="order-tracking-text">📦 ${carrierLabel ? carrierLabel + ' · ' : ''}${I18N.t('o_tracking_number')}: <span class="mono">${o.tracking_number}</span></div>`;
+    }
+    return `
+    <div class="order-card">
+      <div class="order-card-head" onclick="this.parentElement.classList.toggle('open')">
+        <div>
+          <div class="order-card-num">${formatOrderNum(o.id)}</div>
+          <div class="order-card-date">${date}</div>
+          ${trackingHtml}
+        </div>
+        <div class="order-card-right">
+          <span class="order-status-badge status-${o.status}">${statusText}</span>
+          <div class="order-card-total">€${money(o.total)}</div>
+        </div>
+      </div>
+      <div class="order-card-items">${itemsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function openSearch() {
+  if (document.getElementById('searchOverlay')) return;
+  const ov = document.createElement('div');
+  ov.className = 'cart-overlay search-overlay';
+  ov.id = 'searchOverlay';
+  ov.onclick = (e) => { if (e.target === ov) closeSearch(); };
+  ov.innerHTML = `
+    <div class="search-card">
+      <div class="search-head">
+        <input id="searchInput" type="text" inputmode="search" placeholder="Cerca per codice o nome prodotto"
+          oninput="renderSearchResults(this.value)">
+        <button onclick="closeSearch()" aria-label="Chiudi">&times;</button>
+      </div>
+      <div class="cart-list" id="searchResults"></div>
+    </div>`;
+  document.body.appendChild(ov);
+  lockScroll();
+  renderSearchResults('');
+  // 不自动聚焦弹键盘,等用户自己点输入框,避免开窗瞬间就跳动
+}
+
+function closeSearch() {
+  document.getElementById('searchOverlay')?.remove();
+  unlockScroll();
+}
+
+function renderSearchResults(query) {
+  const list = document.getElementById('searchResults');
+  if (!list) return;
+  const q = query.trim().toLowerCase();
+  if (!q) {
+    list.innerHTML = '<div class="cart-empty">Digita un codice o un nome prodotto</div>';
+    return;
+  }
+  const matches = PRODUCTS.filter(p => p.id.toLowerCase().includes(q) || p.name.toLowerCase().includes(q));
+  if (matches.length === 0) {
+    list.innerHTML = '<div class="cart-empty">Nessun risultato</div>';
+    return;
+  }
+  list.innerHTML = matches.map(p => {
+    const pack = packSize(p.unit);
+    const qty = cart[p.id] || 0;
+    return `
+    <div class="cart-row">
+      <img src="${p.image || 'https://placehold.co/160x160'}" alt="" onclick="event.stopPropagation();zoomImage('${(p.image || 'https://placehold.co/800x800').replace(/'/g, '')}', '${p.name.replace(/'/g, '')}')" style="cursor:zoom-in">
+      <div class="ci">
+        <div class="n">${p.name}</div>
+        <div class="s">ID: ${p.id} · ${pack} pz/confezione · €${money(p.price)}${I18N.t('o_per_pc')}</div>
+      </div>
+      <div class="ops">
+        <div class="stepper">
+          <button onclick="changeQty('${p.id}', -${pack});renderSearchResults(document.getElementById('searchInput').value)">−</button>
+          <input type="number" min="0" step="${pack}" value="${qty}" readonly
+            onchange="setQty('${p.id}', this.value);renderSearchResults(document.getElementById('searchInput').value)">
+          <button onclick="changeQty('${p.id}', ${pack});renderSearchResults(document.getElementById('searchInput').value)">+</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderCartList() {
+  const list = document.getElementById('cartList');
+  if (!list) return;
+  const lines = cartLines();
+  if (lines.length === 0) {
+    list.innerHTML = `<div class="cart-empty">${I18N.t('o_cart_empty')}</div>`;
+    return;
+  }
+  list.innerHTML = lines.map(({ id, qty, p }) => {
+    const pack = packSize(p.unit);
+    return `
+    <div class="cart-row">
+      <img src="${p.image || 'https://placehold.co/160x160'}" alt="">
+      <div class="ci">
+        <div class="n">${p.name}</div>
+        <div class="s">${pack} pz/confezione · €${money(p.price)}${I18N.t('o_per_pc')}</div>
+        <div class="p">€${money(p.price * qty)}</div>
+      </div>
+      <div class="ops">
+        <div class="stepper">
+          <button onclick="changeQty('${id}', -${pack})">−</button>
+          <input type="number" min="0" step="${pack}" value="${qty}" readonly onchange="setQty('${id}', this.value)">
+          <button onclick="changeQty('${id}', ${pack})">+</button>
+        </div>
+        <button class="del" onclick="removeFromCart('${id}')">${I18N.t('o_cart_remove')}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function removeFromCart(id) {
+  delete cart[id];
+  const input = getQtyInput(id);
+  if (input) input.value = 0;
+  updateTotals();
+  saveCart();
+  renderCartList();
+}
+
+function changeQty(id, delta) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  const pack = packSize(p.unit);
+  const current = cart[id] || 0;
+  let next = current + delta;
+  if (next < 0) next = 0;
+  next = Math.floor(next / pack) * pack; // 保证永远是整件的倍数
+  if (next === 0) delete cart[id]; else cart[id] = next;
+  updateCartUI(id);
+}
+
+function setQty(id, value) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  const pack = packSize(p.unit);
+  let next = parseInt(value, 10);
+  if (isNaN(next) || next < 0) next = 0;
+  next = Math.round(next / pack) * pack; // 手动输入时也吸附到整件的倍数
+  if (next === 0) delete cart[id]; else cart[id] = next;
+  updateCartUI(id);
+}
+
+function toast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2600);
+}
+
+function zoomImage(src, alt) {
+  const overlay = document.createElement('div');
+  overlay.className = 'img-zoom-overlay';
+  overlay.onclick = () => overlay.remove();
+  overlay.innerHTML = `<span class="close-hint">✕</span><img src="${src}" alt="${alt || ''}">`;
+  document.body.appendChild(overlay);
+}
+
+async function submitOrder() {
+  const items = Object.keys(cart).filter(id => cart[id] > 0).map(id => ({ id, qty: cart[id] }));
+  if (items.length === 0) return;
+  if (cartTotal() < MIN_ORDER) {
+    toast(I18N.t('o_min_toast', { a: MIN_ORDER }));
+    return;
+  }
+  if (!deliveryMode) {
+    openDeliveryModal();
+    return;
+  }
+  const modeLabel = deliveryMode === 'shipping' ? I18N.t('o_delivery_ship') : I18N.t('o_delivery_pickup');
+  const rawNote = document.getElementById('note').value.trim();
+  const note = `[${modeLabel}] ${rawNote}`.trim();
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = I18N.t('o_sending');
+  try {
+    const res = await fetch('/api/order/' + token, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items, note }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      toast(data.error || I18N.t('o_error_generic'));
+      btn.disabled = false; btn.textContent = originalText;
+      return;
+    }
+    Object.keys(cart).forEach(id => delete cart[id]);
+    clearSavedCart();
+    showSuccess(data);
+  } catch (e) {
+    toast(I18N.t('o_error_network'));
+    btn.disabled = false; btn.textContent = originalText;
+  }
+}
+
+function formatOrderNum(id) {
+  let hash = 0;
+  const s = String(id);
+  for (let i = 0; i < s.length; i++) {
+    hash = (hash * 31 + s.charCodeAt(i)) % 10000;
+  }
+  return 'BELLA-' + String(hash).padStart(4, '0');
+}
+
+function showSuccess(data) {
+  const overlay = document.createElement('div');
+  overlay.className = 'seal-overlay';
+  overlay.innerHTML = `
+    <div class="seal-card">
+      <div class="seal">✓</div>
+      <div class="big">${I18N.t('o_order_sent')}</div>
+      <div class="oid">${I18N.t('o_order_num')} ${formatOrderNum(data.orderId)}<br>${I18N.t('o_total_word')} €${money(data.total)}</div>
+      <div style="font-size:14px;color:#a85068;font-weight:700;margin-top:14px;line-height:1.6;padding:8px 12px;background:#fdf0f3;border-radius:10px;letter-spacing:0.03em;font-family:'Jost',sans-serif;">${I18N.t('o_contact_soon')}</div>
+      <button onclick="location.reload()">${I18N.t('o_close')}</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+async function load() {
+  document.getElementById('customerName').textContent = I18N.t('o_loading');
+  try {
+    const res = await fetch('/api/customer/' + token);
+    const data = await res.json();
+    if (!res.ok) {
+      document.getElementById('customerName').textContent = data.error || I18N.t('o_loading_error');
+      return;
+    }
+    if (data.needProfile) {
+      document.getElementById('profileOverlay').style.display = 'block';
+      return;
+    }
+    const c = data.customer;
+    const displayLine = (c.ragione_sociale || c.name) + (c.piva ? ' · P.IVA ' + c.piva : '');
+    document.getElementById('customerName').textContent = displayLine;
+    PRODUCTS = data.products;
+    CATEGORIES = data.categories || [];
+    loadCart();
+    renderCats();
+    updateTotals();
+  } catch (e) {
+    document.getElementById('customerName').textContent = I18N.t('o_loading_error');
+  }
+}
+
+async function submitProfile() {
+  const val = id => document.getElementById(id).value.trim();
+  const payload = {
+    ragione_sociale: val('pf_ragione_sociale'),
+    piva: val('pf_piva'),
+    codice_fiscale: '',
+    indirizzo: val('pf_indirizzo'),
+    cap: val('pf_cap'),
+    citta: val('pf_citta'),
+    sdi: '',
+    pec: '',
+    telefono: document.getElementById('pf_tel_prefix').value + ' ' + val('pf_telefono'),
+    email: '',
+  };
+  const btn = document.getElementById('profileSubmit');
+  btn.disabled = true; btn.textContent = I18N.t('o_pf_saving');
+  try {
+    const res = await fetch('/api/customer/' + token + '/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!res.ok) { toast(data.error || I18N.t('o_pf_save_error')); btn.disabled = false; btn.textContent = I18N.t('o_pf_save'); return; }
+    document.getElementById('profileOverlay').style.display = 'none';
+    load();
+  } catch (e) {
+    toast(I18N.t('o_error_network')); btn.disabled = false; btn.textContent = I18N.t('o_pf_save');
+  }
+}
+
+function render() { renderCats(); }
+
+I18N.initLangSwitch('langSwitch');
+I18N.initLangSwitch('langSwitchProfile');
+window.addEventListener('i18nchange', () => {
+  if (currentView === 'products' && currentCat != null) {
+    const cat = CATEGORIES.find(c => String(c.id) === String(currentCat));
+    if (cat) openCat(cat.id, cat.name); else renderCats();
+  } else {
+    renderCats();
+  }
+  if (document.getElementById('cartOverlay')) { closeCart(); openCart(); }
+});
+
+load();
+
+</script>
+</body>
+</html>
