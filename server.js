@@ -454,7 +454,12 @@ app.delete('/api/admin/customers/:token', requireAdmin, (req, res) => {
 
 // 订单:列表(带明细)/ 改状态
 app.get('/api/admin/orders', requireAdmin, (req, res) => {
-  const orders = db.prepare('SELECT * FROM orders ORDER BY created_at DESC').all();
+  const orders = db.prepare(`
+    SELECT o.*, c.ragione_sociale, c.telefono
+    FROM orders o
+    LEFT JOIN customers c ON c.id = o.customer_id
+    ORDER BY o.created_at DESC
+  `).all();
   const itemsStmt = db.prepare('SELECT * FROM order_items WHERE order_id = ?');
   res.json(orders.map(o => ({ ...o, items: itemsStmt.all(o.id) })));
 });
