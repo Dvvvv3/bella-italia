@@ -176,6 +176,7 @@
     <div id="discontinuedList"></div>
   </section>
   <section id="customers">
+    <div id="customerStats" style="display:flex;gap:12px;margin-bottom:14px"></div>
     <div class="add-form" style="border-color:var(--accent);background:var(--accent-soft)">
       <h3 style="display:flex;justify-content:space-between;align-items:center">
         👀 访客记录
@@ -685,6 +686,7 @@ async function loadVisitorLog() {
 }
 async function loadCustomers() {
   const customers=await api('/api/admin/customers');
+  renderCustomerStats(customers);
   document.getElementById('customerList').innerHTML=customers.map(c=>`
     <div class="card">
       <div class="row" style="justify-content:space-between;align-items:flex-start;gap:8px">
@@ -710,6 +712,24 @@ async function loadCustomers() {
         <button class="btn btn-danger" onclick="deleteCustomer('${c.token}','${c.name.replace(/'/g,'')}')">删除</button>
       </div>
     </div>`).join('')||'<p style="color:#888;font-size:13px">还没有客户</p>';
+}
+function renderCustomerStats(customers) {
+  const total = customers.length;
+  const filled = customers.filter(c => c.profile_done).length;
+  const pct = total ? Math.round(100 * filled / total) : 0;
+  document.getElementById('customerStats').innerHTML = `
+    <div class="card" style="flex:1;text-align:center;padding:14px 8px">
+      <div style="font-size:11px;color:#999;margin-bottom:4px">总客户数</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:#a85068">${total}</div>
+    </div>
+    <div class="card" style="flex:1;text-align:center;padding:14px 8px">
+      <div style="font-size:11px;color:#999;margin-bottom:4px">已填资料</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:#a85068">${filled}</div>
+    </div>
+    <div class="card" style="flex:1;text-align:center;padding:14px 8px">
+      <div style="font-size:11px;color:#999;margin-bottom:4px">填资料率</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:#a85068">${pct}%</div>
+    </div>`;
 }
 let qrCardBlob = null; // 缓存已经渲染好的图片(不是 Promise,是真正拿到手的 Blob)
 const QR_CARD_TEMPLATE = `
