@@ -109,6 +109,7 @@
   <button data-tab="discontinued">下架产品</button>
   <button data-tab="customers">客户</button>
   <button data-tab="orders">订单</button>
+  <button data-tab="analytics">📊 业绩</button>
 </nav>
 <main>
   <section id="products" class="active">
@@ -206,6 +207,9 @@
       <button class="btn btn-ghost" id="tab_cancelled" onclick="setOrderTab('cancelled')">废弃订单</button>
     </div>
     <div id="orderList"></div>
+  </section>
+  <section id="analytics">
+    <div id="analyticsBody"><p style="color:#888;font-size:13px">加载中…</p></div>
   </section>
 </main>
 <div class="gate" id="editModal" style="display:none">
@@ -315,6 +319,7 @@ document.querySelectorAll('[data-tab]').forEach(btn => {
     document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'analytics') loadAnalytics();
   });
 });
 async function loadCategoryCache() {
@@ -1074,6 +1079,128 @@ if (window.Notification && Notification.permission === 'default') {
 }
 setInterval(pollNewOrders, 15000);
 if (ADMIN_KEY) setTimeout(pollNewOrders, 2000); // 建立"已知订单"基准,不在启动瞬间弹通知
+async function loadAnalytics() {
+  const el = document.getElementById('analyticsBody');
+  el.innerHTML = '<p style="color:#888;font-size:13px">加载中…</p>';
+  let d;
+  try { d = await api('/api/admin/analytics'); } catch (e) { el.innerHTML = '<p style="color:#c0392b;font-size:13px">加载失败: '+e.message+'</p>'; return; }
+
+  const money = n => '€' + Number(n||0).toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:0});
+  function pctChange(cur, prev) {
+    if (!prev) return cur > 0 ? {v:100, up:true} : {v:0, up:true};
+    const p = Math.round(100 * (cur - prev) / prev);
+    return {v: Math.abs(p), up: p >= 0};
+  }
+  function deltaTag(cur, prev) {
+    const {v, up} = pctChange(cur, prev);
+    const color = up ? '#2e7d4f' : '#c0392b';
+    const arrow = up ? '▲' : '▼';
+    return `<span style="color:${color};font-size:12.5px;font-weight:600">${arrow} ${v}% <span style="color:#999;font-weight:400">环比上月</span></span>`;
+  }
+
+  const kpiCard = (label, value) => `
+    <div class="card" style="flex:1;text-align:center;padding:18px 10px">
+      <div style="font-size:11.5px;color:#999;margin-bottom:6px">${label}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:#a85068">${value}</div>
+    </div>`;
+
+  const monthCard = (label, cur, prev, fmt) => `
+    <div class="card" style="flex:1;padding:16px 18px">
+      <div style="font-size:11.5px;color:#999;margin-bottom:6px">${label}(本月)</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:#3c2b30;margin-bottom:4px">${fmt(cur)}</div>
+      ${deltaTag(cur, prev)}
+    </div>`;
+
+  // 近30天趋势柱状图(纯CSS,最高的一天定高度基准)
+  const maxRev = Math.max(1, ...d.trend.map(t => t.revenue));
+  const trendBars = d.trend.map(t => {
+    const h = Math.max(4, Math.round(100 * t.revenue / maxRev));
+    const dayLabel = t.day.slice(5).replace('-', '/');
+    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;min-width:0">
+      <div title="${t.day}: €${t.revenue}" style="width:100%;max-width:16px;height:${h}%;background:linear-gradient(180deg,#cf7e93,#a85068);border-radius:4px 4px 2px 2px"></div>
+    </div>`;
+  }).join('');
+
+  const statusNames = {pending:'待处理', confirmed:'已确认', shipped:'已发货', cancelled:'废弃'};
+  const statusColors = {pending:'#a87a00', confirmed:'#2f5db0', shipped:'#2e7d4f', cancelled:'#999'};
+  const totalStatusCnt = d.statusBreakdown.reduce((s,x)=>s+x.cnt,0) || 1;
+  const statusBars = d.statusBreakdown.map(s => `
+    <div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+        <span style="color:${statusColors[s.status]||'#999'};font-weight:600">${statusNames[s.status]||s.status}</span>
+        <span style="color:#999">${s.cnt} 单</span>
+      </div>
+      <div style="background:#f0e6ea;border-radius:6px;height:8px;overflow:hidden">
+        <div style="width:${Math.round(100*s.cnt/totalStatusCnt)}%;height:100%;background:${statusColors[s.status]||'#999'}"></div>
+      </div>
+    </div>`).join('');
+
+  el.innerHTML = `
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      ${kpiCard('累计总营收', money(d.totalRevenue))}
+      ${kpiCard('累计订单数', d.totalOrders)}
+      ${kpiCard('累计客户数', d.totalCustomers)}
+      ${kpiCard('平均客单价', money(d.avgOrderValue))}
+    </div>
+
+    <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+      ${monthCard('营收', d.thisMonth.revenue, d.lastMonth.revenue, money)}
+      ${monthCard('订单数', d.thisMonth.orders, d.lastMonth.orders, n=>n)}
+      ${monthCard('新客户', d.newCustomersThisMonth, d.newCustomersLastMonth, n=>n)}
+    </div>
+
+    <div class="card" style="margin-bottom:14px;padding:18px">
+      <h3 style="margin:0 0 14px;font-size:15px">📈 近30天营收趋势</h3>
+      <div style="display:flex;align-items:flex-end;gap:3px;height:110px">${trendBars || '<p style="color:#aaa;font-size:12px">暂无数据</p>'}</div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <div class="card" style="flex:1;min-width:240px;padding:18px">
+        <h3 style="margin:0 0 12px;font-size:15px">🏆 客户排行榜 Top 5</h3>
+        ${d.topCustomers.length ? d.topCustomers.map((c,i)=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f0e6ea">
+            <div style="display:flex;align-items:center;gap:8px;min-width:0">
+              <span style="font-size:12px;color:#c6a15b;font-weight:700;width:18px">#${i+1}</span>
+              <span style="font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name}</span>
+            </div>
+            <div style="text-align:right;flex-shrink:0">
+              <div style="font-size:13px;font-weight:700;color:#a85068">${money(c.revenue)}</div>
+              <div style="font-size:10.5px;color:#999">${c.orders} 单</div>
+            </div>
+          </div>`).join('') : '<p style="color:#aaa;font-size:12px">暂无数据</p>'}
+      </div>
+      <div class="card" style="flex:1;min-width:240px;padding:18px">
+        <h3 style="margin:0 0 12px;font-size:15px">🔥 热卖商品 Top 10</h3>
+        ${d.topProducts.length ? d.topProducts.map((p,i)=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0e6ea">
+            <div style="display:flex;align-items:center;gap:8px;min-width:0">
+              <span style="font-size:11px;color:#c6a15b;font-weight:700;width:16px">#${i+1}</span>
+              <span style="font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.product_name}</span>
+            </div>
+            <span style="font-size:12px;color:#999;flex-shrink:0">${p.qty} 件</span>
+          </div>`).join('') : '<p style="color:#aaa;font-size:12px">暂无数据</p>'}
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div class="card" style="flex:1;min-width:160px;text-align:center;padding:18px">
+        <div style="font-size:11.5px;color:#999;margin-bottom:6px">复购率</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:#a85068">${d.repeatRate}%</div>
+        <div style="font-size:10.5px;color:#999;margin-top:4px">下过2单以上的客户占比</div>
+      </div>
+      <div class="card" style="flex:1;min-width:160px;text-align:center;padding:18px">
+        <div style="font-size:11.5px;color:#999;margin-bottom:6px">访问转化率</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:#a85068">${d.conversionRate}%</div>
+        <div style="font-size:10.5px;color:#999;margin-top:4px">开过链接的客户里,下过单的比例</div>
+      </div>
+      <div class="card" style="flex:1.4;min-width:220px;padding:18px">
+        <h3 style="margin:0 0 4px;font-size:15px">📦 订单状态分布</h3>
+        <div style="margin-top:10px">${statusBars || '<p style="color:#aaa;font-size:12px">暂无数据</p>'}</div>
+      </div>
+    </div>
+  `;
+}
+
 if(ADMIN_KEY) loadAll();
 </script>
 </body>

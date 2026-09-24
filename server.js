@@ -453,6 +453,72 @@ app.delete('/api/admin/customers/:token', requireAdmin, (req, res) => {
 });
 
 // 订单:列表(带明细)/ 改状态
+// ---------------------------------------------------------------------------
+// 业绩看板:一次性把所有指标算好返回,前端不用自己拼SQL逻辑
+// ---------------------------------------------------------------------------
+app.get('/api/admin/analytics', requireAdmin, (req, res) => {
+  const totalRevenue = db.prepare(`SELECT COALESCE(SUM(total),0) AS v FROM orders WHERE status != 'cancelled'`).get().v;
+  const totalOrders = db.prepare(`SELECT COUNT(*) AS v FROM orders WHERE status != 'cancelled'`).get().v;
+  const totalCustomers = db.prepare(`SELECT COUNT(*) AS v FROM customers`).get().v;
+  const avgOrderValue = totalOrders ? totalRevenue / totalOrders : 0;
+
+  const thisMonth = db.prepare(`
+    SELECT COALESCE(SUM(total),0) AS revenue, COUNT(*) AS orders
+    FROM orders WHERE status != 'cancelled' AND strftime('%Y-%m', created_at) = strftime('%Y-%m','now')
+  `).get();
+  const lastMonth = db.prepare(`
+    SELECT COALESCE(SUM(total),0) AS revenue, COUNT(*) AS orders
+    FROM orders WHERE status != 'cancelled' AND strftime('%Y-%m', created_at) = strftime('%Y-%m','now','-1 month')
+  `).get();
+  const newCustomersThisMonth = db.prepare(`
+    SELECT COUNT(*) AS v FROM customers WHERE strftime('%Y-%m', activated_at) = strftime('%Y-%m','now')
+  `).get().v;
+  const newCustomersLastMonth = db.prepare(`
+    SELECT COUNT(*) AS v FROM customers WHERE strftime('%Y-%m', activated_at) = strftime('%Y-%m','now','-1 month')
+  `).get().v;
+
+  const trend = db.prepare(`
+    SELECT date(created_at) AS day, COALESCE(SUM(total),0) AS revenue, COUNT(*) AS orders
+    FROM orders WHERE status != 'cancelled' AND created_at >= datetime('now','-30 days')
+    GROUP BY day ORDER BY day
+  `).all();
+
+  const topCustomers = db.prepare(`
+    SELECT o.customer_id, COALESCE(c.ragione_sociale, o.customer_name) AS name, SUM(o.total) AS revenue, COUNT(*) AS orders
+    FROM orders o LEFT JOIN customers c ON c.id = o.customer_id
+    WHERE o.status != 'cancelled'
+    GROUP BY o.customer_id ORDER BY revenue DESC LIMIT 5
+  `).all();
+
+  const topProducts = db.prepare(`
+    SELECT oi.product_name, SUM(oi.qty) AS qty, SUM(oi.qty * oi.unit_price) AS revenue
+    FROM order_items oi JOIN orders o ON o.id = oi.order_id
+    WHERE o.status != 'cancelled'
+    GROUP BY oi.product_name ORDER BY qty DESC LIMIT 10
+  `).all();
+
+  const repeatStats = db.prepare(`
+    SELECT COUNT(*) AS total_with_orders, SUM(CASE WHEN cnt > 1 THEN 1 ELSE 0 END) AS repeaters
+    FROM (SELECT customer_id, COUNT(*) AS cnt FROM orders WHERE status != 'cancelled' GROUP BY customer_id)
+  `).get();
+  const repeatRate = repeatStats.total_with_orders ? Math.round(100 * repeatStats.repeaters / repeatStats.total_with_orders) : 0;
+
+  const conversion = db.prepare(`
+    SELECT
+      (SELECT COUNT(DISTINCT customer_id) FROM access_logs) AS visited,
+      (SELECT COUNT(DISTINCT customer_id) FROM orders WHERE status != 'cancelled') AS ordered
+  `).get();
+  const conversionRate = conversion.visited ? Math.round(100 * conversion.ordered / conversion.visited) : 0;
+
+  const statusBreakdown = db.prepare(`SELECT status, COUNT(*) AS cnt FROM orders GROUP BY status`).all();
+
+  res.json({
+    totalRevenue, totalOrders, totalCustomers, avgOrderValue,
+    thisMonth, lastMonth, newCustomersThisMonth, newCustomersLastMonth,
+    trend, topCustomers, topProducts, repeatRate, conversionRate, statusBreakdown,
+  });
+});
+
 app.get('/api/admin/orders', requireAdmin, (req, res) => {
   const orders = db.prepare(`
     SELECT o.*, c.ragione_sociale, c.telefono
