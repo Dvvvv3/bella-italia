@@ -20,6 +20,13 @@
       // accent_color → CSS 变量
       if (s.accent_color) {
         document.documentElement.style.setProperty('--accent', s.accent_color);
+        // 自动生成浅色版本
+        const hex = s.accent_color.replace('#','');
+        const r = Math.min(255, parseInt(hex.slice(0,2),16) + 40);
+        const g = Math.min(255, parseInt(hex.slice(2,4),16) + 40);
+        const b = Math.min(255, parseInt(hex.slice(4,6),16) + 40);
+        const light = '#' + [r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
+        document.documentElement.style.setProperty('--accent-light', light);
       }
     })
     .catch(e => console.warn('store-settings:', e));

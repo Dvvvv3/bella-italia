@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#cf7e93">
+<meta name="theme-color" content="var(--accent-light)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="INGROSSO">
@@ -14,14 +14,16 @@
 <script src="/js/i18n.js"></script>
 <style>
   :root {
-    --blush: #f7dde3;
-    --blush-deep: #eec3cf;
-    --rose: #cf7e93;
-    --rose-deep: #a85068;
+    --accent: #2c4a7c;
+    --accent-light: #4a6fa5;
+    --blush: #eef0f4;
+    --blush-deep: #dde2ec;
+    --rose: var(--accent-light);
+    --rose-deep: var(--accent);
     --gold: #c6a15b;
     --gold-soft: #e4cd9a;
-    --cream: #fff8f4;
-    --ink: #3c2b30;
+    --cream: #f8f9fb;
+    --ink: #1a2332;
     --ink-soft: rgba(60,43,48,0.6);
     --line: rgba(60,43,48,0.14);
   }
@@ -319,7 +321,7 @@
 
   .info-banner {
     margin: 10px 14px 4px;
-    background: linear-gradient(135deg, #a85068, #cf7e93);
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
     color: #fff; border-radius: 14px; padding: 13px 16px;
     font-size: 12.5px; line-height: 1.65;
     box-shadow: 0 3px 12px rgba(168,80,104,0.22);
@@ -522,11 +524,11 @@ function showInstallPrompt() {
   overlay.innerHTML = `
     <div style="background:#fff8f4;border-radius:20px;padding:30px 24px;width:82%;max-width:320px;text-align:center;box-shadow:0 12px 40px rgba(60,43,48,0.25)">
       <div style="font-size:28px;margin-bottom:12px">📱</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#a85068;margin-bottom:8px">${I18N.t('o_pwa_title')}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--accent);margin-bottom:8px">${I18N.t('o_pwa_title')}</div>
       <div style="font-size:13px;color:#666;margin-bottom:20px;line-height:1.5">${I18N.t('o_pwa_desc')}</div>
       <div style="display:flex;gap:10px;justify-content:center">
         <button onclick="this.parentElement.parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--blush);border:none;border-radius:999px;color:var(--rose-deep);font-weight:500;cursor:pointer">${I18N.t('o_pwa_not_now')}</button>
-        <button onclick="installApp()" style="flex:1;padding:10px;background:linear-gradient(135deg,#cf7e93,#a85068);border:none;border-radius:999px;color:#fff;font-weight:500;cursor:pointer">${I18N.t('o_pwa_install')}</button>
+        <button onclick="installApp()" style="flex:1;padding:10px;background:linear-gradient(135deg,var(--accent-light),var(--accent));border:none;border-radius:999px;color:#fff;font-weight:500;cursor:pointer">${I18N.t('o_pwa_install')}</button>
       </div>
     </div>
   `;
@@ -541,9 +543,9 @@ function showOpenInSafariGuide() {
     <div style="background:#fff8f4;border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(60,43,48,0.2);text-align:center">
       <div style="width:36px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 20px"></div>
       <div style="font-size:34px;margin-bottom:10px">🧭</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:#a85068;margin-bottom:8px">${I18N.t('o_safari_title')}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:var(--accent);margin-bottom:8px">${I18N.t('o_safari_title')}</div>
       <div style="font-size:13px;color:#888;margin-bottom:24px;line-height:1.6">${I18N.t('o_safari_desc')}</div>
-      <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:14px;background:linear-gradient(135deg,#cf7e93,#a85068);border:none;border-radius:999px;color:#fff;font-size:15px;font-weight:500;cursor:pointer">${I18N.t('o_ios_gotit')}</button>
+      <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--accent-light),var(--accent));border:none;border-radius:999px;color:#fff;font-size:15px;font-weight:500;cursor:pointer">${I18N.t('o_ios_gotit')}</button>
     </div>
   `;
   document.body.appendChild(overlay);
@@ -555,11 +557,11 @@ function showiOSInstallGuide() {
   overlay.innerHTML = `
     <div style="background:#fff8f4;border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(60,43,48,0.2)">
       <div style="width:36px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 20px"></div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:#a85068;margin-bottom:6px;text-align:center">${I18N.t('o_ios_title')}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:var(--accent);margin-bottom:6px;text-align:center">${I18N.t('o_ios_title')}</div>
       <div style="font-size:13px;color:#888;text-align:center;margin-bottom:22px">${I18N.t('o_ios_desc')}</div>
 
       <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;background:#fff;border-radius:14px;padding:14px">
-        <div style="background:linear-gradient(135deg,#cf7e93,#a85068);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">①</div>
+        <div style="background:linear-gradient(135deg,var(--accent-light),var(--accent));border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">①</div>
         <div>
           <div style="font-weight:600;font-size:14px;margin-bottom:3px">${I18N.t('o_ios_s1_t')}</div>
           <div style="font-size:12px;color:#999">${I18N.t('o_ios_s1_d')}</div>
@@ -567,7 +569,7 @@ function showiOSInstallGuide() {
       </div>
 
       <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;background:#fff;border-radius:14px;padding:14px">
-        <div style="background:linear-gradient(135deg,#cf7e93,#a85068);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">②</div>
+        <div style="background:linear-gradient(135deg,var(--accent-light),var(--accent));border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">②</div>
         <div>
           <div style="font-weight:600;font-size:14px;margin-bottom:3px">${I18N.t('o_ios_s2_t')}</div>
           <div style="font-size:12px;color:#999">${I18N.t('o_ios_s2_d')}</div>
@@ -575,14 +577,14 @@ function showiOSInstallGuide() {
       </div>
 
       <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;background:#fff;border-radius:14px;padding:14px">
-        <div style="background:linear-gradient(135deg,#cf7e93,#a85068);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">③</div>
+        <div style="background:linear-gradient(135deg,var(--accent-light),var(--accent));border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">③</div>
         <div>
           <div style="font-weight:600;font-size:14px;margin-bottom:3px">${I18N.t('o_ios_s3_t')}</div>
           <div style="font-size:12px;color:#999">${I18N.t('o_ios_s3_d')}</div>
         </div>
       </div>
 
-      <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:14px;background:linear-gradient(135deg,#cf7e93,#a85068);border:none;border-radius:999px;color:#fff;font-size:15px;font-weight:500;cursor:pointer">${I18N.t('o_ios_gotit')}</button>
+      <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--accent-light),var(--accent));border:none;border-radius:999px;color:#fff;font-size:15px;font-weight:500;cursor:pointer">${I18N.t('o_ios_gotit')}</button>
     </div>
   `;
   document.body.appendChild(overlay);
@@ -607,7 +609,7 @@ window.addEventListener('appinstalled', () => {
 <body>
 <div id="profileOverlay" style="display:none;position:fixed;inset:0;background:#fff8f4;z-index:80;overflow-y:auto;padding:24px 18px 40px">
   <div class="lang-switch" id="langSwitchProfile" style="justify-content:flex-end;margin-bottom:14px"></div>
-  <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:#a85068;font-size:24px;margin:0 0 4px" data-store="business_name">Bella Italia</p>
+  <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--accent);font-size:24px;margin:0 0 4px" data-store="business_name">Bella Italia</p>
   <p style="font-size:12px;color:#888;margin-bottom:20px" data-i18n="o_profile_sub">Prima di ordinare, compila i dati per la fatturazione</p>
   <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_ragione">Ragione Sociale *</label><input id="pf_ragione_sociale" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
   <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_piva">P.IVA *</label><input id="pf_piva" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
@@ -628,9 +630,9 @@ window.addEventListener('appinstalled', () => {
       <input id="pf_telefono" style="flex:1;min-width:0;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box" placeholder="333 1234567">
     </div>
   </div>
-  <button id="profileSubmit" onclick="submitProfile()" style="width:100%;padding:14px;background:linear-gradient(135deg,#cf7e93,#a85068);color:#fff;border:none;border-radius:999px;font-size:15px;font-weight:500;margin-top:8px" data-i18n="o_pf_save">Salva e continua</button>
+  <button id="profileSubmit" onclick="submitProfile()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--accent-light),var(--accent));color:#fff;border:none;border-radius:999px;font-size:15px;font-weight:500;margin-top:8px" data-i18n="o_pf_save">Salva e continua</button>
   <p style="font-size:11px;color:#aaa;text-align:center;margin-top:12px">
-    Continuando accetti il trattamento dei tuoi dati secondo la nostra <a href="/privacy.html" style="color:#a85068">Privacy Policy</a>.
+    Continuando accetti il trattamento dei tuoi dati secondo la nostra <a href="/privacy.html" style="color:var(--accent)">Privacy Policy</a>.
   </p>
 </div>
 
@@ -825,7 +827,7 @@ function renderCats() {
         <div style="font-weight:600;font-size:15px">${isNewArrivals ? '✨ ' : ''}${c.name}</div>
         <div style="font-size:12px;color:#aaa;margin-top:2px">${inCat.length} ${I18N.t('o_articles')}</div>
       </div>
-      <div style="color:#cf7e93;font-size:18px">›</div>
+      <div style="color:var(--accent-light);font-size:18px">›</div>
     </div>`;
   }).join('');
   requestAnimationFrame(() => window.scrollTo(0, catsScrollY));
@@ -842,10 +844,10 @@ function openCat(id, name) {
   const cat = CATEGORIES.find(c => String(c.id) === String(id));
   const filtered = cat ? productsForCategory(cat) : PRODUCTS.filter(p => String(p.category_id) === String(id));
   main.innerHTML = `
-    <div onclick="navBackToCats()" style="position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:8px;padding-top:max(12px, env(safe-area-inset-top));padding-bottom:12px;padding-left:4px;padding-right:4px;cursor:pointer;color:#a85068;font-size:14px;font-weight:500;background:var(--cream);backdrop-filter:blur(6px)">
+    <div onclick="navBackToCats()" style="position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:8px;padding-top:max(12px, env(safe-area-inset-top));padding-bottom:12px;padding-left:4px;padding-right:4px;cursor:pointer;color:var(--accent);font-size:14px;font-weight:500;background:var(--cream);backdrop-filter:blur(6px)">
       ‹ <span>${I18N.t('o_all')}</span>
     </div>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#a85068;margin-bottom:12px">${name}</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--accent);margin-bottom:12px">${name}</div>
     ${filtered.map(productCard).join('') || `<p style="text-align:center;color:#aaa;padding:30px;font-size:13px">${I18N.t('o_no_products_cat')}</p>`}
   `;
   window.scrollTo(0, 0);
@@ -976,7 +978,7 @@ function openCart() {
           <span class="l">${I18N.t('o_total_label')}</span>
           <span class="v">€ <span id="cartFootTotal">0.00</span></span>
         </div>
-        <button id="cartSubmitBtn" onclick="closeCart();submitOrder()" style="width:100%;padding:13px;border:none;border-radius:999px;background:linear-gradient(135deg,#cf7e93,#a85068);color:#fff;font-size:15px;font-weight:500">${I18N.t('o_submit_btn')}</button>
+        <button id="cartSubmitBtn" onclick="closeCart();submitOrder()" style="width:100%;padding:13px;border:none;border-radius:999px;background:linear-gradient(135deg,var(--accent-light),var(--accent));color:#fff;font-size:15px;font-weight:500">${I18N.t('o_submit_btn')}</button>
       </div>
     </div>`;
   document.body.appendChild(ov);
@@ -1264,7 +1266,7 @@ function showSuccess(data) {
       <div class="seal">✓</div>
       <div class="big">${I18N.t('o_order_sent')}</div>
       <div class="oid">${I18N.t('o_order_num')} ${formatOrderNum(data.orderId)}<br>${I18N.t('o_total_word')} €${money(data.total)}</div>
-      <div style="font-size:14px;color:#a85068;font-weight:700;margin-top:14px;line-height:1.6;padding:8px 12px;background:#fdf0f3;border-radius:10px;letter-spacing:0.03em;font-family:'Jost',sans-serif;">${I18N.t('o_contact_soon')}</div>
+      <div style="font-size:14px;color:var(--accent);font-weight:700;margin-top:14px;line-height:1.6;padding:8px 12px;background:#fdf0f3;border-radius:10px;letter-spacing:0.03em;font-family:'Jost',sans-serif;">${I18N.t('o_contact_soon')}</div>
       <button onclick="location.reload()">${I18N.t('o_close')}</button>
     </div>`;
   document.body.appendChild(overlay);

@@ -6,10 +6,9 @@
 <title id="pageTitle">后台管理</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
-<script src="/js/qrcode.min.js"></script>
 <script src="/js/html2canvas.min.js"></script>
 <style>
-  :root { --ink: #2a2a2a; --line: #e2ddd4; --bg: #faf8f4; --card: #fff; --accent: #a85068; --accent-soft: #f7dde3; --ok: #3f6b4f; --danger: #b23a2e; }
+  :root { --ink: #2a2a2a; --line: #e2ddd4; --bg: #f8f9fb; --card: #fff; --accent: #2c4a7c; --accent-soft: #eef0f4; --ok: #3f6b4f; --danger: #b23a2e; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; touch-action: manipulation; }
   header { padding: 16px 18px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
@@ -264,14 +263,7 @@
     </div>
   </div>
 </div>
-<div class="gate" id="qrCardModal" style="display:none">
-  <div class="gate-card" style="max-width:380px;padding:0;background:transparent;border:none;box-shadow:none">
-    <div id="qrCardWrap"></div>
-    <div id="qrCardHint" style="text-align:center;font-size:12.5px;color:#a87a00;margin-top:10px;display:none">👆 长按上面的图片,选择「存储图像」保存到相册</div>
-    <div class="actions" style="justify-content:center;margin-top:14px">
-      <button class="btn btn-ghost" onclick="document.getElementById('qrCardModal').style.display='none'">关闭</button>
-    </div>
-  </div>
+
 </div>
 <div class="gate" id="custModal" style="display:none">
   <div class="modal-card">
@@ -732,7 +724,6 @@ function renderCustomerList(customers, searchActive) {
         <button class="btn btn-ghost" onclick="copyLink('${c.token}')">复制链接</button>
         <button class="btn btn-ghost" onclick="viewCustomer('${c.token}')">查看资料/订单</button>
         ${c.activated_at ? `<button class="btn btn-ghost" onclick="resetDevice('${c.token}','${c.name.replace(/'/g,'')}')">解绑设备</button>` : ''}
-        <button class="btn btn-ghost" onclick="showQrCard('${c.token}','${c.name.replace(/'/g,'')}')">邀请卡/二维码</button>
         <button class="btn btn-ghost" onclick="regenerateLink('${c.token}','${c.name.replace(/'/g,'')}')">换新链接</button>
         <button class="btn btn-danger" onclick="deleteCustomer('${c.token}','${c.name.replace(/'/g,'')}')">删除</button>
       </div>
@@ -745,62 +736,18 @@ function renderCustomerStats(customers) {
   document.getElementById('customerStats').innerHTML = `
     <div class="card" style="flex:1;text-align:center;padding:14px 8px">
       <div style="font-size:11px;color:#999;margin-bottom:4px">总客户数</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:#a85068">${total}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--accent)">${total}</div>
     </div>
     <div class="card" style="flex:1;text-align:center;padding:14px 8px">
       <div style="font-size:11px;color:#999;margin-bottom:4px">已填资料</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:#a85068">${filled}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--accent)">${filled}</div>
     </div>
     <div class="card" style="flex:1;text-align:center;padding:14px 8px">
       <div style="font-size:11px;color:#999;margin-bottom:4px">填资料率</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:#a85068">${pct}%</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--accent)">${pct}%</div>
     </div>`;
 }
-let qrCardBlob = null; // 缓存已经渲染好的图片(不是 Promise,是真正拿到手的 Blob)
-const QR_CARD_TEMPLATE = `
-    <div id="qrCardArea" style="background:linear-gradient(160deg,#f7dde3,#eec3cf 55%,#cf7e93);border-radius:24px;padding:32px 26px;text-align:center;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif">
-      <div style="font-family:'Cormorant Garamond',serif;font-weight:700;font-size:32px;color:#fff;letter-spacing:1.5px;line-height:1.1;text-shadow:0 2px 8px rgba(168,80,104,0.25)">BELLA ITALIA</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.9);letter-spacing:3px;margin-top:4px;margin-bottom:22px">WHOLESALE COSMETICS</div>
-      <div style="background:#fff;border-radius:18px;padding:16px;display:inline-block;box-shadow:0 10px 26px rgba(168,80,104,0.3)">
-        <div id="qrCardCode"></div>
-      </div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.95);margin-top:20px;line-height:1.6;padding:0 6px">
-        ⚠️ Link personale ed esclusivo.<br>Si attiva sul <b>primo</b> telefono che lo apre e non funzionerà più su altri dispositivi.
-      </div>
-      <div style="margin-top:16px;background:rgba(255,255,255,0.2);border-radius:14px;padding:14px;text-align:left;font-size:12px;color:#fff;line-height:1.75">
-        <b>📲 Dopo aver aperto il link, aggiungilo alla Home:</b><br>
-        <b>iPhone</b> → tocca <b>Condividi</b> (icona □↑) → <b>Aggiungi a Home</b><br>
-        <b>Android</b> → tocca <b>⋮</b> in alto a destra → <b>Aggiungi a schermata Home</b>
-      </div>
-      <div id="qrCardLinkText" class="mono" style="margin-top:14px;font-size:10.5px;color:rgba(255,255,255,0.85);word-break:break-all"></div>
-    </div>`;
-function showQrCard(token, name) {
-  document.getElementById('qrCardWrap').innerHTML = QR_CARD_TEMPLATE;
-  const url = location.origin + '/o/' + token;
-  document.getElementById('qrCardLinkText').textContent = url;
-  const qrEl = document.getElementById('qrCardCode');
-  qrEl.innerHTML = '';
-  const qr = qrcode(0, 'M');
-  qr.addData(url);
-  qr.make();
-  qrEl.innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2 });
-  document.getElementById('qrCardModal').style.display = 'flex';
-  document.getElementById('qrCardHint').style.display = 'none';
-  // 弹窗一打开就自动把卡片渲染成一张真正的图片替换掉原来的 HTML,
-  // 不用再多点一次"保存图片",直接长按这张图就能存到相册/相片
-  renderQrCardToImage();
-}
-function renderQrCardToImage() {
-  const area = document.getElementById('qrCardArea');
-  html2canvas(area, { scale: 3, backgroundColor: null, useCORS: true }).then(canvas => {
-    canvas.toBlob(blob => {
-      if (!blob) return;
-      const url = URL.createObjectURL(blob);
-      area.outerHTML = `<img id="qrCardArea" src="${url}" style="width:100%;display:block;border-radius:24px;box-shadow:0 10px 26px rgba(168,80,104,0.25)">`;
-      document.getElementById('qrCardHint').style.display = 'block';
-    }, 'image/png');
-  }).catch(e => console.error('渲染邀请卡失败', e));
-}
+
 async function resetDevice(token, name) {
   if (!confirm(`解绑「${name}」当前绑定的设备?\n链接本身不变,下一个打开这个链接的人会重新绑定。\n(适用于:客户换了新手机/清了浏览器数据打不开)`)) return;
   await api(`/api/admin/customers/${token}/reset-device`, { method: 'POST' });
@@ -812,7 +759,6 @@ async function regenerateLink(token, name) {
   copyText(location.origin + data.orderUrl);
   flash('已生成新链接并复制到剪贴板: ' + data.orderUrl);
   loadCustomers();
-  showQrCard(data.token, name);
 }
 async function addCustomer() {
   const name=document.getElementById('c_name').value.trim();
@@ -820,8 +766,8 @@ async function addCustomer() {
   if(!name) return;
   const data=await api('/api/admin/customers',{method:'POST',body:JSON.stringify({name,tier})});
   document.getElementById('c_name').value='';
-  flash('已生成: '+data.orderUrl); loadCustomers();
-  showQrCard(data.token, name);
+  copyText(location.origin + data.orderUrl);
+  flash('已生成并复制链接: '+data.orderUrl); loadCustomers();
 }
 function copyLink(token) {
   const url=location.origin+'/o/'+token;
@@ -1103,7 +1049,7 @@ async function loadAnalytics() {
   const kpiCard = (label, value) => `
     <div class="card" style="flex:1;text-align:center;padding:18px 10px">
       <div style="font-size:11.5px;color:#999;margin-bottom:6px">${label}</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:#a85068">${value}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:var(--accent)">${value}</div>
     </div>`;
 
   const monthCard = (label, cur, prev, fmt) => `
@@ -1171,7 +1117,7 @@ async function loadAnalytics() {
               <span style="font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name}</span>
             </div>
             <div style="text-align:right;flex-shrink:0">
-              <div style="font-size:13px;font-weight:700;color:#a85068">${money(c.revenue)}</div>
+              <div style="font-size:13px;font-weight:700;color:var(--accent)">${money(c.revenue)}</div>
               <div style="font-size:10.5px;color:#999">${c.orders} 单</div>
             </div>
           </div>`).join('') : '<p style="color:#aaa;font-size:12px">暂无数据</p>'}
@@ -1192,12 +1138,12 @@ async function loadAnalytics() {
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <div class="card" style="flex:1;min-width:160px;text-align:center;padding:18px">
         <div style="font-size:11.5px;color:#999;margin-bottom:6px">复购率</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:#a85068">${d.repeatRate}%</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:var(--accent)">${d.repeatRate}%</div>
         <div style="font-size:10.5px;color:#999;margin-top:4px">下过2单以上的客户占比</div>
       </div>
       <div class="card" style="flex:1;min-width:160px;text-align:center;padding:18px">
         <div style="font-size:11.5px;color:#999;margin-bottom:6px">访问转化率</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:#a85068">${d.conversionRate}%</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:var(--accent)">${d.conversionRate}%</div>
         <div style="font-size:10.5px;color:#999;margin-top:4px">开过链接的客户里,下过单的比例</div>
       </div>
       <div class="card" style="flex:1.4;min-width:220px;padding:18px">

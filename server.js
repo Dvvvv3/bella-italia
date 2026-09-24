@@ -747,8 +747,10 @@ app.put('/api/admin/settings', requireAdmin, (req, res) => {
       'shipping_intl_price','shipping_intl_maxkg','shipping_intl_label','accent_color'];
     const updates = fields.filter(f => req.body[f] !== undefined);
     if (updates.length === 0) return res.json({ ok: true });
-    const sql = `UPDATE store_settings SET ${updates.map(f => f+'=?').join(',')} WHERE id=1`;
-    db.prepare(sql).run(updates.map(f => req.body[f]));
+    const sql = `UPDATE store_settings SET ${updates.map(f => f+'=@'+f).join(',')} WHERE id=1`;
+    const params = {};
+    updates.forEach(f => { params[f] = req.body[f]; });
+    db.prepare(sql).run(params);
     res.json({ ok: true });
   } catch(e) {
     res.status(500).json({ error: e.message });
