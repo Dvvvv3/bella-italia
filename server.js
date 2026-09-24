@@ -477,11 +477,20 @@ app.get('/api/admin/analytics', requireAdmin, (req, res) => {
     SELECT COUNT(*) AS v FROM customers WHERE strftime('%Y-%m', activated_at) = strftime('%Y-%m','now','-1 month')
   `).get().v;
 
-  const trend = db.prepare(`
+  const trendRaw = db.prepare(`
     SELECT date(created_at) AS day, COALESCE(SUM(total),0) AS revenue, COUNT(*) AS orders
     FROM orders WHERE status != 'cancelled' AND created_at >= datetime('now','-30 days')
     GROUP BY day ORDER BY day
   `).all();
+  // 补全30天中没有订单的日期(值为0),让图表每天都显示
+  const trendMap = Object.fromEntries(trendRaw.map(r => [r.day, r]));
+  const trend = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    trend.push(trendMap[key] || { day: key, revenue: 0, orders: 0 });
+  }
 
   const topCustomers = db.prepare(`
     SELECT o.customer_id, COALESCE(c.ragione_sociale, o.customer_name) AS name, SUM(o.total) AS revenue, COUNT(*) AS orders
