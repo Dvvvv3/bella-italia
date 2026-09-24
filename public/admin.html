@@ -101,7 +101,6 @@
   <h1 id="headerTitle">后台管理</h1>
   <div style="display:flex;align-items:center;gap:10px">
     <span class="status" id="statusMsg"></span>
-    <button data-tab="settings" style="border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent);padding:7px 16px;border-radius:999px;font-size:13px;white-space:nowrap">⚙️ 我的</button>
   </div>
 </header>
 <nav>
@@ -207,61 +206,6 @@
       <button class="btn btn-ghost" id="tab_cancelled" onclick="setOrderTab('cancelled')">废弃订单</button>
     </div>
     <div id="orderList"></div>
-  </section>
-  <section id="settings">
-    <div class="add-form">
-      <h3>⚙️ 我的 — 商家信息</h3>
-      <p style="font-size:12px;color:#999;margin:-4px 0 12px">这里填的信息会用在首页、下单页、联系页、打印送货单等所有地方。保存后记得去各页面确认显示正常。</p>
-
-      <label>店铺名称 *</label>
-      <input id="st_business_name" placeholder="比如 Bella Italia" style="margin-bottom:10px">
-
-      <label>标语 / 副标题</label>
-      <input id="st_tagline" placeholder="比如 ingrosso cosmetici · profumi" style="margin-bottom:10px">
-
-      <div class="row">
-        <div style="flex:1"><label>WhatsApp 号码(含国家码,纯数字)</label><input id="st_whatsapp_number" placeholder="393485180143"></div>
-        <div style="flex:1"><label>展示用电话</label><input id="st_phone_display" placeholder="+39 348 518 0143"></div>
-      </div>
-      <div style="height:10px"></div>
-
-      <div class="row">
-        <div style="flex:1"><label>邮箱</label><input id="st_email" placeholder="info@example.com"></div>
-        <div style="flex:1"><label>P.IVA / 税号</label><input id="st_piva" placeholder="00000000000"></div>
-      </div>
-      <div style="height:10px"></div>
-
-      <label>地址</label>
-      <input id="st_address" placeholder="Via Roma 1, 80100 Napoli NA" style="margin-bottom:10px">
-
-      <label>Google Maps 链接(可选)</label>
-      <input id="st_google_maps_link" placeholder="https://maps.app.goo.gl/..." style="margin-bottom:10px">
-
-      <label>品牌主色(十六进制)</label>
-      <input id="st_accent_color" placeholder="#a85068" style="margin-bottom:16px">
-
-      <h3 style="margin-top:4px">运费与最低起订</h3>
-      <label>最低订单金额(€)</label>
-      <input id="st_min_order" type="number" placeholder="300" style="margin-bottom:10px">
-
-      <div class="row">
-        <div style="flex:1"><label>国内运费(€)</label><input id="st_shipping_domestic_price" type="number" placeholder="15"></div>
-        <div style="flex:1"><label>国内最高重量(kg)</label><input id="st_shipping_domestic_maxkg" type="number" placeholder="25"></div>
-      </div>
-      <div style="height:10px"></div>
-      <label>国内运费提示文案</label>
-      <input id="st_shipping_domestic_label" placeholder="比如 SPEDIZIONE in tutta Italia" style="margin-bottom:10px">
-
-      <div class="row">
-        <div style="flex:1"><label>国际运费(€)</label><input id="st_shipping_intl_price" type="number" placeholder="35"></div>
-        <div style="flex:1"><label>国际最高重量(kg)</label><input id="st_shipping_intl_maxkg" type="number" placeholder="25"></div>
-      </div>
-      <div style="height:10px"></div>
-      <label>国际运费提示文案</label>
-      <input id="st_shipping_intl_label" placeholder="比如 SPEDIZIONE in tutta Europa" style="margin-bottom:16px">
-
-      <button class="btn btn-primary" style="width:100%" onclick="saveSettings()">保存商家信息</button>
-    </div>
   </section>
 </main>
 <div class="gate" id="editModal" style="display:none">
@@ -1070,40 +1014,8 @@ if (scanInputEl) {
   });
 }
 
-async function loadAll(){await loadCategoryCache();loadProducts();loadCategories();loadCustomers();loadOrders();loadVisitorLog();loadSettings();document.getElementById('scanInput')?.focus();}
+async function loadAll(){await loadCategoryCache();loadProducts();loadCategories();loadCustomers();loadOrders();loadVisitorLog();document.getElementById('scanInput')?.focus();}
 
-const SETTINGS_FIELDS = [
-  'business_name','tagline','whatsapp_number','phone_display','email','address',
-  'piva','google_maps_link','accent_color','min_order',
-  'shipping_domestic_price','shipping_domestic_maxkg','shipping_domestic_label',
-  'shipping_intl_price','shipping_intl_maxkg','shipping_intl_label',
-];
-async function loadSettings() {
-  const s = await fetch('/api/settings').then(r => r.json()).catch(() => ({}));
-  SETTINGS_FIELDS.forEach(f => {
-    const el = document.getElementById('st_' + f);
-    if (el && s[f] !== undefined && s[f] !== null) el.value = s[f];
-  });
-  // 顶部标题和网页标签页标题也跟着店铺名称走,不再写死"BELLA ITALIA"
-  if (s.business_name) {
-    document.getElementById('headerTitle').textContent = s.business_name + ' 后台';
-    document.getElementById('pageTitle').textContent = '后台管理 · ' + s.business_name;
-  }
-}
-async function saveSettings() {
-  const body = {};
-  SETTINGS_FIELDS.forEach(f => {
-    const el = document.getElementById('st_' + f);
-    body[f] = el ? el.value.trim() : '';
-  });
-  try {
-    await api('/api/admin/settings', { method: 'PUT', body: JSON.stringify(body) });
-    flash('商家信息已保存');
-    loadSettings();
-  } catch (e) {
-    alert('保存失败: ' + e.message);
-  }
-}
 
 // ---- 新订单提醒:定时轮询,发现新订单就弹通知 + 页内弹窗 + 让订单卡片闪烁 ----
 let seenOrderIds = new Set(JSON.parse(localStorage.getItem('bi_seen_orders') || '[]'));
@@ -1162,7 +1074,6 @@ if (window.Notification && Notification.permission === 'default') {
 }
 setInterval(pollNewOrders, 15000);
 if (ADMIN_KEY) setTimeout(pollNewOrders, 2000); // 建立"已知订单"基准,不在启动瞬间弹通知
-loadSettings();
 if(ADMIN_KEY) loadAll();
 </script>
 </body>
