@@ -607,7 +607,7 @@ window.addEventListener('appinstalled', () => {
 <body>
 <div id="profileOverlay" style="display:none;position:fixed;inset:0;background:#fff8f4;z-index:80;overflow-y:auto;padding:24px 18px 40px">
   <div class="lang-switch" id="langSwitchProfile" style="justify-content:flex-end;margin-bottom:14px"></div>
-  <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:#a85068;font-size:24px;margin:0 0 4px">Bella Italia</p>
+  <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:#a85068;font-size:24px;margin:0 0 4px" data-store="business_name">Bella Italia</p>
   <p style="font-size:12px;color:#888;margin-bottom:20px" data-i18n="o_profile_sub">Prima di ordinare, compila i dati per la fatturazione</p>
   <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_ragione">Ragione Sociale *</label><input id="pf_ragione_sociale" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
   <div style="margin-bottom:12px"><label style="display:block;font-size:12px;font-weight:500;margin-bottom:4px" data-i18n="o_pf_piva">P.IVA *</label><input id="pf_piva" style="width:100%;padding:10px;border:1px solid #e2ddd4;border-radius:10px;font-size:14px;box-sizing:border-box"></div>
@@ -635,7 +635,7 @@ window.addEventListener('appinstalled', () => {
 </div>
 
 <header class="brand" id="pageHeader">
-  <p class="brand-name">Bella Italia</p>
+  <p class="brand-name" data-store="business_name">Bella Italia</p>
   <div class="brand-tagline" data-i18n="o_tagline">Cosmetics Wholesale · Ingrosso Cosmetici</div>
   <div class="brand-meta">
     <span id="customerName">…</span>
@@ -1344,5 +1344,6 @@ window.addEventListener('i18nchange', () => {
 load();
 
 </script>
+<script src="/js/store-settings.js"></script>
 </body>
 </html>

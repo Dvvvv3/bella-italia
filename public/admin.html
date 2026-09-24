@@ -110,6 +110,7 @@
   <button data-tab="customers">客户</button>
   <button data-tab="orders">订单</button>
   <button data-tab="analytics">📊 业绩</button>
+  <button data-tab="settings">⚙️ 设置</button>
 </nav>
 <main>
   <section id="products" class="active">
@@ -320,6 +321,7 @@ document.querySelectorAll('[data-tab]').forEach(btn => {
     btn.classList.add('active');
     document.getElementById(btn.dataset.tab).classList.add('active');
     if (btn.dataset.tab === 'analytics') loadAnalytics();
+    if (btn.dataset.tab === 'settings') loadSettings();
   });
 });
 async function loadCategoryCache() {
@@ -1208,5 +1210,109 @@ async function loadAnalytics() {
 
 if(ADMIN_KEY) loadAll();
 </script>
+
+<section id="settings">
+  <h3>商家信息设置</h3>
+  <div style="max-width:600px;display:flex;flex-direction:column;gap:12px">
+
+    <div><label>商家名称</label><input id="s_business_name" placeholder="Bella Italia"></div>
+    <div><label>副标题</label><input id="s_tagline" placeholder="Cosmetics Wholesale"></div>
+    <div><label>WhatsApp 号码（纯数字含区号）</label><input id="s_whatsapp_number" placeholder="393485180143"></div>
+    <div><label>电话显示文字</label><input id="s_phone_display" placeholder="+39 348 518 0143"></div>
+    <div><label>Email</label><input id="s_email" placeholder="info@example.com"></div>
+    <div><label>地址</label><input id="s_address" placeholder="Via Example 1, 00100 Roma"></div>
+    <div><label>P.IVA</label><input id="s_piva" placeholder="12345678901"></div>
+    <div><label>Google Maps 链接</label><input id="s_google_maps_link" placeholder="https://maps.google.com/..."></div>
+    <div><label>最低订单金额 (€)</label><input id="s_min_order" type="number" placeholder="300"></div>
+
+    <h4 style="margin:8px 0 0">国内运费</h4>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div><label>价格 (€)</label><input id="s_shipping_domestic_price" type="number" placeholder="15"></div>
+      <div><label>最高重量 (kg)</label><input id="s_shipping_domestic_maxkg" type="number" placeholder="25"></div>
+      <div><label>标签文字</label><input id="s_shipping_domestic_label" placeholder="Italia"></div>
+    </div>
+
+    <h4 style="margin:8px 0 0">国际运费</h4>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div><label>价格 (€)</label><input id="s_shipping_intl_price" type="number" placeholder="35"></div>
+      <div><label>最高重量 (kg)</label><input id="s_shipping_intl_maxkg" type="number" placeholder="25"></div>
+      <div><label>标签文字</label><input id="s_shipping_intl_label" placeholder="Europa"></div>
+    </div>
+
+    <h4 style="margin:8px 0 0">主题颜色</h4>
+    <div style="display:flex;align-items:center;gap:12px">
+      <input id="s_accent_color" type="color" value="#a85068" style="width:48px;height:36px;border:none;cursor:pointer;border-radius:8px">
+      <span id="s_accent_preview" style="font-size:13px;color:#666">#a85068</span>
+    </div>
+
+    <button class="btn btn-primary" style="margin-top:8px" onclick="saveSettings()">💾 保存设置</button>
+    <p id="settings_msg" style="font-size:13px;color:green;display:none">✅ 保存成功</p>
+  </div>
+</section>
+
+<script>
+// ── 设置页 ──────────────────────────────────────────────────
+async function loadSettings() {
+  const r = await fetch('/api/settings');
+  const s = await r.json();
+  const map = {
+    business_name: 's_business_name', tagline: 's_tagline',
+    whatsapp_number: 's_whatsapp_number', phone_display: 's_phone_display',
+    email: 's_email', address: 's_address', piva: 's_piva',
+    google_maps_link: 's_google_maps_link', min_order: 's_min_order',
+    shipping_domestic_price: 's_shipping_domestic_price',
+    shipping_domestic_maxkg: 's_shipping_domestic_maxkg',
+    shipping_domestic_label: 's_shipping_domestic_label',
+    shipping_intl_price: 's_shipping_intl_price',
+    shipping_intl_maxkg: 's_shipping_intl_maxkg',
+    shipping_intl_label: 's_shipping_intl_label',
+    accent_color: 's_accent_color'
+  };
+  Object.entries(map).forEach(([key, id]) => {
+    const el = document.getElementById(id);
+    if (el && s[key] !== undefined) el.value = s[key];
+  });
+  if (s.accent_color) document.getElementById('s_accent_preview').textContent = s.accent_color;
+}
+
+async function saveSettings() {
+  const fields = ['business_name','tagline','whatsapp_number','phone_display','email',
+    'address','piva','google_maps_link','min_order',
+    'shipping_domestic_price','shipping_domestic_maxkg','shipping_domestic_label',
+    'shipping_intl_price','shipping_intl_maxkg','shipping_intl_label','accent_color'];
+  const body = {};
+  fields.forEach(f => {
+    const el = document.getElementById('s_' + f);
+    if (el) body[f] = el.value;
+  });
+  const r = await fetch('/api/admin/settings', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY },
+    body: JSON.stringify(body)
+  });
+  const data = await r.json();
+  const msg = document.getElementById('settings_msg');
+  if (data.ok) {
+    msg.style.display = 'block';
+    msg.textContent = '✅ 保存成功';
+    msg.style.color = 'green';
+    // 实时更新颜色预览
+    const color = document.getElementById('s_accent_color').value;
+    document.getElementById('s_accent_preview').textContent = color;
+    document.documentElement.style.setProperty('--accent', color);
+    setTimeout(() => msg.style.display = 'none', 3000);
+  } else {
+    msg.style.display = 'block';
+    msg.textContent = '❌ 保存失败';
+    msg.style.color = 'red';
+  }
+}
+
+document.getElementById('s_accent_color').addEventListener('input', function() {
+  document.getElementById('s_accent_preview').textContent = this.value;
+  document.documentElement.style.setProperty('--accent', this.value);
+});
+</script>
+
 </body>
 </html>

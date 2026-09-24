@@ -728,6 +728,34 @@ app.get('/api/admin/orders/:id/print', requireAdminViaQuery, (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
+// ── store_settings 接口 ──────────────────────────────────────
+app.get('/api/settings', (req, res) => {
+  try {
+    const row = db.prepare('SELECT * FROM store_settings WHERE id=1').get();
+    res.json(row || {});
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.put('/api/admin/settings', requireAdmin, (req, res) => {
+  try {
+    const fields = ['business_name','tagline','whatsapp_number','phone_display','email',
+      'address','piva','google_maps_link','min_order',
+      'shipping_domestic_price','shipping_domestic_maxkg','shipping_domestic_label',
+      'shipping_intl_price','shipping_intl_maxkg','shipping_intl_label','accent_color'];
+    const updates = fields.filter(f => req.body[f] !== undefined);
+    if (updates.length === 0) return res.json({ ok: true });
+    const sql = `UPDATE store_settings SET ${updates.map(f => f+'=?').join(',')} WHERE id=1`;
+    db.prepare(sql).run(updates.map(f => req.body[f]));
+    res.json({ ok: true });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+
 app.listen(PORT, () => {
   console.log(`跑起来了: http://localhost:${PORT}/o/a1b2c3`);
   console.log(`后台管理: http://localhost:${PORT}/admin.html (密钥: ${ADMIN_KEY})`);
